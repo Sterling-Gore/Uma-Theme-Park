@@ -3,7 +3,7 @@ import React, {  useState , useEffect } from "react";
 import { BrowserRouter as Navigate, Routes, Route, Router } from "react-router-dom";
 
 import './App.css';
-
+/*
 function App() {
   return (
     <div className="App">
@@ -26,3 +26,4 @@ function App() {
 }
 
 export default App;
+*/

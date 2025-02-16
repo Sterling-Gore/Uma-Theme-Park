@@ -1,0 +1,21 @@
+.Test {
+    top: 0;
+    width: auto;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #282c34;
+  }
+
+
+
+.Container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #282c34;
+    padding: 20px;
+  }
