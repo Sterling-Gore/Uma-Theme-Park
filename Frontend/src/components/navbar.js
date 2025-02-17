@@ -13,13 +13,13 @@ function NavBar()
         <Link to = "/"> Dashboard </Link>
     <BrowserRouter>
     */
-
+   
     return (
         <>
         <div className="Navbar">
             <div>
                 <div className="NavLinks">
-                    <h1>[Park Name]</h1>
+                    <h1 className = "NavLogo">[Park Name]</h1>
                     <div className="NavLinks">
                         <a href = "/" className="NavLink1"> Dashboard </a>
                         <a href = "/activities" className="NavLink1"> Activities </a>
@@ -31,7 +31,7 @@ function NavBar()
                 </div>
             </div>
             <div>
-                <a href = "/"> Login </a>
+                <a href = "/Register"> Login </a>
             </div>
         </div>
         </>

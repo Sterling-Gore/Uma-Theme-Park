@@ -41,24 +41,12 @@
     font-weight: 600;
     font-size: 20px;
   }
-.NavLink2 {
+.NavLogo {
     color: #f4f4f4;
-    text-decoration: none;
-    font-family: Neverland;
-    font-size: 40px;
-  }
-.NavLink3 {
-    color: #f4f4f4;
-    text-decoration: none;
-    font-family: MagicOne;
-    font-size: 40px;
-  }
-.NavLink4 {
-    color: #f4f4f4;
-    text-decoration: none;
-    font-family: MagicTwo;
-    font-size: 40px;
-  }
+    font-family: Britney;
+    font-weight: bold;
+    font-size: 50px;
+}
 
 .NavLinks {
     display: flex;

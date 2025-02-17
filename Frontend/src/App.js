@@ -9,6 +9,7 @@ import Dining from "./pages/dining.js"
 import Problems from "./pages/problems.js"
 import Tickets from "./pages/tickets.js"
 import Shop from "./pages/shop.js"
+import Register from "./components/register.js"
 
 
 const router = createBrowserRouter([
@@ -40,6 +41,11 @@ const router = createBrowserRouter([
   {
     path: '/problems',
     element: <Problems />,
+    errorElement: <PageNotFound />
+  },
+  {
+    path: '/register',
+    element: <Register />,
     errorElement: <PageNotFound />
   },
 ]);
