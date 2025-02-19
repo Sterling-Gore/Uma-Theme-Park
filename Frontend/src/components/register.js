@@ -22,6 +22,37 @@ function Register() {
         
     });
 
+    function checkError()
+    {
+        if ( formData.first_name === "")
+        {
+            setError("Fill in First Name");
+            return true;
+        }
+        if ( formData.last_name === "")
+        {
+            setError("Fill in Last Name");
+            return true;
+        }
+        if ( formData.birthday === "")
+        {
+            setError("Fill in Birthday");
+            return true;
+        }
+        //if (/*age is younger than 12*/)
+        //{
+        //    setError("Must be at least 13 years old")
+        //}
+        if ( formData.first_name === "")
+        {
+            setError("Enter a First Name");
+            return true;
+        }
+
+        return false;
+            
+            
+    }
     return (
         <>
         <div /*background*/>
@@ -236,6 +267,16 @@ function Register() {
                         />
                     </div>
                 </div>
+                {error !== "" ? (
+                    <p /*classname*/>{error}</p>
+                ) : (
+                    <button
+                        type="submit"
+                        /*classname*/
+                    >
+                    create an account
+                    </button>
+                ) }
             </form>
         </div>
         </div>
