@@ -14,7 +14,6 @@ function Register() {
         //username: "",    //I dont think we need a username, we can use emails instead
         password: "",
         confirm_password: "",
-        
         street: "",
         city: "",
         state: "",
@@ -50,15 +49,41 @@ function Register() {
         }
 
         return false;
-            
-            
     }
+
+    const handleSubmit = async (event) => {
+        event.preventDefault(); 
+        try {
+            const response = await fetch('http://localhost:4000/customer/createCustomer', {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData), 
+            });
+            const data = await response.json();
+    
+            if (response.ok) {
+                console.log('Customer created successfully:', data);
+                alert('Customer created successfully');
+            } else {
+                console.error('Error creating customer:', data);
+                alert(`Error: ${data.message || 'Failed to create customer'}`);
+            }
+        } catch (error) {
+            console.error('Request failed:', error);
+            alert('An error occurred while creating the customer');
+        }
+    };
+    
+
     return (
         <>
         <div /*background*/>
         <div /*centralized Register container*/>
             <h1 /*title*/> Register </h1>
-            <form /*onSubmit = {handleSubmit}*/ /*form area*/>
+            <form onSubmit = {handleSubmit} /*form area*/>
                 <div /*row*/ >
                     <div /*input Group*/>
                         <label /*label header*/ > FIRST NAME </label>
