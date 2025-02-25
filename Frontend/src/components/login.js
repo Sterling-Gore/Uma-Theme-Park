@@ -1,14 +1,48 @@
 import React, {useState, useEffect} from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
 function Login() {
+    const navigate = useNavigate();
     const [error, setError] = useState("");
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
 
-    const handleSubmit = async (event) => {}
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const dataToSend = {
+            username : email,
+            password : password
+        }
+        try {
+            const response = await fetch('http://localhost:4000/login', {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials : 'include',
+                body: JSON.stringify(dataToSend), 
+            });
+            const data = await response.json();
+    
+            if (response.ok) {
+                console.log('Login Successful: ', data.message);
+                alert('Login Successful');
+                navigate('/');
+            } else {
+                console.error('Error loggin in: ', data.message);
+                alert(`Error: ${data.message || 'Failed to login'}`);
+            }
+        } catch (error) {
+            console.error('Request failed:', error);
+            alert('An error occurred while logging in');
+        }
+
+
+    }
 
     return (
         <>
@@ -24,7 +58,7 @@ function Login() {
                             //clasName = ""
                             placeholder = "Email"
                             value={email}
-                            onChange = {(e) => setEmail({ email: e.target.value})}
+                            onChange = {(e) => setEmail(e.target.value)}
                         />
                     </div>
                 </div>
@@ -36,7 +70,7 @@ function Login() {
                             //clasName = ""
                             placeholder = "Password"
                             value={password}
-                            onChange = {(e) => setPassword({password : e.target.value})}
+                            onChange = {(e) => setPassword(e.target.value)}
                             maxLength={30}
                             minLength={8}
                         />
