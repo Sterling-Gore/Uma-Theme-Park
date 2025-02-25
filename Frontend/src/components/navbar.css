@@ -28,6 +28,7 @@
 .Navbar {
     top: 0;
     width: auto;
+    height: 50px;
     display: flex;
     justify-content: space-between;
     align-items: center;

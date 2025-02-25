@@ -2,7 +2,7 @@
 import React, {  useState , useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import Dashboard from "./pages/dashboard.js"
+import Home from "./pages/Home/Home.js"
 import Activities from "./pages/activities.js"
 import PageNotFound from "./pages/_PageNotFound.js"
 import Dining from "./pages/dining.js"
@@ -16,7 +16,7 @@ import Login from "./components/login.js"
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Dashboard />,
+    element: <Home />,
     errorElement: <PageNotFound />
   },
   {
