@@ -31,7 +31,8 @@ function NavBar()
                 </div>
             </div>
             <div>
-                <a href = "/Register"> Login </a>
+                <a href = "/Login"> Login </a>
+                <a href = "/Register"> Register </a>
             </div>
         </div>
         </>
