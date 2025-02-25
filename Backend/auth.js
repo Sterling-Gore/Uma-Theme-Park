@@ -11,24 +11,32 @@ function verifyToken(token) {
 }
 
 async function checkAuth(req, res){
-    const authHeader = req.headers['authorization'];
+    const cookieHeader = req.headers.cookie;
 
-    if (!authHeader) {
+    if (!cookieHeader) {
         res.writeHead(401, { 'Content-Type': 'application/json' });
-        return res.end(JSON.stringify({ message: 'No token provided' }));
+        res.end(JSON.stringify({ message: 'No token provided' }));
+        return false;
     }
 
-    const token = authHeader.split(' ')[1];
+    const cookies = Object.fromEntries(cookieHeader.split('; ').map(c => c.split('=')));
+    const token = cookies.token
+    if (!token) {
+        res.writeHead(401, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: 'Authentication token not found in cookies' }));
+        return false;
+    }
     const user = verifyToken(token);
 
-    if (user) {
-        req.user = user; // here we can specify the user later
-        return true;
-    } else {
+    if (!user) {
         res.writeHead(403, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: 'Invalid token' }));
         return false;
     }
+
+    req.user = user; // attaching the user to the req
+    return true;
+
 }
 
 module.exports = {
