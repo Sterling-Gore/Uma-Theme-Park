@@ -10,6 +10,7 @@ import Problems from "./pages/problems.js"
 import Tickets from "./pages/tickets.js"
 import Shop from "./pages/shop.js"
 import Register from "./components/register.js"
+import Login from "./components/login.js"
 
 
 const router = createBrowserRouter([
@@ -46,6 +47,11 @@ const router = createBrowserRouter([
   {
     path: '/register',
     element: <Register />,
+    errorElement: <PageNotFound />
+  },
+  {
+    path: '/login',
+    element: <Login />,
     errorElement: <PageNotFound />
   },
 ]);
