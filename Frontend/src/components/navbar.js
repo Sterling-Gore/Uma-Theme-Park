@@ -2,6 +2,8 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import { Link } from "react-router-dom";
 import { BrowserRouter } from 'react-router-dom'
 
+import Logout from './logout.js'
+
 import './navbar.css';
 function NavBar()
 {
@@ -33,6 +35,7 @@ function NavBar()
             <div>
                 <a href = "/Login"> Login </a>
                 <a href = "/Register"> Register </a>
+                <a href="/logout">Logout</a>
             </div>
         </div>
         </>

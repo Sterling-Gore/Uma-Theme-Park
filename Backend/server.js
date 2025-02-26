@@ -7,6 +7,7 @@ const { testingPost } = require('./testingPost');
 const { registerCustomer } = require('./registerCustomer');
 const { login } = require('./login')
 const { checkAuth } = require('./auth')
+const { logout } = require('./logout')
 const pool = require('./database');
 
 const PORT = process.env.PORT || 7000;
@@ -44,6 +45,9 @@ const server = http.createServer(async (req, res) => {
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ message: `Hello, ${req.user.username}` }));
         }
+    }
+    else if (req.url === '/logout' && req.method === 'GET'){
+        logout(req, res)
     }
     else if( req.url === '/testDatabaseConnection' && req.method === 'GET'){
         pool.getConnection((err, connection) => {

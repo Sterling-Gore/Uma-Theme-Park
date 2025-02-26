@@ -19,12 +19,14 @@ function Activities()
                     credentials: "include", 
                 });
 
+                const data = await response.json()
+
                 if (response.ok) {
                     console.log("user is still authenticated")
                     setIsAuthenticated(true);
                 } else {
                     setIsAuthenticated(false);
-                    console.log("user is no longer authenticated so rerouting to main page")
+                    console.log(data.message)
                     navigate("/"); 
                 }
             } catch (error) {

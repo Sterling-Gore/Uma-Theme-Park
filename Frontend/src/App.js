@@ -11,6 +11,7 @@ import Tickets from "./pages/tickets.js"
 import Shop from "./pages/shop.js"
 import Register from "./components/register.js"
 import Login from "./components/login.js"
+import Logout from "./components/logout.js"
 
 
 const router = createBrowserRouter([
@@ -54,6 +55,11 @@ const router = createBrowserRouter([
     element: <Login />,
     errorElement: <PageNotFound />
   },
+  {
+    path: '/logout',
+    element: <Logout />,
+    errorElement: <PageNotFound />
+  }
 ]);
 
 function App() {
