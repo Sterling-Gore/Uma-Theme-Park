@@ -5,9 +5,9 @@ const http = require('http');
 const { testing } = require('./testing');
 const { testingPost } = require('./testingPost');
 const { registerCustomer } = require('./registerCustomer');
-const { login } = require('./login')
-const { checkAuth } = require('./auth')
-const { logout } = require('./logout')
+const { login } = require('./loginHandler/login')
+const { checkAuth } = require('./loginHandler/auth')
+const { logout } = require('./loginHandler/logout')
 const pool = require('./database');
 
 const PORT = process.env.PORT || 7000;
