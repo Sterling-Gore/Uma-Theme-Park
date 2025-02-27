@@ -1,12 +1,15 @@
 // server.js 
+require('dotenv').config();
+
 const http = require('http');
 const { testing } = require('./testing');
 const { testingPost } = require('./testingPost');
 const { registerCustomer } = require('./registerCustomer');
 const { login } = require('./login')
 const { checkAuth } = require('./auth')
+const pool = require('./database');
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 7000;
 
 const server = http.createServer(async (req, res) => {
     // Set CORS Headers
@@ -42,13 +45,22 @@ const server = http.createServer(async (req, res) => {
             res.end(JSON.stringify({ message: `Hello, ${req.user.username}` }));
         }
     }
+    else if( req.url === '/testDatabaseConnection' && req.method === 'GET'){
+        pool.getConnection((err, connection) => {
+            if (err) {
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, message: "Database connection failed", error: err.message }));
+            } else {
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: true, message: "Successfully connected to the database" }));
+                connection.release();
+            }
+        })
+    }
     else {
         res.writeHead(404, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: 'Route not found' }));
     }
-
-
-    
 });
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

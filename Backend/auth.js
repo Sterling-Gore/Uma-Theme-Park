@@ -1,10 +1,9 @@
 const jwt = require('jsonwebtoken');
 
-const SECRET_KEY = "1234";
 
 function verifyToken(token) {
     try {
-        return jwt.verify(token, SECRET_KEY);
+        return jwt.verify(token, process.env.SECRET_KEY);
     } catch (err) {
         return null;
     }

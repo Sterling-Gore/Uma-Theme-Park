@@ -9,7 +9,7 @@ function authenticateUser(username, password){
 }
 
 function createToken(username) {
-    return jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
+    return jwt.sign({ username }, process.env.SECRET_KEY, { expiresIn: '1h' });
 }
 
 
