@@ -1,11 +1,11 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import AuthContext from "../context/AuthContext"; 
 
 function Login() {
     const navigate = useNavigate();
+    const { setIsLoggedIn } = useContext(AuthContext);
     const [error, setError] = useState("");
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -30,6 +30,8 @@ function Login() {
     
             if (response.ok) {
                 console.log('Login Successful: ', data.message);
+                localStorage.setItem("isLoggedIn", "true")
+                setIsLoggedIn(true);
                 alert('Login Successful');
                 navigate('/');
             } else {
