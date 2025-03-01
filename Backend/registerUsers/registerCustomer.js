@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 const pool = require("../database");
+const bcrypt = require('bcrypt');
 
 async function registerCustomer(req, res) {
     try {
@@ -14,10 +15,10 @@ async function registerCustomer(req, res) {
                 const { first_name, last_name, birthday, email, phone_number, password, street, city, state, zip } = JSON.parse(body);
                 const customer_id = uuidv4(); 
                 const address = `${street}, ${city}, ${state}, ${zip}`;
-                
+                const newPassword = await bcrypt.hash(password, 10);
                 const [result] = await pool.execute(
                     "INSERT INTO theme_park.customers (customer_id, first_name, last_name, date_of_birth, tickets, customer_feedback_park, customer_feedback_attraction, email, password, phone_number, Address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    [customer_id, first_name, last_name, birthday, null, null, null, email, password, phone_number, address]
+                    [customer_id, first_name, last_name, birthday, null, null, null, email, newPassword, phone_number, address]
                 );
 
                 console.log(result);

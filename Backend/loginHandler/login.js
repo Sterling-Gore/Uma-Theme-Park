@@ -1,10 +1,12 @@
 const jwt = require('jsonwebtoken');
 const cookie = require('cookie');
 const pool = require('../database');
+const bcrypt = require('bcrypt')
 
 const SECRET_KEY = "1234";
 
-function authenticateUser(inputPassword, storedPassword) {
+async function authenticateUser (inputPassword, storedPassword) {
+    const decryptedPass = await bcrypt.compare(inputPassword, storedPassword);
     return inputPassword === storedPassword;
 }
 
