@@ -5,11 +5,13 @@ import Home from "./pages/Home/Home.js";
 import Activities from "./pages/activities.js";
 import PageNotFound from "./pages/_PageNotFound.js";
 import Dining from "./pages/dining.js";
-import Problems from "./pages/problems.js";
-import Tickets from "./pages/tickets.js";
-import Shop from "./pages/shop.js";
-import Register from "./components/register.js";
-import Login from "./components/login.js";
+import Problems from "./pages/Problems/problems.js";
+import Tickets from "./pages/Tickets/tickets.js";
+import Shop from "./pages/Shop/shop.js";
+import Register from "./components/authentication/register.js";
+import Login from "./components/authentication/login.js";
+import ManagerPortal from "./pages/Manager/ManagerPortal.js";
+import EmployeePortal from "./pages/Employee/EmployeePortal.js";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
       <Route path="/problems" element={<Problems />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/ManagerPortal" element={<ManagerPortal />} />
+      <Route path="/EmployeePortal" element={<EmployeePortal />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
