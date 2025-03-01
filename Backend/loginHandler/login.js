@@ -16,7 +16,6 @@ function createToken(username) {
 
 async function getCustomerByEmail(email) {
     try {
-        console.log("Checking email:", email);
         const sqlQuery = "SELECT * FROM theme_park.customers WHERE email = ?";
         const [rows] = await pool.execute(sqlQuery, [email]);
         return rows.length > 0 ? rows[0] : null;

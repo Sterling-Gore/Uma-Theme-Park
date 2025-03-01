@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from 'react';
-
+import { useNavigate } from 'react-router-dom';
 
 function Register() {
     const [error, setError] = useState("");
+    const navigate = useNavigate();
     const [formData, setFormData] = useState(
         {
         first_name: "",
@@ -64,6 +65,7 @@ function Register() {
             if (response.ok) {
                 console.log('Customer created successfully:', data);
                 alert('Customer created successfully');
+                navigate('/login')
             } else {
                 console.error('Error creating customer:', data);
                 alert(`Error: ${data.message || 'Failed to create customer'}`);

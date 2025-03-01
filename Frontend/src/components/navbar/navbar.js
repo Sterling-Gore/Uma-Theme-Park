@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { useNavigate } from "react-router-dom";
 import AuthContext from '../../context/AuthContext';
-import { handleLogout } from '../authentication/handleLogout'; // Import function
+import { handleLogout } from '../authentication/handleLogout'; 
 import './navbar.css';
 
 function NavBar() {
