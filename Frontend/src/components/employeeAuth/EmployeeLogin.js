@@ -1,5 +1,4 @@
-// 3. Update the EmployeeLogin.js component to use the simplified auth context
-// File: Frontend/src/components/employeeAuth/EmployeeLogin.js
+// Frontend/src/components/employeeAuth/EmployeeLogin.js
 
 import React, { useState, useContext } from 'react';
 import './EmployeeLogin.css';
@@ -33,8 +32,11 @@ function EmployeeLogin() {
       const data = await response.json(); 
 
       if (response.ok) {
-        console.log('Login Successful');
+        console.log('Employee Login Successful');
+        
+        // The login function will handle localStorage updates
         login('employee');
+        
         navigate('/EmployeePortal');
       } else {
         setError(data.message || 'Invalid credentials');

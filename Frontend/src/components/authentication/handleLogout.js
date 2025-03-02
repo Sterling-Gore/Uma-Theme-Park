@@ -15,23 +15,25 @@ export const handleLogout = async (navigate, logout) => {
 
         if (response.ok) {
             console.log('Successfully logged out:', data.message);
-        
-            localStorage.removeItem("isLoggedIn");
-            localStorage.removeItem("userType");
             
-          
+            // Call the logout function from context (which handles localStorage)
             logout();
             
-         
+            // Navigate to home page
             navigate('/');
         } else {
             console.error('Error logging out:', data.message);
+            
+            // Even if API fails, we should still log out locally
+            logout();
+            navigate('/');
+            
             alert(`Error: ${data.message || 'Failed to logout'}`);
         }
     } catch (error) {
         console.error('Logout error:', error);
-        localStorage.removeItem("isLoggedIn");
-        localStorage.removeItem("userType");
+        
+        // Even on network error, log out locally
         logout();
         navigate('/');
     }

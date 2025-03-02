@@ -1,52 +1,85 @@
+// Frontend/src/components/navbar/navbar.js
 
-import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, memo } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
 import './navbar.css'; 
 
-function NavBar() {
-  const { isLoggedIn, userType } = useContext(AuthContext);
-  console.log("NavBar Rendered → isLoggedIn:", isLoggedIn, "| userType:", userType);
+// Using memo to prevent unnecessary re-renders
+const NavBar = memo(function NavBar() {
+  const { isLoggedIn, userType, logout, isLoading } = useContext(AuthContext);
+  const navigate = useNavigate();
+  
+  // Log only when debugging is needed, commenting out to reduce console noise
+  // console.log("NavBar Rendered → isLoggedIn:", isLoggedIn, "| userType:", userType);
 
-  // Don't render the navbar for employees and managers
-  if (isLoggedIn && (userType === 'employee' || userType === 'manager')) {
+  // Don't render anything during loading or for employee/manager
+  if (isLoading || (isLoggedIn && (userType === 'employee' || userType === 'manager'))) {
     return null; 
   }
 
+  const handleLogoutClick = (e) => {
+    e.preventDefault();
+    // Simple direct logout
+    try {
+      fetch('http://localhost:4000/logout', {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include'
+      }).then(() => {
+        logout();
+        navigate('/');
+      }).catch(() => {
+        logout();
+        navigate('/');
+      });
+    } catch (error) {
+      logout();
+      navigate('/');
+    }
+  };
+
   return (
-    <nav className="navbar">
-      <div className="navbar-logo">
-        <Link to="/">YourLogo</Link>
+    <nav className="Navbar">
+      <div className="NavLogo">
+        <Link to="/">ParkName</Link>
       </div>
 
-      <div className="navbar-links">
-        <Link to="/">Home</Link>
-        <Link to="/activities">Activities</Link>
-        <Link to="/dining">Dining</Link>
-        <Link to="/shop">Shop</Link>
-        <Link to="/tickets">Tickets</Link>
-        <Link to="/problems">Problems</Link>
+      <div className="NavLinks">
+        <Link to="/" className="NavLink1">Home</Link>
+        <Link to="/activities" className="NavLink1">Activities</Link>
+        <Link to="/dining" className="NavLink1">Dining</Link>
+        <Link to="/shop" className="NavLink1">Shop</Link>
+        <Link to="/tickets" className="NavLink1">Tickets</Link>
+        <Link to="/problems" className="NavLink1">Problems</Link>
         
         {!isLoggedIn ? (
           <>
-            <Link to="/login">Login</Link>
-            <Link to="/register">Register</Link>
-            <Link to="/EmployeeLogin">Employee Login</Link>
+            <Link to="/login" className="NavLink1">Login</Link>
+            <Link to="/register" className="NavLink1">Register</Link>
+            <Link to="/EmployeeLogin" className="NavLink1">Employee Login</Link>
           </>
         ) : (
           // Links for logged-in customers
           userType === 'customer' && (
             <>
-              <Link to="/account">My Account</Link>
-              <Link to="/logout" onClick={(e) => {
-                e.preventDefault();
-              }}>Logout</Link>
+              <Link to="/account" className="NavLink1">My Account</Link>
+              <Link 
+                to="/" 
+                className="NavLink1" 
+                onClick={handleLogoutClick}
+              >
+                Logout
+              </Link>
             </>
           )
         )}
       </div>
     </nav>
   );
-}
+});
 
 export default NavBar;

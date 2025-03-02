@@ -1,20 +1,42 @@
+// Frontend/src/pages/Employee/EmployeePortal.js
 
-import React, { useContext } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { handleLogout } from '../../components/authentication/handleLogout'; 
-import AuthContext from '../../context/AuthContext';
 
+// This is a completely stripped down version that doesn't use any context
 function EmployeePortal() {
   const navigate = useNavigate();
-  const { logout } = useContext(AuthContext);
+  
+  // Very simple logout with no dependencies
+  const handleLogout = () => {
+    // Clear localStorage first
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("userType");
+    
+    // Call API directly
+    fetch('http://localhost:4000/logout', {
+      method: 'GET',
+      credentials: 'include'
+    }).finally(() => {
+      // Always navigate to home page regardless of API result
+      window.location.href = '/';
+    });
+  };
   
   return (
-    <div>
+    <div className="employee-portal">
       <h1>Employee Portal</h1>
-      <p>Welcome to the employee dashboard. You are successfully logged in.</p>
+      <p>Welcome to the employee dashboard. You are successfully logged in as an employee.</p>
+      
+      <h3>Quick Links</h3>
+      <ul>
+        <li>View Schedule</li>
+        <li>Submit Time Off</li>
+        <li>View Company Announcements</li>
+      </ul>
+      
       <button 
-        onClick={() => handleLogout(navigate, logout)} 
-        className="logout-button"
+        onClick={handleLogout}
       >
         Logout
       </button>

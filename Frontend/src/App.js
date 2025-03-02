@@ -1,5 +1,4 @@
-// 6. Update App.js to use protected routes
-// File: Frontend/src/App.js
+// Frontend/src/App.js
 
 import React, { useContext } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
@@ -20,9 +19,14 @@ import AuthContext from "./context/AuthContext";
 import ProtectedRoute from "./components/authentication/ProtectedRoute.js";
 
 function App() {
-  const { isLoggedIn, userType } = useContext(AuthContext);
+  const { isLoggedIn, userType, isLoading } = useContext(AuthContext);
 
   console.log("App.js Rendered → isLoggedIn:", isLoggedIn, "| userType:", userType);
+  
+  // Show loading indicator while auth state is being determined
+  if (isLoading) {
+    return <div className="loading">Loading...</div>;
+  }
   
   return (
     <Routes>
@@ -34,12 +38,14 @@ function App() {
       <Route path="/tickets" element={<Tickets />} />
       <Route path="/problems" element={<Problems />} />
       
+      {/* Auth routes with redirects if already logged in */}
       <Route path="/register" element={
         isLoggedIn ? <Navigate to="/" /> : <Register />
       } />
       <Route path="/login" element={
         isLoggedIn ? 
-          (userType === 'employee' ? <Navigate to="/EmployeePortal" /> : <Navigate to="/" />) 
+          (userType === 'employee' ? <Navigate to="/EmployeePortal" /> : 
+           userType === 'manager' ? <Navigate to="/ManagerPortal" /> : <Navigate to="/" />) 
           : <HandleLogin />
       } />
       <Route path="/EmployeeLogin" element={
@@ -57,6 +63,7 @@ function App() {
         element={<ProtectedRoute element={<EmployeePortal />} requiredUserType="employee" />} 
       />
       
+      {/* 404 route */}
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

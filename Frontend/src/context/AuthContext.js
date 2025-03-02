@@ -1,6 +1,6 @@
 // Frontend/src/context/AuthContext.js
 
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useRef } from 'react';
 
 const AuthContext = createContext();
 
@@ -8,40 +8,86 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userType, setUserType] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Use useRef to keep track of if it's the initial mount
+  const isInitialMount = useRef(true);
+  // Use this flag to avoid localStorage updates during auth verification
+  const skipLocalStorageUpdate = useRef(false);
 
-  // Initialize auth state from localStorage on component mount
+  // Initial auth verification only on mount
   useEffect(() => {
-    const storedLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    const storedUserType = localStorage.getItem('userType');
-    
-    setIsLoggedIn(storedLoggedIn);
-    setUserType(storedUserType || null);
-    setIsLoading(false);
-    
-    console.log("AuthContext initialized:", storedLoggedIn, storedUserType);
-  }, []);
-
-  // Update localStorage whenever auth state changes
-  useEffect(() => {
-    if (!isLoading) {
-      if (isLoggedIn) {
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userType', userType || '');
-      } else {
-        localStorage.removeItem('isLoggedIn');
-        localStorage.removeItem('userType');
+    const verifyAuthStatus = async () => {
+      try {
+        // First set state from localStorage to prevent flicker
+        const storedLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const storedUserType = localStorage.getItem('userType');
+        
+        // Set initial state without triggering useEffect dependencies
+        skipLocalStorageUpdate.current = true;
+        setIsLoggedIn(storedLoggedIn);
+        setUserType(storedUserType || null);
+        
+        // If stored state indicates logged in, verify with server
+        if (storedLoggedIn) {
+          try {
+            const response = await fetch("http://localhost:4000/protected", {
+              method: "GET",
+              mode: 'cors',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              credentials: "include", 
+            });
+            
+            if (!response.ok) {
+              // Session expired, clear state
+              skipLocalStorageUpdate.current = true;
+              setIsLoggedIn(false);
+              setUserType(null);
+              localStorage.removeItem('isLoggedIn');
+              localStorage.removeItem('userType');
+            }
+          } catch (error) {
+            console.error("Auth verification failed:", error);
+            // Keep current state on network error
+          }
+        }
+      } finally {
+        setIsLoading(false);
+        skipLocalStorageUpdate.current = false;
+        isInitialMount.current = false;
       }
-      console.log("AuthContext updated:", isLoggedIn, userType);
-    }
-  }, [isLoggedIn, userType, isLoading]);
+    };
+    
+    verifyAuthStatus();
+  }, []); // Empty dependency array - only run on mount
 
-  // Provide login and logout functions
+  // Update localStorage on state change, but not during initial load
+  useEffect(() => {
+    // Skip on initial mount and when skipLocalStorageUpdate is true
+    if (isInitialMount.current || skipLocalStorageUpdate.current) {
+      return;
+    }
+    
+    if (isLoggedIn) {
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userType', userType || '');
+      console.log("AuthContext updated:", isLoggedIn, userType);
+    } else {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userType');
+      console.log("AuthContext cleared");
+    }
+  }, [isLoggedIn, userType]);
+
+  // Login function
   const login = (type) => {
     console.log("login called with type:", type);
     setIsLoggedIn(true);
     setUserType(type);
   };
 
+  // Logout function
   const logout = () => {
     console.log("logout called");
     setIsLoggedIn(false);

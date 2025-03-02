@@ -1,23 +1,27 @@
-import React, {useState, useEffect, useContext} from 'react';
+// Frontend/src/components/authentication/HandleLogin.js
+
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from "../../context/AuthContext"; 
-import userContext from "../../context/userContext"
 
 function HandleLogin() {
     const navigate = useNavigate();
-    const { setIsLoggedIn } = useContext(AuthContext);
-    const { setUserType } = useContext(userContext);
+    const { login } = useContext(AuthContext);
     const [error, setError] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setError("");
+        setIsSubmitting(true);
+        
         const dataToSend = {
-            username : email,
-            password : password
-        }
+            username: email,
+            password: password
+        };
+        
         try {
             const response = await fetch('http://localhost:4000/login', {
                 method: 'POST',
@@ -25,80 +29,87 @@ function HandleLogin() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                credentials : 'include',
+                credentials: 'include',
                 body: JSON.stringify(dataToSend), 
             });
+            
             const data = await response.json();
     
             if (response.ok) {
                 console.log('Login Successful: ', data.message);
-                localStorage.setItem("isLoggedIn", "true")
+                
+                // Use the login function from AuthContext - it will handle localStorage
                 if (data.user) {
-                    localStorage.setItem("userType", data.user);
-                    setUserType(data.user);
+                    login(data.user);
+                } else {
+                    login('customer'); // Default to customer if type not specified
                 }
-                setIsLoggedIn(true);
+                
                 alert('Login Successful');
                 navigate('/');
             } else {
-                console.error('Error loggin in: ', data.message);
-                alert(`Error: ${data.message || 'Failed to login'}`);
+                console.error('Error logging in: ', data.message);
+                setError(data.message || 'Failed to login');
             }
         } catch (error) {
             console.error('Request failed:', error);
-            alert('An error occurred while logging in');
+            setError('An error occurred while logging in');
+        } finally {
+            setIsSubmitting(false);
         }
-
-
-    }
+    };
 
     return (
-        <>
-        <div /*background*/>
-        <div /*centralized login container*/>
-            <h1 /*title*/> Login </h1>
-            <form onSubmit = {handleSubmit} /*form area*/>
-                <div /*row*/ >
-                    <div /*input Group*/>
-                        <label /*label header*/ > EMAIL </label>
+        <div className="login-container">
+            <h2 className="login-title">Login</h2>
+            
+            <form onSubmit={handleSubmit} className="login-form">
+                <div className="form-row">
+                    <div className="input-group">
+                        <label className="input-label">EMAIL</label>
                         <input 
                             type="email"
-                            //clasName = ""
-                            placeholder = "Email"
+                            className="input-field"
+                            placeholder="Email"
                             value={email}
-                            onChange = {(e) => setEmail(e.target.value)}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            disabled={isSubmitting}
                         />
                     </div>
                 </div>
-                <div /*row*/ >
-                    <div /*input Group*/>
-                        <label /*label header*/ > PASSWORD </label>
+                
+                <div className="form-row">
+                    <div className="input-group">
+                        <label className="input-label">PASSWORD</label>
                         <input 
-                            type="text"
-                            //clasName = ""
-                            placeholder = "Password"
+                            type="password"
+                            className="input-field"
+                            placeholder="Password"
                             value={password}
-                            onChange = {(e) => setPassword(e.target.value)}
+                            onChange={(e) => setPassword(e.target.value)}
                             maxLength={30}
                             minLength={8}
+                            required
+                            disabled={isSubmitting}
                         />
                     </div>
                 </div>
-                {error !== "" ? (
-                    <p /*classname*/>{error}</p>
-                ) : (
-                    <button
-                        type="submit"
-                        /*classname*/
-                    >
-                    Login
-                    </button>
-                ) }
+                
+                {error ? (
+                    <p className="error-message">{error}</p>
+                ) : null}
+                
+                <button
+                    type="submit"
+                    className="login-button"
+                    disabled={isSubmitting}
+                >
+                    {isSubmitting ? 'Logging in...' : 'Login'}
+                </button>
             </form>
         </div>
-        </div>
-        </>
-    )
+    );
 }
 
 export default HandleLogin;
