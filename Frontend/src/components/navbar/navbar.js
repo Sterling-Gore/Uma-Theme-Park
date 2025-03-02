@@ -1,12 +1,18 @@
 import React, { useContext } from 'react';
 import { useNavigate } from "react-router-dom";
 import AuthContext from '../../context/AuthContext';
+import UserContext from '../../context/userContext';
 import { handleLogout } from '../authentication/handleLogout'; 
 import './navbar.css';
 
 function NavBar() {
     const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+    const { userType } = useContext(UserContext);
     const navigate = useNavigate();
+    
+    if (isLoggedIn && userType === "employee") {
+        return null;
+    }
 
     return (
         <div className="Navbar">

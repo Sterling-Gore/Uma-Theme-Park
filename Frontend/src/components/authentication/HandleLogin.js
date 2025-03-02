@@ -1,10 +1,12 @@
 import React, {useState, useEffect, useContext} from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from "../../context/AuthContext"; 
+import userContext from "../../context/userContext"
 
 function HandleLogin() {
     const navigate = useNavigate();
     const { setIsLoggedIn } = useContext(AuthContext);
+    const { setUserType } = useContext(userContext);
     const [error, setError] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -31,6 +33,10 @@ function HandleLogin() {
             if (response.ok) {
                 console.log('Login Successful: ', data.message);
                 localStorage.setItem("isLoggedIn", "true")
+                if (data.user) {
+                    localStorage.setItem("userType", data.user);
+                    setUserType(data.user);
+                }
                 setIsLoggedIn(true);
                 alert('Login Successful');
                 navigate('/');

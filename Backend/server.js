@@ -8,6 +8,8 @@ const { registerCustomer } = require('./registerUsers/registerCustomer');
 const { login } = require('./loginHandler/login')
 const { checkAuth } = require('./loginHandler/auth')
 const { logout } = require('./loginHandler/logout')
+const { registerEmployee } = require('./registerUsers/registerEmployee')
+const { employeeLogin } = require('./employeeHandler/employeeLogin')
 const pool = require('./database');
 
 const PORT = process.env.PORT || 7000;
@@ -48,6 +50,12 @@ const server = http.createServer(async (req, res) => {
     }
     else if (req.url === '/logout' && req.method === 'GET'){
         logout(req, res)
+    }
+    else if (req.url === '/createEmployee' && req.method === 'POST'){
+        registerEmployee(req, res)
+    }
+    else if(req.url === '/employeeLogin' && req.method === 'POST'){
+        employeeLogin(req, res)
     }
     else if( req.url === '/testDatabaseConnection' && req.method === 'GET'){
         pool.getConnection((err, connection) => {

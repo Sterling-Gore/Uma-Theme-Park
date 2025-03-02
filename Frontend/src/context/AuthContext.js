@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const loggedInStatus = localStorage.getItem("isLoggedIn") === "true";
         setIsLoggedIn(loggedInStatus);
-    }, []);
+    }, [isLoggedIn]);
 
     return (
         <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>

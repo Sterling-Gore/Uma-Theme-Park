@@ -14,6 +14,7 @@ export const handleLogout = async (navigate, setIsLoggedIn) => {
         if (response.ok) {
             console.log('Successfully logged out:', data.message);
             localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("userType")
             setIsLoggedIn(false);
             navigate('/')
         } else {

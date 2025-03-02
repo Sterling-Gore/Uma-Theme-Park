@@ -14,7 +14,7 @@ function createToken(username) {
 
 async function getCustomerByEmail(email) {
     try {
-        const sqlQuery = "SELECT * FROM theme_park.customers WHERE email = ?";
+        const sqlQuery = "SELECT * FROM theme_park.employee WHERE email = ?";
         const [rows] = await pool.execute(sqlQuery, [email]);
         return rows.length > 0 ? rows[0] : null;
     } catch (err) {
@@ -23,7 +23,7 @@ async function getCustomerByEmail(email) {
     }
 }
 
-async function login(req, res) {
+async function employeeLogin(req, res) {
     let body = '';
 
     req.on('data', (chunk) => {
@@ -60,7 +60,7 @@ async function login(req, res) {
                 })
             });
 
-            res.end(JSON.stringify({ user: "Customer" }));
+            res.end(JSON.stringify({ user: "Employee" }));
 
         } catch (err) {
             console.error("Error processing login:", err);
@@ -71,5 +71,5 @@ async function login(req, res) {
 }
 
 module.exports = {
-    login
+    employeeLogin
 };
