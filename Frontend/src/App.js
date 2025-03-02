@@ -1,5 +1,8 @@
+// 6. Update App.js to use protected routes
+// File: Frontend/src/App.js
+
 import React, { useContext } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import Home from "./pages/Home/Home.js";
 import Activities from "./pages/activities.js";
@@ -14,28 +17,46 @@ import EmployeePortal from "./pages/Employee/EmployeePortal.js";
 import HandleLogin from "./components/authentication/HandleLogin.js";
 import EmployeeLogin from "./components/employeeAuth/EmployeeLogin.js";
 import AuthContext from "./context/AuthContext";
-import UserContext from "./context/userContext";
-
-
+import ProtectedRoute from "./components/authentication/ProtectedRoute.js";
 
 function App() {
-  const { isLoggedIn } = useContext(AuthContext);
-  const { userType } = useContext(UserContext);
+  const { isLoggedIn, userType } = useContext(AuthContext);
 
   console.log("App.js Rendered → isLoggedIn:", isLoggedIn, "| userType:", userType);
+  
   return (
     <Routes>
+      {/* Public routes */}
       <Route path="/" element={<Home />} />
       <Route path="/activities" element={<Activities />} />
       <Route path="/dining" element={<Dining />} />
       <Route path="/shop" element={<Shop />} />
       <Route path="/tickets" element={<Tickets />} />
       <Route path="/problems" element={<Problems />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/login" element={<HandleLogin />} />
-      <Route path="/ManagerPortal" element={<ManagerPortal />} />
-      <Route path="/EmployeePortal" element={<EmployeePortal />} />
-      <Route path="/EmployeeLogin" element={<EmployeeLogin />} />
+      
+      <Route path="/register" element={
+        isLoggedIn ? <Navigate to="/" /> : <Register />
+      } />
+      <Route path="/login" element={
+        isLoggedIn ? 
+          (userType === 'employee' ? <Navigate to="/EmployeePortal" /> : <Navigate to="/" />) 
+          : <HandleLogin />
+      } />
+      <Route path="/EmployeeLogin" element={
+        isLoggedIn && userType === 'employee' ? 
+          <Navigate to="/EmployeePortal" /> : <EmployeeLogin />
+      } />
+      
+      {/* Protected routes */}
+      <Route 
+        path="/ManagerPortal" 
+        element={<ProtectedRoute element={<ManagerPortal />} requiredUserType="manager" />} 
+      />
+      <Route 
+        path="/EmployeePortal" 
+        element={<ProtectedRoute element={<EmployeePortal />} requiredUserType="employee" />} 
+      />
+      
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

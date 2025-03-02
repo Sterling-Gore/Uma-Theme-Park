@@ -1,18 +1,23 @@
+// 3. Update the EmployeeLogin.js component to use the simplified auth context
+// File: Frontend/src/components/employeeAuth/EmployeeLogin.js
+
 import React, { useState, useContext } from 'react';
 import './EmployeeLogin.css';
 import AuthContext from "../../context/AuthContext";
-import UserContext from "../../context/userContext";
 import { useNavigate } from 'react-router-dom';
 
 function EmployeeLogin() {
   const navigate = useNavigate();
-  const { setIsLoggedIn } = useContext(AuthContext);
-  const { setUserType } = useContext(UserContext);
+  const { login } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setError('');
+    setIsSubmitting(true);
 
     const dataToSend = { username: email, password };
 
@@ -29,27 +34,23 @@ function EmployeeLogin() {
 
       if (response.ok) {
         console.log('Login Successful');
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("userType", "employee"); 
-        setIsLoggedIn(true);
-        setUserType("employee");
-      
-        alert('Login Successful');
+        login('employee');
         navigate('/EmployeePortal');
       } else {
-        console.error('Error logging in:', data.message);
-        alert(`Error: ${data.message || 'Failed to login'}`);
+        setError(data.message || 'Invalid credentials');
       }
     } catch (error) {
       console.error('Request failed:', error);
-      alert('An error occurred while logging in');
+      setError('Network error. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
-
 
   return (
     <div className="login-container">
       <h2>Employee Login</h2>
+      {error && <div className="error-message">{error}</div>}
       <form onSubmit={handleSubmit}>
         <div className="input-group">
           <label>Email</label>
@@ -58,6 +59,7 @@ function EmployeeLogin() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            disabled={isSubmitting}
           />
         </div>
         <div className="input-group">
@@ -67,9 +69,16 @@ function EmployeeLogin() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={isSubmitting}
           />
         </div>
-        <button type="submit" className="login-button">Login</button>
+        <button 
+          type="submit" 
+          className="login-button"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? 'Logging in...' : 'Login'}
+        </button>
       </form>
     </div>
   );

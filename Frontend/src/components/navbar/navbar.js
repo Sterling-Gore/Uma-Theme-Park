@@ -1,44 +1,52 @@
+
 import React, { useContext } from 'react';
-import { useNavigate } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
-import UserContext from '../../context/userContext';
-import { handleLogout } from '../authentication/handleLogout'; 
-import './navbar.css';
+import './navbar.css'; 
 
 function NavBar() {
-    const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
-    const { userType } = useContext(UserContext);
-    const navigate = useNavigate();
-    
-    if (isLoggedIn && userType === "employee") {
-        return null;
-    }
+  const { isLoggedIn, userType } = useContext(AuthContext);
+  console.log("NavBar Rendered → isLoggedIn:", isLoggedIn, "| userType:", userType);
 
-    return (
-        <div className="Navbar">
-            <div className="NavLinks">
-                <h1 className="NavLogo">[Park Name]</h1>
-                <a href="/">Dashboard</a>
-                <a href="/activities">Activities</a>
-                <a href="/dining">Dining</a>
-                <a href="/shop">Online Shop</a>
-                <a href="/tickets">Tickets</a>
-                <a href="/problems">Report a Problem</a>
-            </div>
-            <div>
-                {isLoggedIn ? (
-                    <button onClick={() => handleLogout(navigate, setIsLoggedIn)} className="logout-button">
-                        Logout
-                    </button>
-                ) : (
-                    <>
-                        <a href="/login">Login</a>
-                        <a href="/register">Register</a>
-                    </>
-                )}
-            </div>
-        </div>
-    );
+  // Don't render the navbar for employees and managers
+  if (isLoggedIn && (userType === 'employee' || userType === 'manager')) {
+    return null; 
+  }
+
+  return (
+    <nav className="navbar">
+      <div className="navbar-logo">
+        <Link to="/">YourLogo</Link>
+      </div>
+
+      <div className="navbar-links">
+        <Link to="/">Home</Link>
+        <Link to="/activities">Activities</Link>
+        <Link to="/dining">Dining</Link>
+        <Link to="/shop">Shop</Link>
+        <Link to="/tickets">Tickets</Link>
+        <Link to="/problems">Problems</Link>
+        
+        {!isLoggedIn ? (
+          <>
+            <Link to="/login">Login</Link>
+            <Link to="/register">Register</Link>
+            <Link to="/EmployeeLogin">Employee Login</Link>
+          </>
+        ) : (
+          // Links for logged-in customers
+          userType === 'customer' && (
+            <>
+              <Link to="/account">My Account</Link>
+              <Link to="/logout" onClick={(e) => {
+                e.preventDefault();
+              }}>Logout</Link>
+            </>
+          )
+        )}
+      </div>
+    </nav>
+  );
 }
 
 export default NavBar;
