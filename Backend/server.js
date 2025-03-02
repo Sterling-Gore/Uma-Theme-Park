@@ -26,7 +26,6 @@ const server = http.createServer(async (req, res) => {
         return;
     }
 
-    // DEFINE ROUTES HERE 
     if (req.url === '/api/testing' && req.method === 'GET') { 
         testing(req, res);
     }
