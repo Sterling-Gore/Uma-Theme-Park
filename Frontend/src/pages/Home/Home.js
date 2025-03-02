@@ -1,9 +1,19 @@
 import './Home.css'
+import { useEffect, useContext } from 'react';
 import { useNavigate } from "react-router-dom";
+import UserContext from '../../context/userContext';
 
 const Home = () => {
 
   const navigate =  useNavigate();
+
+  const { userType } = useContext(UserContext);
+
+    useEffect(() => {
+        if (userType === "employee") {
+            navigate('/EmployeePortal');
+        }
+    }, [userType, navigate]);
 
   return (
     <div className="home-container">

@@ -16,17 +16,13 @@ import EmployeeLogin from "./components/employeeAuth/EmployeeLogin.js";
 import AuthContext from "./context/AuthContext";
 import UserContext from "./context/userContext";
 
-function ProtectedRoute({ element, allowedRoles }) {
+
+
+function App() {
   const { isLoggedIn } = useContext(AuthContext);
   const { userType } = useContext(UserContext);
 
-  if (!isLoggedIn || !allowedRoles.includes(userType)) {
-    return <Navigate to="/" />;
-  }
-  return element;
-}
-
-function App() {
+  console.log("App.js Rendered → isLoggedIn:", isLoggedIn, "| userType:", userType);
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -38,10 +34,7 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<HandleLogin />} />
       <Route path="/ManagerPortal" element={<ManagerPortal />} />
-      <Route
-        path="/EmployeePortal"
-        element={<ProtectedRoute element={<EmployeePortal />} allowedRoles={["employee"]} />}
-      />
+      <Route path="/EmployeePortal" element={<EmployeePortal />} />
       <Route path="/EmployeeLogin" element={<EmployeeLogin />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>

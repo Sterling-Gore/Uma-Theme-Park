@@ -1,11 +1,19 @@
-import React, {  useState , useEffect } from "react";
+import React, {  useState , useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../App.css";
+import UserContext from "../../context/userContext";
 
 function Tickets()
 {
     const [isAuthenticated, setIsAuthenticated] = useState(null);
     const navigate = useNavigate(); 
+    const { userType } = useContext(UserContext);
+
+    useEffect(() => {
+        if (userType === "employee") {
+            navigate('/EmployeePortal');
+        }
+    }, [userType, navigate]);
 
     useEffect(() => {
         const checkAuth = async () => {
