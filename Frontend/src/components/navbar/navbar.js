@@ -64,7 +64,7 @@ const NavBar = memo(function NavBar() {
           </>
         ) : (
           // Links for logged-in customers
-          userType === 'customer' && (
+          userType === 'Customer' && (
             <>
               <Link to="/account" className="NavLink1">My Account</Link>
               <Link 
