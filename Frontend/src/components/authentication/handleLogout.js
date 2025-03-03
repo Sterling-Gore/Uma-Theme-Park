@@ -1,4 +1,6 @@
-export const handleLogout = async (navigate, setIsLoggedIn) => {
+// Frontend/src/components/authentication/handleLogout.js
+
+export const handleLogout = async (navigate, logout) => {
     try {
         const response = await fetch('http://localhost:4000/logout', {
             method: 'GET',
@@ -13,14 +15,23 @@ export const handleLogout = async (navigate, setIsLoggedIn) => {
 
         if (response.ok) {
             console.log('Successfully logged out:', data.message);
-            localStorage.removeItem("isLoggedIn");
-            setIsLoggedIn(false);
-            navigate('/')
+            
+            logout();
+
+            navigate('/');
         } else {
             console.error('Error logging out:', data.message);
+            
+       
+            logout();
+            navigate('/');
+            
             alert(`Error: ${data.message || 'Failed to logout'}`);
         }
     } catch (error) {
         console.error('Logout error:', error);
+        
+        logout();
+        navigate('/');
     }
 };
