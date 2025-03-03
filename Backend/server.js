@@ -4,7 +4,7 @@ require('dotenv').config();
 const http = require('http');
 const { testing } = require('./testing');
 const { testingPost } = require('./testingPost');
-const { registerCustomer } = require('./registerCustomer');
+const { registerCustomer } = require('./registerUsers/registerCustomer');
 const { login } = require('./loginHandler/login')
 const { checkAuth } = require('./loginHandler/auth')
 const { logout } = require('./loginHandler/logout')
@@ -26,7 +26,6 @@ const server = http.createServer(async (req, res) => {
         return;
     }
 
-    // DEFINE ROUTES HERE 
     if (req.url === '/api/testing' && req.method === 'GET') { 
         testing(req, res);
     }

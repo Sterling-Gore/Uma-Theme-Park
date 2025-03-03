@@ -3,7 +3,6 @@ import React, {useState, useEffect} from 'react';
 
 function Register() {
     const [error, setError] = useState("");
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [formData, setFormData] = useState(
         {
         first_name: "",
@@ -11,9 +10,7 @@ function Register() {
         birthday: "",
         email: "",
         phone_number: "",
-        //username: "",    //I dont think we need a username, we can use emails instead
         password: "",
-        confirm_password: "",
         street: "",
         city: "",
         state: "",
@@ -285,8 +282,8 @@ function Register() {
                             type="text"
                             //clasName = ""
                             placeholder = "Confirm Password"
-                            value={formData.confirm_password}
-                            onChange = {(e) => setFormData({ ...formData, confirm_password : e.target.value})}
+                    
+        
                             maxLength={30}
                             minLength={8}
                         />

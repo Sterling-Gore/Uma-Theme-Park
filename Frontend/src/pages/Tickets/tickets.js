@@ -1,6 +1,6 @@
 import React, {  useState , useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../App.css";
+import "../../App.css";
 
 function Tickets()
 {
@@ -25,6 +25,7 @@ function Tickets()
                 } else {
                     setIsAuthenticated(false);
                     console.log("user is no longer authenticated so rerouting to main page")
+                    alert("Please login!");
                     navigate("/"); 
                 }
             } catch (error) {
