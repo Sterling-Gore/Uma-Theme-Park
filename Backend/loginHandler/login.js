@@ -3,17 +3,19 @@ const cookie = require('cookie');
 const pool = require('../database');
 const bcrypt = require('bcrypt')
 
+
 async function authenticateUser (inputPassword, storedPassword) {
     const decryptedPass = await bcrypt.compare(inputPassword, storedPassword);
     return inputPassword === storedPassword;
 }
 
 function createToken(username) {
-    return jwt.sign({ username }, process.env.SECRET_KEY, { expiresIn: '1h' });
+    return jwt.sign({ username }, process.env.SECRET_KEY || SECRET_KEY, { expiresIn: '1h' });
 }
 
 async function getCustomerByEmail(email) {
     try {
+
         const sqlQuery = "SELECT * FROM theme_park.customers WHERE email = ?";
         const [rows] = await pool.execute(sqlQuery, [email]);
         return rows.length > 0 ? rows[0] : null;
@@ -60,8 +62,9 @@ async function login(req, res) {
                 })
             });
 
-            res.end(JSON.stringify({ user: "Customer" }));
 
+            res.end(JSON.stringify({ user: "Customer" }));
+ 
         } catch (err) {
             console.error("Error processing login:", err);
             res.writeHead(500, { 'Content-Type': 'application/json' });

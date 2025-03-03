@@ -1,3 +1,4 @@
+
 // Frontend/src/components/navbar/navbar.js
 
 import React, { useContext, memo } from 'react';

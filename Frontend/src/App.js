@@ -18,6 +18,7 @@ import EmployeeLogin from "./components/employeeAuth/EmployeeLogin.js";
 import AuthContext from "./context/AuthContext";
 import ProtectedRoute from "./components/authentication/ProtectedRoute.js";
 
+
 function App() {
   const { isLoggedIn, userType, isLoading } = useContext(AuthContext);
 
