@@ -24,7 +24,6 @@ const ViewEmployees = ({ employees, handleEdit, handleDelete, searchTerm, setSea
       <table className="employee-table">
         <thead>
           <tr>
-            <th>ID</th>
             <th>Name</th>
             <th>Position</th>
             <th>Department</th>
@@ -37,8 +36,7 @@ const ViewEmployees = ({ employees, handleEdit, handleDelete, searchTerm, setSea
         <tbody>
           {filteredEmployees.length > 0 ? (
             filteredEmployees.map(employee => (
-              <tr key={employee.id}>
-                <td>{employee.id}</td>
+              <tr key={employee.email}>
                 <td>{employee.name}</td>
                 <td>{employee.position}</td>
                 <td>{employee.department}</td>
