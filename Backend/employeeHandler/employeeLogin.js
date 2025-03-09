@@ -34,6 +34,7 @@ async function employeeLogin(req, res) {
         try {
             const { username, password } = JSON.parse(body);
             const customer = await getCustomerByEmail(username);
+            const customerUser = customer.role
 
             if (!customer) {
                 res.writeHead(401, { 'Content-Type': 'application/json' });
@@ -60,7 +61,7 @@ async function employeeLogin(req, res) {
                 })
             });
 
-            res.end(JSON.stringify({ user: "Employee" }));
+            res.end(JSON.stringify({ user: customerUser }));
 
         } catch (err) {
             console.error("Error processing login:", err);

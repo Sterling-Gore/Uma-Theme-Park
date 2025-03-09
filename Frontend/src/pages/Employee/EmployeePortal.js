@@ -4,11 +4,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// This is a completely stripped down version that doesn't use any context
 function EmployeePortal() {
   const navigate = useNavigate();
   
-  // Very simple logout with no dependencies
   const handleLogout = () => {
     // Clear localStorage first
     localStorage.removeItem("isLoggedIn");
@@ -19,7 +17,7 @@ function EmployeePortal() {
       method: 'GET',
       credentials: 'include'
     }).finally(() => {
-      // Always navigate to home page regardless of API result
+
       window.location.href = '/';
     });
   };
