@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 function Register() {
     const [error, setError] = useState("");
+    const [confirm_password, setConfirm_Password] = useState("");
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState(
@@ -33,12 +34,7 @@ function Register() {
             const birthday = new Date(date);
     
             let years = today.getFullYear() - birthday.getFullYear();
-            console.log(today.getFullYear())
-            console.log(birthday.getFullYear())
-            console.log(today.getMonth())
-            console.log(birthday.getMonth())
-            console.log(today.getDate())
-            console.log(birthday.getDate())
+
     
             // Adjust if the full year hasn't passed yet
             if (
@@ -48,7 +44,7 @@ function Register() {
                 years--;
             }
     
-            return Math.abs(years);
+            return years;
     
         };
     
@@ -129,21 +125,22 @@ function Register() {
                 setError("Password Must be at Least 8 Characters Long");
                 return true;
             }
-            if ( formData.confirm_password === "")
+            if ( confirm_password === "")
             {
                 setError("Fill in Confirm Password");
                 return true;
             }
-            if ( formData.confirm_password.length < 8)
+            if ( confirm_password.length < 8)
             {
-                setError("Password Must be at Least 8 Characters Long");
+                setError("Confirm Password Must be at Least 8 Characters Long");
                 return true;
             }
-            if ( formData.confirm_password !== formData.password)
+            if ( confirm_password !== formData.password)
             {
                 setError("Confirm Password Must Match Password");
                 return true;
             }
+                
             
             setError("");
             return false;
@@ -413,7 +410,11 @@ function Register() {
                             type="text"
                             //clasName = ""
                             placeholder = "Confirm Password"
-                    
+                            value={confirm_password}
+                            onChange = {(e) => {
+                                setConfirm_Password(e.target.value);
+                                checkError();
+                            }}
         
                             maxLength={30}
                             minLength={8}
