@@ -1,7 +1,4 @@
-
-// Frontend/src/pages/Tickets/tickets.js
-
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../App.css";
 import AuthContext from "../../context/AuthContext";
@@ -9,6 +6,7 @@ import AuthContext from "../../context/AuthContext";
 function Tickets() {
     const navigate = useNavigate();
     const { isLoggedIn, userType, isLoading } = useContext(AuthContext);
+    const alertShown = useRef(false);
 
     // Redirect employees and managers to their portals
     useEffect(() => {
@@ -23,7 +21,8 @@ function Tickets() {
 
     // Verify auth status for ticket purchase
     useEffect(() => {
-        if (!isLoading && !isLoggedIn) {
+        if (!isLoading && !isLoggedIn && !alertShown.current) {
+            alertShown.current = true;
             alert("Please login to purchase tickets!");
             navigate("/login");
         }

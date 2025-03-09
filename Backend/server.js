@@ -11,6 +11,7 @@ const { logout } = require('./loginHandler/logout')
 const { registerEmployee } = require('./registerUsers/registerEmployee')
 const { employeeLogin } = require('./employeeHandler/employeeLogin')
 const pool = require('./database');
+const { viewEmployees } = require('./managerPortal/viewEmployees');
 
 const PORT = process.env.PORT || 7000;
 
@@ -55,6 +56,9 @@ const server = http.createServer(async (req, res) => {
     }
     else if(req.url === '/employeeLogin' && req.method === 'POST'){
         employeeLogin(req, res)
+    }
+    else if(req.url === '/viewEmployees' && req.method === 'GET'){
+        viewEmployees(req, res)
     }
     else if( req.url === '/testDatabaseConnection' && req.method === 'GET'){
         pool.getConnection((err, connection) => {

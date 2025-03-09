@@ -14,12 +14,11 @@ async function registerCustomer(req, res) {
             try {
                 const { first_name, last_name, birthday, email, phone_number, password, street, city, state, zip } = JSON.parse(body);
                 const customer_id = uuidv4(); 
-                const address = `${street}, ${city}, ${state}, ${zip}`;
                 const newPassword = await bcrypt.hash(password, 10);
                 const [result] = await pool.execute(
 
-                    "INSERT INTO theme_park.customers (customer_id, first_name, last_name, date_of_birth, tickets, email, password, phone_number, Address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    [customer_id, first_name, last_name, birthday, null, email, newPassword, phone_number, address]
+                    "INSERT INTO theme_park.customers (customer_id, first_name, last_name, date_of_birth, email, password, phone_number, street_address, city, state, zipcode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    [customer_id, first_name, last_name, birthday, email, newPassword, phone_number, street, city, state, zip]
 
                 );
 

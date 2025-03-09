@@ -35,9 +35,14 @@ function EmployeeLogin() {
         console.log('Employee Login Successful');
         
         // The login function will handle localStorage updates
-        login('employee');
-        
-        navigate('/EmployeePortal');
+        console.log(data.user)
+        login(data.user);
+        if(data.user === 'employee'){
+          navigate('/EmployeePortal');
+        }
+        else if(data.user === 'manager'){
+          navigate('/ManagerPortal')
+        }
       } else {
         setError(data.message || 'Invalid credentials');
       }
