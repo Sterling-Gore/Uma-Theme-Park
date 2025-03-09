@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import ViewEmployees from './components/ViewEmployees';
 import EmployeeForm from './components/EmployeeForm';
@@ -7,36 +7,65 @@ import './ManagerPortal.css';
 
 function ManagerPortal() {
   const [activeTab, setActiveTab] = useState('view');
-  const [employees, setEmployees] = useState([
-    { id: 1, name: 'John Doe', position: 'Ride Operator', department: 'Attractions', email: 'john.doe@parkname.com', phone: '555-123-4567', startDate: '2023-05-15' },
-    { id: 2, name: 'Jane Smith', position: 'Food Service', department: 'Dining', email: 'jane.smith@parkname.com', phone: '555-987-6543', startDate: '2022-03-10' },
-    { id: 3, name: 'Mike Johnson', position: 'Gift Shop Attendant', department: 'Retail', email: 'mike.johnson@parkname.com', phone: '555-456-7890', startDate: '2023-09-22' },
-  ]);
+  const [employees, setEmployees] = useState([]);
   
   const [formData, setFormData] = useState({
-    id: '',
-    name: '',
-    position: '',
-    department: '',
+    employee_id: '',
+    first_name: '',
+    last_name: '',
+    role: '',
+    attraction_pos: '',
     email: '',
-    phone: '',
-    startDate: ''
+    phone_number: '',
+    password: '',
+    supervisor_name: ''
   });
 
   const [editMode, setEditMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [refreshEmployees, setRefreshEmployees] = useState(false);
+
+  // Fetch employees from backend
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/viewEmployees', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch employees');
+        }
+        
+        const data = await response.json();
+        if (data.success) {
+          setEmployees(data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching employees:', error);
+      }
+    };
+    
+    fetchEmployees();
+  }, [refreshEmployees]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     if (tab === 'create') {
       setFormData({
-        id: employees.length > 0 ? Math.max(...employees.map(emp => emp.id)) + 1 : 1,
-        name: '',
-        position: '',
-        department: '',
+        employee_id: '',
+        first_name: '',
+        last_name: '',
+        role: '',
+        attraction_name: '',
         email: '',
-        phone: '',
-        startDate: ''
+        phone_number: '',
+        password: '',
+        supervisor_name: ''
       });
       setEditMode(false);
     }
@@ -50,43 +79,111 @@ function ManagerPortal() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
     if (editMode) {
       // Update existing employee
-      setEmployees(employees.map(emp => 
-        emp.id === formData.id ? formData : emp
-      ));
-      setEditMode(false);
+      try {
+        const response = await fetch('http://localhost:4000/updateEmployee', {
+          method: 'PUT',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to update employee');
+        }
+        
+        const data = await response.json();
+        if (data.success || data.message === "Success") {
+          // Update successful
+          setRefreshEmployees(!refreshEmployees); // Trigger refresh
+          setActiveTab('view');
+        } else {
+          alert('Error updating employee: ' + data.message);
+        }
+      } catch (error) {
+        console.error('Error updating employee:', error);
+        alert('Error updating employee. Please try again.');
+      }
     } else {
-      // Add new employee
-      setEmployees([...employees, formData]);
+      // Create new employee
+      try {
+        const response = await fetch('http://localhost:4000/registerEmployee', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to create employee');
+        }
+        
+        const data = await response.json();
+        if (data.message === "Success") {
+          // Creation successful
+          setRefreshEmployees(!refreshEmployees); // Trigger refresh
+          setActiveTab('view');
+        } else {
+          alert('Error creating employee: ' + data.message);
+        }
+      } catch (error) {
+        console.error('Error creating employee:', error);
+        alert('Error creating employee. Please try again.');
+      }
     }
-    
-    // Clear form
-    setFormData({
-      id: employees.length > 0 ? Math.max(...employees.map(emp => emp.id)) + 1 : 1,
-      name: '',
-      position: '',
-      department: '',
-      email: '',
-      phone: '',
-      startDate: ''
-    });
-    
-    // Switch to view tab
-    setActiveTab('view');
   };
 
   const handleEdit = (employee) => {
-    setFormData(employee);
+    // Set form data with employee data
+    setFormData({
+      employee_id: employee.employee_id,
+      first_name: employee.first_name,
+      last_name: employee.last_name,
+      role: employee.role,
+      attraction_pos: employee.attraction_name,
+      email: employee.email,
+      phone_number: employee.phone_number,
+      supervisor_name: employee.supervisor_name || ''
+    });
     setEditMode(true);
     setActiveTab('edit');
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (employee_id) => {
     if (window.confirm('Are you sure you want to delete this employee?')) {
-      setEmployees(employees.filter(emp => emp.id !== id));
+      try {
+        const response = await fetch('http://localhost:4000/deleteEmployee', {
+          method: 'DELETE',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ employee_id })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to delete employee');
+        }
+        
+        const data = await response.json();
+        if (data.success || data.message === "Success") {
+          // Deletion successful
+          setRefreshEmployees(!refreshEmployees); // Trigger refresh
+        } else {
+          alert('Error deleting employee: ' + data.message);
+        }
+      } catch (error) {
+        console.error('Error deleting employee:', error);
+        alert('Error deleting employee. Please try again.');
+      }
     }
   };
   
@@ -95,7 +192,7 @@ function ManagerPortal() {
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userType");
     
-    // Call API directly
+    // Call API
     fetch('http://localhost:4000/logout', {
       method: 'GET',
       credentials: 'include'

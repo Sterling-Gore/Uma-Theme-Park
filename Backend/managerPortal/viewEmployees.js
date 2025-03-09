@@ -2,8 +2,9 @@ const pool = require('../database');
 
 async function pullData(){
     try{
-        const sqlQuery = "SELECT E.first_name, E.last_name, A.attraction_name, E.phone_number, E.email FROM employee AS E, attraction_pos AS A WHERE E.attraction_pos = A.id;";
+        const sqlQuery = "SELECT E.first_name, E.last_name, E.role, A.attraction_name, E.phone_number, E.email, S.first_name AS supervisor_name FROM employee AS E, employee AS S, attraction_pos AS A WHERE E.attraction_pos = A.id AND E.supervisors_id = S.employee_id;";
         const [rows] = await pool.execute(sqlQuery)
+        console.log(rows);
         return rows.length > 0 ? rows : [];
     }catch (err) {
         console.error("Database error:", err);

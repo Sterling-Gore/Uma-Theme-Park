@@ -12,6 +12,8 @@ const { registerEmployee } = require('./registerUsers/registerEmployee')
 const { employeeLogin } = require('./employeeHandler/employeeLogin')
 const pool = require('./database');
 const { viewEmployees } = require('./managerPortal/viewEmployees');
+const { deleteEmployee } = require('./managerPortal/deleteEmployee');
+const { updateEmployee } = require('./managerPortal/updateEmployee');
 
 const PORT = process.env.PORT || 7000;
 
@@ -59,6 +61,12 @@ const server = http.createServer(async (req, res) => {
     }
     else if(req.url === '/viewEmployees' && req.method === 'GET'){
         viewEmployees(req, res)
+    }
+    else if(req.url === '/deleteEmployee' && req.method === 'DELETE'){
+        deleteEmployee(req, res)
+    }
+    else if(req.url === 'updateEmployee' && req.method === 'PUT'){
+        updateEmployee(req, res)
     }
     else if( req.url === '/testDatabaseConnection' && req.method === 'GET'){
         pool.getConnection((err, connection) => {

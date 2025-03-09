@@ -9,46 +9,54 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
       
       <form onSubmit={handleSubmit} className="employee-form">
         <div className="form-group">
-          <label htmlFor="name">Full Name</label>
+          <label htmlFor="first_name">First Name</label>
           <input
             type="text"
-            id="name"
-            name="name"
-            value={formData.name}
+            id="first_name"
+            name="first_name"
+            value={formData.first_name}
             onChange={handleInputChange}
             required
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="position">Position</label>
+          <label htmlFor="last_name">Last Name</label>
           <input
             type="text"
-            id="position"
-            name="position"
-            value={formData.position}
+            id="last_name"
+            name="last_name"
+            value={formData.last_name}
             onChange={handleInputChange}
             required
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="department">Department</label>
+          <label htmlFor="role">Role</label>
           <select
-            id="department"
-            name="department"
-            value={formData.department}
+            id="role"
+            name="role"
+            value={formData.role}
             onChange={handleInputChange}
             required
           >
-            <option value="">Select Department</option>
-            <option value="Attractions">Attractions</option>
-            <option value="Dining">Dining</option>
-            <option value="Retail">Retail</option>
-            <option value="Custodial">Custodial</option>
-            <option value="Administration">Administration</option>
-            <option value="Entertainment">Entertainment</option>
+            <option value="">Select Role</option>
+            <option value="employee">employee</option>
+            <option value="manager">manager</option>
           </select>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="attraction_pos">Attraction Position</label>
+          <input
+            type="text"
+            id="attraction_pos"
+            name="attraction_pos"
+            value={formData.attraction_pos}
+            onChange={handleInputChange}
+            required
+          />
         </div>
 
         <div className="form-group">
@@ -64,26 +72,39 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
         </div>
 
         <div className="form-group">
-          <label htmlFor="phone">Phone Number</label>
+          <label htmlFor="phone_number">Phone Number</label>
           <input
             type="tel"
-            id="phone"
-            name="phone"
-            value={formData.phone}
+            id="phone_number"
+            name="phone_number"
+            value={formData.phone_number}
             onChange={handleInputChange}
             required
           />
         </div>
 
+        {!editMode && (
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              required={!editMode}
+            />
+          </div>
+        )}
+
         <div className="form-group">
-          <label htmlFor="startDate">Start Date</label>
+          <label htmlFor="supervisor_ID">Supervisor ID (Optional)</label>
           <input
-            type="date"
-            id="startDate"
-            name="startDate"
-            value={formData.startDate}
+            type="text"
+            id="supervisor_ID"
+            name="supervisor_ID"
+            value={formData.supervisor_ID || ""}
             onChange={handleInputChange}
-            required
           />
         </div>
 
