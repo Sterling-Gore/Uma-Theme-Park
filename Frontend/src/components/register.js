@@ -21,6 +21,37 @@ function Register() {
         
     });
 
+    const validateEmail = (email) => {
+        return email.match(
+          /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        );
+        
+      };
+
+    const checkBirthdate = (date) => {
+        const today = new Date();
+        const birthday = new Date(date);
+
+        let years = today.getFullYear() - birthday.getFullYear();
+        console.log(today.getFullYear())
+        console.log(birthday.getFullYear())
+        console.log(today.getMonth())
+        console.log(birthday.getMonth())
+        console.log(today.getDate())
+        console.log(birthday.getDate())
+
+        // Adjust if the full year hasn't passed yet
+        if (
+            today.getMonth() < birthday.getMonth() || 
+            (today.getMonth() === birthday.getMonth() && today.getDate() < (birthday.getDate()+1))
+        ) {
+            years--;
+        }
+
+        return Math.abs(years);
+
+    };
+
     function checkError()
     {
         if ( formData.first_name === "")
@@ -33,23 +64,94 @@ function Register() {
             setError("Fill in Last Name");
             return true;
         }
+        if ( formData.email === "")
+        {
+            setError("Fill in Email");
+            return true;
+        }
+        if ( !validateEmail(formData.email))
+        {
+            setError("Must Enter a Valid Email");
+            return true;
+        }
+        if ( formData.phone_number === "")
+        {
+            setError("Fill in Phone Number");
+            return true;
+        }
+        if ( formData.phone_number.length < 10)
+        {
+            setError("Phone Number Must Have 10 Digits");
+            return true;
+        }
         if ( formData.birthday === "")
         {
             setError("Fill in Birthday");
             return true;
         }
-        //if (/*age is younger than 12*/)
-        //{
-        //    setError("Must be at least 13 years old")
-        //}
-        if ( formData.first_name === "")
+        if (checkBirthdate(formData.birthday) < 13)
         {
-            setError("Enter a First Name");
+            setError("Must be at least 13 years old")
+            return true;
+        }        
+        if ( formData.street === "")
+        {
+            setError("Fill in Street Address");
             return true;
         }
-
+        if ( formData.city === "")
+        {
+            setError("Fill in City");
+            return true;
+        }
+        if ( formData.state === "")
+        {
+            setError("Fill in State");
+            return true;
+        }
+        if ( formData.zip === "")
+        {
+            setError("Fill in Zipcode");
+            return true;
+        }
+        if ( formData.zip.length < 5)
+        {
+            setError("Zipcode Must Have 5 Digits");
+            return true;
+        }
+        if ( formData.password === "")
+        {
+            setError("Fill in Password");
+            return true;
+        }
+        if ( formData.password.length < 8)
+        {
+            setError("Password Must be at Least 8 Characters Long");
+            return true;
+        }
+        if ( formData.confirm_password === "")
+        {
+            setError("Fill in Confirm Password");
+            return true;
+        }
+        if ( formData.confirm_password.length < 8)
+        {
+            setError("Password Must be at Least 8 Characters Long");
+            return true;
+        }
+        if ( formData.confirm_password !== formData.password)
+        {
+            setError("Confirm Password Must Match Password");
+            return true;
+        }
+        
+        setError("");
         return false;
     }
+
+    useEffect(() => {
+        checkError();
+    })
 
     const handleSubmit = async (event) => {
         event.preventDefault(); 
@@ -95,6 +197,7 @@ function Register() {
                             onChange={(e) => {
                                 const onlyLetters = e.target.value.replace(/[^a-zA-Z]/g, ""); // Remove non-alphabet characters
                                 setFormData({ ...formData, first_name: onlyLetters });
+                                checkError();
                               }}                            
                             //onChange = {(e) => setFormData({ ...formData, first_name: e.target.value})}
                             maxLength="50"
@@ -112,6 +215,7 @@ function Register() {
                             onChange={(e) => {
                                 const onlyLetters = e.target.value.replace(/[^a-zA-Z]/g, ""); // Remove non-alphabet characters
                                 setFormData({ ...formData, last_name: onlyLetters });
+                                checkError();
                             }}    
                             //onChange = {(e) => setFormData({ ...formData, last_name: e.target.value})}
                             maxLength="50"
@@ -128,7 +232,10 @@ function Register() {
                             //clasName = ""
                             placeholder = "Email"
                             value={formData.email}
-                            onChange = {(e) => setFormData({ ...formData, email: e.target.value})}
+                            onChange = {(e) => {
+                                setFormData({ ...formData, email: e.target.value});
+                                checkError();
+                            }}
                         />
                     </div>
                 </div>
@@ -143,6 +250,7 @@ function Register() {
                             onChange = {(e) => {
                                 const onlyDigits = e.target.value.replace(/\D/g, ""); // Remove non-digits
                                 setFormData({ ...formData, phone_number: onlyDigits});
+                                checkError();
                             }}
                             maxLength={10}
                             minLength={10}
@@ -158,7 +266,10 @@ function Register() {
                             //clasName = ""
                             placeholder = "Birthday"
                             value={formData.birthday}
-                            onChange = {(e) => setFormData({ ...formData, birthday: e.target.value})}
+                            onChange = {(e) => {
+                                setFormData({ ...formData, birthday: e.target.value});
+                                checkError();
+                            }}
                             max = {new Date().toISOString().split('T')[0]}
                         />
                     </div>
@@ -171,7 +282,10 @@ function Register() {
                             //clasName = ""
                             placeholder = "Street Address"
                             value={formData.street}
-                            onChange = {(e) => setFormData({ ...formData, street : e.target.value})}
+                            onChange = {(e) => {
+                                setFormData({ ...formData, street : e.target.value});
+                                checkError();
+                            }}
                         />
                     </div>
                 </div>
@@ -183,7 +297,10 @@ function Register() {
                             //clasName = ""
                             placeholder = "City"
                             value={formData.city}
-                            onChange = {(e) => setFormData({ ...formData, city : e.target.value})}
+                            onChange = {(e) => {
+                                setFormData({ ...formData, city : e.target.value});
+                                checkError();
+                            }}
                         />
                     </div>
                 </div>
@@ -192,7 +309,10 @@ function Register() {
                         <label /*label header*/ > STATE </label>
                         <select 
                             value = {formData.state}
-                            onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                            onChange={(e) => {
+                                setFormData({ ...formData, state: e.target.value });
+                                checkError();
+                            }}
                         >
                             <option value="">Select State</option>
                             <option value="AL">Alabama</option>
@@ -257,6 +377,7 @@ function Register() {
                             onChange = {(e) => {
                                 const onlyDigits = e.target.value.replace(/\D/g, ""); // Remove non-digits
                                 setFormData({ ...formData, zip : onlyDigits});
+                                checkError();
                             }}
                             maxLength="5"
                             minLength="5"
@@ -272,7 +393,10 @@ function Register() {
                             //clasName = ""
                             placeholder = "Password"
                             value={formData.password}
-                            onChange = {(e) => setFormData({ ...formData, password : e.target.value})}
+                            onChange = {(e) => {
+                                setFormData({ ...formData, password : e.target.value});
+                                checkError();
+                            }}
                             maxLength={30}
                             minLength={8}
                         />
@@ -286,7 +410,10 @@ function Register() {
                             //clasName = ""
                             placeholder = "Confirm Password"
                             value={formData.confirm_password}
-                            onChange = {(e) => setFormData({ ...formData, confirm_password : e.target.value})}
+                            onChange = {(e) => {
+                                setFormData({ ...formData, confirm_password : e.target.value});
+                                checkError();
+                            }}
                             maxLength={30}
                             minLength={8}
                         />
