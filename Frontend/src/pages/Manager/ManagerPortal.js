@@ -113,7 +113,7 @@ function ManagerPortal() {
     } else {
       // Create new employee
       try {
-        const response = await fetch('http://localhost:4000/registerEmployee', {
+        const response = await fetch('http://localhost:4000/createEmployee', {
           method: 'POST',
           credentials: 'include',
           headers: {
@@ -150,6 +150,7 @@ function ManagerPortal() {
       role: employee.role,
       attraction_pos: employee.attraction_name,
       email: employee.email,
+
       phone_number: employee.phone_number,
       supervisor_name: employee.supervisor_name || ''
     });
@@ -157,8 +158,8 @@ function ManagerPortal() {
     setActiveTab('edit');
   };
 
-  const handleDelete = async (employee_id) => {
-    if (window.confirm('Are you sure you want to delete this employee?')) {
+  const handleDelete = async (employee_id, email) => {
+    if (window.confirm(`Are you sure you want to delete this employee (${email})?`)) {
       try {
         const response = await fetch('http://localhost:4000/deleteEmployee', {
           method: 'DELETE',
@@ -166,7 +167,7 @@ function ManagerPortal() {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ employee_id })
+          body: JSON.stringify({ employee_id, email }) // Send both identifiers
         });
         
         if (!response.ok) {

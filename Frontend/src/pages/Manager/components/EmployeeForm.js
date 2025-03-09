@@ -5,6 +5,11 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
     <div className="employee-form-container">
       <div className="content-header">
         <h2>{editMode ? 'Modify Employee' : 'Create New Employee'}</h2>
+        {editMode && (
+          <div className="employee-identifier">
+            <p>Editing employee: <strong>{formData.email}</strong></p>
+          </div>
+        )}
       </div>
       
       <form onSubmit={handleSubmit} className="employee-form">
@@ -60,7 +65,7 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
         </div>
 
         <div className="form-group">
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email">Email{editMode ? ' (New)' : ''}</label>
           <input
             type="email"
             id="email"
@@ -69,6 +74,11 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
             onChange={handleInputChange}
             required
           />
+          {editMode && (
+            <small className="form-help-text">
+              Changing this will update the employee's login email.
+            </small>
+          )}
         </div>
 
         <div className="form-group">
@@ -90,10 +100,26 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
               type="password"
               id="password"
               name="password"
-              value={formData.password}
+              value={formData.password || ''}
               onChange={handleInputChange}
               required={!editMode}
             />
+          </div>
+        )}
+
+        {editMode && (
+          <div className="form-group">
+            <label htmlFor="password">New Password (Optional)</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password || ''}
+              onChange={handleInputChange}
+            />
+            <small className="form-help-text">
+              Leave blank to keep current password.
+            </small>
           </div>
         )}
 
@@ -107,6 +133,8 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
             onChange={handleInputChange}
           />
         </div>
+
+
 
         <div className="form-actions">
           <button type="submit" className="submit-btn">

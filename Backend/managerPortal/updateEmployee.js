@@ -13,32 +13,49 @@ async function updateEmployee (req, res) {
             try {
                 const { 
                     employee_id, 
+                    email, 
                     first_name, 
                     last_name, 
                     role, 
                     attraction_pos, 
                     phone_number, 
-                    email, 
                     password, 
-                    supervisor_ID 
+                    supervisor_ID
                 } = JSON.parse(body);
 
-                // Validate required fields
+                // Validate required fields - employee_id must be provided
                 if (!employee_id) {
                     res.writeHead(400, { 'Content-Type': 'application/json' });
                     return res.end(JSON.stringify({ message: "Employee ID is required" }));
                 }
 
+                // Build the query to find the employee
+                let query = "SELECT * FROM theme_park.employee WHERE employee_id = ?";
+                let params = [employee_id];
+
                 // First, check if the employee exists
-                const [employee] = await pool.execute(
-                    "SELECT * FROM theme_park.employee WHERE employee_id = ?",
-                    [employee_id]
-                );
+                const [employee] = await pool.execute(query, params);
 
                 if (employee.length === 0) {
                     res.writeHead(404, { 'Content-Type': 'application/json' });
                     return res.end(JSON.stringify({ message: "Employee not found" }));
                 }
+
+                // If we're updating the email, check if the new email already exists for another employee
+                if (email && email !== employee[0].email) {
+                    const [existingEmail] = await pool.execute(
+                        "SELECT * FROM theme_park.employee WHERE email = ? AND employee_id != ?",
+                        [email, employee[0].employee_id]
+                    );
+
+                    if (existingEmail.length > 0) {
+                        res.writeHead(400, { 'Content-Type': 'application/json' });
+                        return res.end(JSON.stringify({ message: "Email already in use by another employee" }));
+                    }
+                }
+
+                // Get the employee ID for the update
+                const employeeIdToUpdate = employee[0].employee_id;
 
                 // Build SQL update query parts
                 let updateQuery = "UPDATE theme_park.employee SET ";
@@ -96,14 +113,18 @@ async function updateEmployee (req, res) {
 
                 // Complete the query
                 updateQuery += updates.join(", ") + " WHERE employee_id = ?";
-                updateParams.push(employee_id);
+                updateParams.push(employeeIdToUpdate);
 
                 // Execute the update query
                 const [result] = await pool.execute(updateQuery, updateParams);
 
                 console.log("Update result:", result);
                 res.writeHead(200, { 'Content-Type': 'application/json' });
-                return res.end(JSON.stringify({ message: "Success", affected_rows: result.affectedRows }));
+                return res.end(JSON.stringify({ 
+                    message: "Success", 
+                    affected_rows: result.affectedRows,
+                    updated_email: email || employee[0].email
+                }));
             } catch (error) {
                 console.error("Error updating employee:", error);
                 res.writeHead(400, { 'Content-Type': 'application/json' });
