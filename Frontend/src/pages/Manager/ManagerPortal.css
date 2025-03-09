@@ -16,25 +16,26 @@
   --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Poppins', sans-serif;
-  background-color: var(--background-color);
-  color: var(--text-color);
-}
-
+/* Scoped styles to prevent affecting global elements */
 .manager-portal {
   display: flex;
   min-height: 100vh;
+  background-color: var(--background-color);
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-color);
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+}
+
+.manager-portal *,
+.manager-portal *::before,
+.manager-portal *::after {
+  box-sizing: inherit;
 }
 
 /* Sidebar Styles */
-.sidebar {
+.manager-portal .sidebar {
   width: 250px;
   background-color: var(--sidebar-bg);
   color: white;
@@ -42,24 +43,26 @@ body {
   height: 100vh;
   position: fixed;
   overflow-y: auto;
+  z-index: 2;
 }
 
-.sidebar-header {
+.manager-portal .sidebar-header {
   padding: 0 20px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.sidebar-header h2 {
+.manager-portal .sidebar-header h2 {
   font-size: 1.5rem;
   font-weight: 600;
   color: white;
+  margin: 0;
 }
 
-.sidebar-nav {
+.manager-portal .sidebar-nav {
   margin-top: 20px;
 }
 
-.sidebar-nav button {
+.manager-portal .sidebar-nav button {
   display: flex;
   align-items: center;
   width: 100%;
@@ -74,30 +77,30 @@ body {
   border-left: 3px solid transparent;
 }
 
-.sidebar-nav button:hover {
+.manager-portal .sidebar-nav button:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-.sidebar-nav button.active {
+.manager-portal .sidebar-nav button.active {
   background-color: rgba(255, 255, 255, 0.1);
   border-left: 3px solid var(--sidebar-active);
   color: var(--accent-color);
 }
 
-.sidebar-nav .icon {
+.manager-portal .sidebar-nav .icon {
   margin-right: 10px;
   font-size: 1.2rem;
 }
 
 /* Content Area Styles */
-.content-area {
+.manager-portal .content-area {
   flex: 1;
   margin-left: 250px;
   padding: 20px;
   background-color: var(--background-color);
 }
 
-.top-bar {
+.manager-portal .top-bar {
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -105,7 +108,7 @@ body {
   margin-bottom: 20px;
 }
 
-.user-info {
+.manager-portal .user-info {
   background: var(--primary-color);
   color: white;
   padding: 8px 15px;
@@ -113,14 +116,14 @@ body {
   font-weight: 500;
 }
 
-.main-content {
+.manager-portal .main-content {
   background-color: white;
   border-radius: var(--border-radius);
   padding: 20px;
   box-shadow: var(--box-shadow);
 }
 
-.content-header {
+.manager-portal .content-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -129,18 +132,18 @@ body {
   border-bottom: 2px solid var(--primary-color);
 }
 
-.content-header h2 {
+.manager-portal .content-header h2 {
   color: var(--primary-color);
   font-size: 1.8rem;
   margin: 0;
 }
 
 /* View Employees Styles */
-.search-bar {
+.manager-portal .search-bar {
   width: 300px;
 }
 
-.search-bar input {
+.manager-portal .search-bar input {
   width: 100%;
   padding: 10px 15px;
   border: 1px solid #ddd;
@@ -149,47 +152,47 @@ body {
   transition: border 0.3s ease;
 }
 
-.search-bar input:focus {
+.manager-portal .search-bar input:focus {
   border-color: var(--primary-color);
   outline: none;
 }
 
-.employee-table {
+.manager-portal .employee-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
 }
 
-.employee-table th,
-.employee-table td {
+.manager-portal .employee-table th,
+.manager-portal .employee-table td {
   padding: 12px 15px;
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
 
-.employee-table th {
+.manager-portal .employee-table th {
   background-color: var(--primary-color);
   color: white;
   font-weight: 500;
 }
 
-.employee-table tr:hover {
+.manager-portal .employee-table tr:hover {
   background-color: rgba(58, 134, 255, 0.05);
 }
 
-.employee-table .no-results {
+.manager-portal .employee-table .no-results {
   text-align: center;
   padding: 30px;
   color: var(--light-text);
 }
 
-.action-buttons {
+.manager-portal .action-buttons {
   display: flex;
   gap: 8px;
 }
 
-.action-buttons button {
+.manager-portal .action-buttons button {
   padding: 6px 12px;
   border: none;
   border-radius: var(--border-radius);
@@ -198,48 +201,48 @@ body {
   transition: all 0.3s ease;
 }
 
-.edit-btn {
+.manager-portal .edit-btn {
   background-color: var(--primary-color);
   color: white;
 }
 
-.edit-btn:hover {
+.manager-portal .edit-btn:hover {
   background-color: #2a75e0;
 }
 
-.delete-btn {
+.manager-portal .delete-btn {
   background-color: var(--error-color);
   color: white;
 }
 
-.delete-btn:hover {
+.manager-portal .delete-btn:hover {
   background-color: #e64545;
 }
 
 /* Employee Form Styles */
-.employee-form-container {
+.manager-portal .employee-form-container {
   max-width: 800px;
   margin: 0 auto;
 }
 
-.employee-form {
+.manager-portal .employee-form {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
 
-.form-group {
+.manager-portal .form-group {
   margin-bottom: 15px;
 }
 
-.form-group label {
+.manager-portal .form-group label {
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
 }
 
-.form-group input,
-.form-group select {
+.manager-portal .form-group input,
+.manager-portal .form-group select {
   width: 100%;
   padding: 12px;
   border: 1px solid #ddd;
@@ -248,14 +251,14 @@ body {
   transition: all 0.3s ease;
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.manager-portal .form-group input:focus,
+.manager-portal .form-group select:focus {
   border-color: var(--primary-color);
   outline: none;
   box-shadow: 0 0 0 2px rgba(58, 134, 255, 0.2);
 }
 
-.form-actions {
+.manager-portal .form-actions {
   grid-column: span 2;
   display: flex;
   justify-content: center;
@@ -263,7 +266,7 @@ body {
   margin-top: 20px;
 }
 
-.form-actions button {
+.manager-portal .form-actions button {
   padding: 12px 25px;
   border: none;
   border-radius: var(--border-radius);
@@ -273,27 +276,27 @@ body {
   transition: all 0.3s ease;
 }
 
-.submit-btn {
+.manager-portal .submit-btn {
   background-color: var(--success-color);
   color: white;
 }
 
-.submit-btn:hover {
+.manager-portal .submit-btn:hover {
   background-color: #2d9900;
 }
 
-.cancel-btn {
+.manager-portal .cancel-btn {
   background-color: #f8f9fa;
   color: var(--text-color);
   border: 1px solid #ddd;
 }
 
-.cancel-btn:hover {
+.manager-portal .cancel-btn:hover {
   background-color: #e9ecef;
 }
 
 /* Logout Button */
-.logout-btn {
+.manager-portal .logout-btn {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -307,20 +310,20 @@ body {
   transition: all 0.3s ease;
 }
 
-.logout-btn:hover {
+.manager-portal .logout-btn:hover {
   background-color: #e64545;
 }
 
-.logout-icon {
+.manager-portal .logout-icon {
   font-size: 1.1rem;
 }
 
 /* Reports Styles */
-.reports {
+.manager-portal .reports {
   padding: 20px;
 }
 
-.report-placeholder {
+.manager-portal .report-placeholder {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -334,11 +337,11 @@ body {
 
 /* Responsive adjustments */
 @media (max-width: 1024px) {
-  .sidebar {
+  .manager-portal .sidebar {
     width: 200px;
   }
   
-  .content-area {
+  .manager-portal .content-area {
     margin-left: 200px;
   }
 }
@@ -348,35 +351,35 @@ body {
     flex-direction: column;
   }
   
-  .sidebar {
+  .manager-portal .sidebar {
     width: 100%;
     height: auto;
     position: relative;
   }
   
-  .content-area {
+  .manager-portal .content-area {
     margin-left: 0;
   }
   
-  .employee-form {
+  .manager-portal .employee-form {
     grid-template-columns: 1fr;
   }
   
-  .form-actions {
+  .manager-portal .form-actions {
     grid-column: span 1;
   }
   
-  .content-header {
+  .manager-portal .content-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
   
-  .search-bar {
+  .manager-portal .search-bar {
     width: 100%;
   }
   
-  .employee-table {
+  .manager-portal .employee-table {
     display: block;
     overflow-x: auto;
   }
