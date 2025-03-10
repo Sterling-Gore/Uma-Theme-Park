@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
         skipLocalStorageUpdate.current = true;
         setIsLoggedIn(storedLoggedIn);
         setUserType(storedUserType || null);
+        setUserID(storedUserID || null);
         
         // If stored state indicates logged in, verify with server
         if (storedLoggedIn) {
