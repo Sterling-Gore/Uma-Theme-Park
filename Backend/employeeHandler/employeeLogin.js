@@ -61,7 +61,8 @@ async function employeeLogin(req, res) {
                 })
             });
 
-            res.end(JSON.stringify({ user: customerUser }));
+
+            res.end(JSON.stringify({ user: customer.role, id: customer.employee_id }));
 
         } catch (err) {
             console.error("Error processing login:", err);

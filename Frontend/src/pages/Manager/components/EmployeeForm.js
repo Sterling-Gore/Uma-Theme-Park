@@ -1,58 +1,79 @@
 import React from 'react';
 
 const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, setActiveTab }) => {
+  const getAttractionValue = () => {
+    if (typeof formData.attraction_pos === 'number') {
+      return 'attration1'; // Convert from number to string form representation
+    }
+    return formData.attraction_pos || '';
+  };
+
   return (
     <div className="employee-form-container">
       <div className="content-header">
         <h2>{editMode ? 'Modify Employee' : 'Create New Employee'}</h2>
+        {editMode && (
+          <div className="employee-identifier">
+            <p>Editing employee: <strong>{formData.email}</strong></p>
+          </div>
+        )}
       </div>
       
       <form onSubmit={handleSubmit} className="employee-form">
         <div className="form-group">
-          <label htmlFor="name">Full Name</label>
+          <label htmlFor="first_name">First Name</label>
           <input
             type="text"
-            id="name"
-            name="name"
-            value={formData.name}
+            id="first_name"
+            name="first_name"
+            value={formData.first_name}
             onChange={handleInputChange}
             required
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="position">Position</label>
+          <label htmlFor="last_name">Last Name</label>
           <input
             type="text"
-            id="position"
-            name="position"
-            value={formData.position}
+            id="last_name"
+            name="last_name"
+            value={formData.last_name}
             onChange={handleInputChange}
             required
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="department">Department</label>
+          <label htmlFor="role">Role</label>
           <select
-            id="department"
-            name="department"
-            value={formData.department}
+            id="role"
+            name="role"
+            value={formData.role}
             onChange={handleInputChange}
             required
           >
-            <option value="">Select Department</option>
-            <option value="Attractions">Attractions</option>
-            <option value="Dining">Dining</option>
-            <option value="Retail">Retail</option>
-            <option value="Custodial">Custodial</option>
-            <option value="Administration">Administration</option>
-            <option value="Entertainment">Entertainment</option>
+            <option value="">Select Role</option>
+            <option value="employee">employee</option>
+            <option value="manager">manager</option>
+          </select>
+        </div>
+        <div className="form-group">
+          <label htmlFor="attraction_pos">Attraction Position</label>
+          <select
+            id="attraction_pos"
+            name="attraction_pos"
+            value={getAttractionValue()}
+            onChange={handleInputChange}
+            required
+          >
+            <option value="">Select Attraction</option>
+            <option value="attration1">attration1</option>
           </select>
         </div>
 
         <div className="form-group">
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email">Email{editMode ? ' (New)' : ''}</label>
           <input
             type="email"
             id="email"
@@ -61,29 +82,63 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
             onChange={handleInputChange}
             required
           />
+          {editMode && (
+            <small className="form-help-text">
+              Changing this will update the employee's login email.
+            </small>
+          )}
         </div>
 
         <div className="form-group">
-          <label htmlFor="phone">Phone Number</label>
+          <label htmlFor="phone_number">Phone Number</label>
           <input
             type="tel"
-            id="phone"
-            name="phone"
-            value={formData.phone}
+            id="phone_number"
+            name="phone_number"
+            value={formData.phone_number}
             onChange={handleInputChange}
             required
           />
         </div>
 
+        {!editMode && (
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password || ''}
+              onChange={handleInputChange}
+              required={!editMode}
+            />
+          </div>
+        )}
+
+        {editMode && (
+          <div className="form-group">
+            <label htmlFor="password">New Password (Optional)</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password || ''}
+              onChange={handleInputChange}
+            />
+            <small className="form-help-text">
+              Leave blank to keep current password.
+            </small>
+          </div>
+        )}
+
         <div className="form-group">
-          <label htmlFor="startDate">Start Date</label>
+          <label htmlFor="supervisor_email">Supervisor Email (Optional)</label>
           <input
-            type="date"
-            id="startDate"
-            name="startDate"
-            value={formData.startDate}
+            type="text"
+            id="supervisor_email"
+            name="supervisor_email"
+            value={formData.supervisor_email || ""}
             onChange={handleInputChange}
-            required
           />
         </div>
 
