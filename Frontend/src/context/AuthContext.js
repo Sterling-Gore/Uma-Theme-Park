@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
         skipLocalStorageUpdate.current = true;
         setIsLoggedIn(storedLoggedIn);
         setUserType(storedUserType || null);
+        setUserID(storedUserID || null);
         
         // If stored state indicates logged in, verify with server
         if (storedLoggedIn) {
@@ -80,7 +81,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem('userID');
       console.log("AuthContext cleared");
     }
-  }, [isLoggedIn, userType]);
+  }, [isLoggedIn, userType, userID]);
 
   // Login function
   const login = (type, id) => {
