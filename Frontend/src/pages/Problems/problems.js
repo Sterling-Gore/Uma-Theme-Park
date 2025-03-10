@@ -11,7 +11,7 @@ function Problems() {
     });
     const navigate = useNavigate();
     const alertShown = useRef(false);
-    const { isLoggedIn, userType, isLoading } = useContext(AuthContext);
+    const { isLoggedIn, isLoading } = useContext(AuthContext);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitMessage, setSubmitMessage] = useState("");
     const [submitStatus, setSubmitStatus] = useState("");
