@@ -1,13 +1,13 @@
 // Frontend/src/context/AuthContext.js
 
 import React, { createContext, useState, useEffect, useRef } from 'react';
-
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userType, setUserType] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [userID, setUserID] = useState(null);
   
   // Use useRef to keep track of if it's the initial mount
   const isInitialMount = useRef(true);
@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
         // First set state from localStorage to prevent flicker
         const storedLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
         const storedUserType = localStorage.getItem('userType');
-        
+        const storedUserID = localStorage.getItem('userID');
         // Set initial state without triggering useEffect dependencies
         skipLocalStorageUpdate.current = true;
         setIsLoggedIn(storedLoggedIn);
@@ -72,19 +72,22 @@ export const AuthProvider = ({ children }) => {
     if (isLoggedIn) {
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('userType', userType || '');
-      console.log("AuthContext updated:", isLoggedIn, userType);
+      localStorage.setItem('userID', userID || '');
+      console.log("AuthContext updated:", isLoggedIn, userType, userID);
     } else {
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userType');
+      localStorage.removeItem('userID');
       console.log("AuthContext cleared");
     }
   }, [isLoggedIn, userType]);
 
   // Login function
-  const login = (type) => {
+  const login = (type, id) => {
     console.log("login called with type:", type);
     setIsLoggedIn(true);
     setUserType(type);
+    setUserID(id);
   };
 
   // Logout function
@@ -92,6 +95,7 @@ export const AuthProvider = ({ children }) => {
     console.log("logout called");
     setIsLoggedIn(false);
     setUserType(null);
+    setUserID(null);
   };
 
   return (
@@ -100,6 +104,8 @@ export const AuthProvider = ({ children }) => {
       setIsLoggedIn,
       userType, 
       setUserType,
+      userID,
+      setUserID,
       isLoading, 
       login, 
       logout 

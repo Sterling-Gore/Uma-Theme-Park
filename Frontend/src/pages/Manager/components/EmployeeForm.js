@@ -51,18 +51,21 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
             <option value="manager">manager</option>
           </select>
         </div>
-
         <div className="form-group">
-          <label htmlFor="attraction_pos">Attraction Position</label>
-          <input
-            type="text"
+          <label htmlFor="attraction_pos">Attraction Posistion</label>
+          <select
             id="attraction_pos"
             name="attraction_pos"
             value={formData.attraction_pos}
             onChange={handleInputChange}
             required
-          />
+          >
+            <option value="">Select Attraction</option>
+            <option value="attration1">attration1</option>
+          </select>
         </div>
+
+  
 
         <div className="form-group">
           <label htmlFor="email">Email{editMode ? ' (New)' : ''}</label>
@@ -124,12 +127,12 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
         )}
 
         <div className="form-group">
-          <label htmlFor="supervisor_ID">Supervisor ID (Optional)</label>
+          <label htmlFor="supervisor_email">Supervisor Email(Optional)</label>
           <input
             type="text"
-            id="supervisor_ID"
-            name="supervisor_ID"
-            value={formData.supervisor_ID || ""}
+            id="supervisor_email"
+            name="supervisor_email"
+            value={formData.supervisor_email || ""}
             onChange={handleInputChange}
           />
         </div>

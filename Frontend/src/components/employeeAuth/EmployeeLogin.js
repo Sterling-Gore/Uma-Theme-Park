@@ -36,7 +36,7 @@ function EmployeeLogin() {
         
         // The login function will handle localStorage updates
         console.log(data.user)
-        login(data.user);
+        login(data.user, data.id);
         if(data.user === 'employee'){
           navigate('/EmployeePortal');
         }

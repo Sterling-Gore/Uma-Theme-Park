@@ -10,7 +10,6 @@ function ManagerPortal() {
   const [employees, setEmployees] = useState([]);
   
   const [formData, setFormData] = useState({
-    employee_id: '',
     first_name: '',
     last_name: '',
     role: '',
@@ -18,7 +17,7 @@ function ManagerPortal() {
     email: '',
     phone_number: '',
     password: '',
-    supervisor_name: ''
+    supervisor_email: ''
   });
 
   const [editMode, setEditMode] = useState(false);
@@ -57,15 +56,14 @@ function ManagerPortal() {
     setActiveTab(tab);
     if (tab === 'create') {
       setFormData({
-        employee_id: '',
         first_name: '',
         last_name: '',
         role: '',
-        attraction_name: '',
+        attraction_pos: '',
         email: '',
         phone_number: '',
         password: '',
-        supervisor_name: ''
+        supervisor_email: ''
       });
       setEditMode(false);
     }
@@ -113,6 +111,7 @@ function ManagerPortal() {
     } else {
       // Create new employee
       try {
+        console.log(formData)
         const response = await fetch('http://localhost:4000/createEmployee', {
           method: 'POST',
           credentials: 'include',
@@ -144,7 +143,6 @@ function ManagerPortal() {
   const handleEdit = (employee) => {
     // Set form data with employee data
     setFormData({
-      employee_id: employee.employee_id,
       first_name: employee.first_name,
       last_name: employee.last_name,
       role: employee.role,
@@ -152,13 +150,13 @@ function ManagerPortal() {
       email: employee.email,
 
       phone_number: employee.phone_number,
-      supervisor_name: employee.supervisor_name || ''
+      supervisor_email: employee.supervisor_email || ''
     });
     setEditMode(true);
     setActiveTab('edit');
   };
 
-  const handleDelete = async (employee_id, email) => {
+  const handleDelete = async (email) => {
     if (window.confirm(`Are you sure you want to delete this employee (${email})?`)) {
       try {
         const response = await fetch('http://localhost:4000/deleteEmployee', {
@@ -167,7 +165,7 @@ function ManagerPortal() {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ employee_id, email }) // Send both identifiers
+          body: JSON.stringify({ email }) // Send both identifiers
         });
         
         if (!response.ok) {

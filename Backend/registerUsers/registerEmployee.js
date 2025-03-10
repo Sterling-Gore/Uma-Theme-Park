@@ -15,6 +15,10 @@ async function registerEmployee (req, res) {
                 const { first_name, last_name, role, attraction_pos, phone_number, email, password, supervisor_ID = null } = JSON.parse(body);
                 const employee_id = uuidv4(); 
                 const newPassword = await bcrypt.hash(password, 10);
+                if(attraction_pos === "attration1"){
+                    attraction_pos = 1;
+                }
+                console.log(role);
                 const [result] = await pool.execute(
                     "INSERT INTO theme_park.employee (employee_id, first_name, last_name, role, attraction_pos, phone_number, email, password, supervisors_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     [employee_id, first_name, last_name, role, attraction_pos, phone_number, email, newPassword, supervisor_ID]

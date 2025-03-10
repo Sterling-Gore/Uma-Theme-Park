@@ -5,7 +5,7 @@ const ViewEmployees = ({ employees, handleEdit, handleDelete, searchTerm, setSea
     `${employee.first_name} ${employee.last_name}`.toLowerCase().includes(searchTerm?.toLowerCase() || '') ||
     employee.attraction_name?.toLowerCase().includes(searchTerm?.toLowerCase() || '') ||
     employee.email?.toLowerCase().includes(searchTerm?.toLowerCase() || '') || 
-    employee.supervisor_name?.toLowerCase.includes(searchTerm?.toLowerCase() || '')
+    employee.supervisor_email?.toLowerCase.includes(searchTerm?.toLowerCase() || '')
   );
 
   return (
@@ -30,23 +30,23 @@ const ViewEmployees = ({ employees, handleEdit, handleDelete, searchTerm, setSea
             <th>Role</th>
             <th>Email</th>
             <th>Phone</th>
-            <th>Supervisor Name</th>
+            <th>Supervisor email</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {filteredEmployees.length > 0 ? (
             filteredEmployees.map((employee) => (
-              <tr key={employee.employee_id}>
+              <tr key={employee.email}>
                 <td>{`${employee.first_name} ${employee.last_name}`}</td>
                 <td>{employee.attraction_name}</td>
                 <td>{employee.role}</td>
                 <td>{employee.email}</td>
                 <td>{employee.phone_number}</td>
-                <td>{employee.supervisor_name}</td>
+                <td>{employee.supervisor_email}</td>
                 <td className="action-buttons">
                   <button className="edit-btn" onClick={() => handleEdit(employee)}>Edit</button>
-                  <button className="delete-btn" onClick={() => handleDelete(employee.employee_id)}>Delete</button>
+                  <button className="delete-btn" onClick={() => handleDelete(employee.email)}>Delete</button>
                 </td>
               </tr>
             ))

@@ -22,7 +22,7 @@ async function updateEmployee (req, res) {
                     password, 
                     supervisor_ID
                 } = JSON.parse(body);
-
+                
                 // Validate required fields - employee_id must be provided
                 if (!employee_id) {
                     res.writeHead(400, { 'Content-Type': 'application/json' });

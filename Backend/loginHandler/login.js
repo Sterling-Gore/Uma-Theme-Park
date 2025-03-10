@@ -63,7 +63,7 @@ async function login(req, res) {
             });
 
 
-            res.end(JSON.stringify({ user: "Customer" }));
+            res.end(JSON.stringify({ user: "Customer", id: customer.customer_id}));
  
         } catch (err) {
             console.error("Error processing login:", err);
