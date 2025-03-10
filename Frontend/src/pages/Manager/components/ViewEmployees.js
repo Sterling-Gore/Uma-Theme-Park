@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 const ViewEmployees = ({ employees, handleEdit, handleDelete, searchTerm, setSearchTerm }) => {
-  const filteredEmployees = employees.filter(employee => 
-    `${employee.first_name} ${employee.last_name}`.toLowerCase().includes(searchTerm?.toLowerCase() || '') ||
-    employee.attraction_name?.toLowerCase().includes(searchTerm?.toLowerCase() || '') ||
-    employee.email?.toLowerCase().includes(searchTerm?.toLowerCase() || '') || 
-    employee.supervisor_email?.toLowerCase.includes(searchTerm?.toLowerCase() || '')
-  );
+  const filteredEmployees = employees.filter(employee => {
+    const fullName = `${employee.first_name || ''} ${employee.last_name || ''}`.toLowerCase();
+    const searchLower = (searchTerm || '').toLowerCase();
+    
+    return fullName.includes(searchLower) ||
+      (employee.attraction_name?.toLowerCase() || '').includes(searchLower) ||
+      (employee.email?.toLowerCase() || '').includes(searchLower) || 
+      (employee.supervisor_email?.toLowerCase() || '').includes(searchLower);
+  });
 
   return (
     <div className="view-employees">
@@ -30,20 +33,20 @@ const ViewEmployees = ({ employees, handleEdit, handleDelete, searchTerm, setSea
             <th>Role</th>
             <th>Email</th>
             <th>Phone</th>
-            <th>Supervisor email</th>
+            <th>Supervisor Email</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {filteredEmployees.length > 0 ? (
             filteredEmployees.map((employee) => (
-              <tr key={employee.email}>
+              <tr key={employee.employee_id || employee.email}>
                 <td>{`${employee.first_name} ${employee.last_name}`}</td>
-                <td>{employee.attraction_name}</td>
+                <td>{employee.attraction_name || 'N/A'}</td>
                 <td>{employee.role}</td>
                 <td>{employee.email}</td>
                 <td>{employee.phone_number}</td>
-                <td>{employee.supervisor_email}</td>
+                <td>{employee.supervisor_email || 'None'}</td>
                 <td className="action-buttons">
                   <button className="edit-btn" onClick={() => handleEdit(employee)}>Edit</button>
                   <button className="delete-btn" onClick={() => handleDelete(employee.email)}>Delete</button>
@@ -52,7 +55,7 @@ const ViewEmployees = ({ employees, handleEdit, handleDelete, searchTerm, setSea
             ))
           ) : (
             <tr>
-              <td colSpan="6" className="no-results">No employees found</td>
+              <td colSpan="7" className="no-results">No employees found</td>
             </tr>
           )}
         </tbody>

@@ -77,26 +77,85 @@ function ManagerPortal() {
     });
   };
 
+  const handleEdit = (employee) => {
+    console.log("Editing employee:", employee); // Debug log
+    
+    // Convert attraction_pos to the format expected by the backend
+    let attractionPos = employee.attraction_pos;
+    
+    // If what we have is attraction_name but we need attraction_pos
+    if (employee.attraction_name === "attration1" && !attractionPos) {
+      attractionPos = 1;
+    }
+    
+    // Find supervisor email if supervisor ID exists
+    let supervisorEmail = '';
+    if (employee.supervisors_id) {
+      const supervisor = employees.find(emp => emp.employee_id === employee.supervisors_id);
+      if (supervisor) {
+        supervisorEmail = supervisor.email;
+      }
+    }
+    
+    // Set form data with employee data - focusing on email as identifier
+    setFormData({
+      first_name: employee.first_name,
+      last_name: employee.last_name,
+      role: employee.role,
+      attraction_pos: attractionPos,
+      email: employee.email, // This is now our primary identifier
+      phone_number: employee.phone_number,
+      supervisor_email: supervisorEmail,
+      // We don't need to include supervisor_ID directly anymore
+    });
+    
+    setEditMode(true);
+    setActiveTab('edit');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (editMode) {
       // Update existing employee
       try {
+        // Create a clean copy of formData for sending
+        const updateData = { ...formData };
+        
+        // Make sure we have email (required by backend)
+        if (!updateData.email) {
+          alert('Error: Email is missing. Cannot update.');
+          return;
+        }
+        
+        // Ensure attraction_pos is in the format expected by backend
+        if (updateData.attraction_pos === "attration1") {
+          updateData.attraction_pos = 1;
+        }
+        
+        console.log("Sending update data:", updateData); // Debug log
+        
         const response = await fetch('http://localhost:4000/updateEmployee', {
           method: 'PUT',
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(formData)
+          body: JSON.stringify(updateData)
         });
         
+        // Log the raw response for debugging
+        console.log("Update response status:", response.status);
+        
         if (!response.ok) {
-          throw new Error('Failed to update employee');
+          const errorText = await response.text();
+          console.error("Update error response:", errorText);
+          throw new Error(`Failed to update employee: ${response.status} ${errorText}`);
         }
         
         const data = await response.json();
+        console.log("Update response data:", data); // Debug log
+        
         if (data.success || data.message === "Success") {
           // Update successful
           setRefreshEmployees(!refreshEmployees); // Trigger refresh
@@ -106,26 +165,42 @@ function ManagerPortal() {
         }
       } catch (error) {
         console.error('Error updating employee:', error);
-        alert('Error updating employee. Please try again.');
+        alert('Error updating employee: ' + error.message);
       }
     } else {
       // Create new employee
       try {
-        console.log(formData)
+        // Create a clean copy of formData for sending
+        const createData = { ...formData };
+        
+        // Ensure attraction_pos is in the format expected by backend
+        if (createData.attraction_pos === "attration1") {
+          createData.attraction_pos = 1;
+        }
+        
+        console.log("Sending create data:", createData); // Debug log
+        
         const response = await fetch('http://localhost:4000/createEmployee', {
           method: 'POST',
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(formData)
+          body: JSON.stringify(createData)
         });
         
+        // Log the raw response for debugging
+        console.log("Create response status:", response.status);
+        
         if (!response.ok) {
-          throw new Error('Failed to create employee');
+          const errorText = await response.text();
+          console.error("Create error response:", errorText);
+          throw new Error(`Failed to create employee: ${response.status} ${errorText}`);
         }
         
         const data = await response.json();
+        console.log("Create response data:", data); // Debug log
+        
         if (data.message === "Success") {
           // Creation successful
           setRefreshEmployees(!refreshEmployees); // Trigger refresh
@@ -135,25 +210,9 @@ function ManagerPortal() {
         }
       } catch (error) {
         console.error('Error creating employee:', error);
-        alert('Error creating employee. Please try again.');
+        alert('Error creating employee: ' + error.message);
       }
     }
-  };
-
-  const handleEdit = (employee) => {
-    // Set form data with employee data
-    setFormData({
-      first_name: employee.first_name,
-      last_name: employee.last_name,
-      role: employee.role,
-      attraction_pos: employee.attraction_name,
-      email: employee.email,
-
-      phone_number: employee.phone_number,
-      supervisor_email: employee.supervisor_email || ''
-    });
-    setEditMode(true);
-    setActiveTab('edit');
   };
 
   const handleDelete = async (email) => {
@@ -165,7 +224,7 @@ function ManagerPortal() {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ email }) // Send both identifiers
+          body: JSON.stringify({ email }) // Send identifier
         });
         
         if (!response.ok) {
@@ -222,6 +281,7 @@ function ManagerPortal() {
             handleSubmit={handleSubmit} 
             editMode={editMode} 
             setActiveTab={setActiveTab} 
+            employees={employees} // Pass employees for supervisor dropdown
           />
         );
       case 'reports':

@@ -1,7 +1,7 @@
 const pool = require("../database");
 const bcrypt = require('bcrypt');
 
-async function updateEmployee (req, res) {
+async function updateEmployee(req, res) {
     try {
         let body = '';
 
@@ -12,7 +12,6 @@ async function updateEmployee (req, res) {
         req.on('end', async () => {
             try {
                 const { 
-                    employee_id, 
                     email, 
                     first_name, 
                     last_name, 
@@ -20,42 +19,44 @@ async function updateEmployee (req, res) {
                     attraction_pos, 
                     phone_number, 
                     password, 
-                    supervisor_ID
+                    supervisor_email 
                 } = JSON.parse(body);
                 
-                // Validate required fields - employee_id must be provided
-                if (!employee_id) {
+                // Validate required fields - email must be provided
+                if (!email) {
                     res.writeHead(400, { 'Content-Type': 'application/json' });
-                    return res.end(JSON.stringify({ message: "Employee ID is required" }));
+                    return res.end(JSON.stringify({ message: "Email is required" }));
                 }
 
-                // Build the query to find the employee
-                let query = "SELECT * FROM theme_park.employee WHERE employee_id = ?";
-                let params = [employee_id];
-
-                // First, check if the employee exists
-                const [employee] = await pool.execute(query, params);
+                // Check if the employee exists with the provided email
+                const [employee] = await pool.execute(
+                    "SELECT * FROM theme_park.employee WHERE email = ?",
+                    [email]
+                );
 
                 if (employee.length === 0) {
                     res.writeHead(404, { 'Content-Type': 'application/json' });
                     return res.end(JSON.stringify({ message: "Employee not found" }));
                 }
 
-                // If we're updating the email, check if the new email already exists for another employee
-                if (email && email !== employee[0].email) {
-                    const [existingEmail] = await pool.execute(
-                        "SELECT * FROM theme_park.employee WHERE email = ? AND employee_id != ?",
-                        [email, employee[0].employee_id]
+                // Get supervisor ID if supervisor email is provided
+                let supervisorId = null;
+                if (supervisor_email) {
+                    const [supervisors] = await pool.execute(
+                        "SELECT employee_id FROM theme_park.employee WHERE email = ?",
+                        [supervisor_email]
                     );
-
-                    if (existingEmail.length > 0) {
+                    
+                    if (supervisors.length > 0) {
+                        supervisorId = supervisors[0].employee_id;
+                    } else {
+                        // Handle case when supervisor email doesn't match any employee
                         res.writeHead(400, { 'Content-Type': 'application/json' });
-                        return res.end(JSON.stringify({ message: "Email already in use by another employee" }));
+                        return res.end(JSON.stringify({ 
+                            message: "Supervisor email not found in the system" 
+                        }));
                     }
                 }
-
-                // Get the employee ID for the update
-                const employeeIdToUpdate = employee[0].employee_id;
 
                 // Build SQL update query parts
                 let updateQuery = "UPDATE theme_park.employee SET ";
@@ -78,18 +79,18 @@ async function updateEmployee (req, res) {
                 }
 
                 if (attraction_pos) {
+                    // Handle attraction_pos conversion if needed
+                    let posValue = attraction_pos;
+                    if (attraction_pos === "attration1") {
+                        posValue = 1;
+                    }
                     updates.push("attraction_pos = ?");
-                    updateParams.push(attraction_pos);
+                    updateParams.push(posValue);
                 }
 
                 if (phone_number) {
                     updates.push("phone_number = ?");
                     updateParams.push(phone_number);
-                }
-
-                if (email) {
-                    updates.push("email = ?");
-                    updateParams.push(email);
                 }
 
                 // Only update password if provided
@@ -99,10 +100,10 @@ async function updateEmployee (req, res) {
                     updateParams.push(newPassword);
                 }
 
-                // Handle supervisor_ID (can be null)
-                if (supervisor_ID !== undefined) {
+                // Handle supervisor_ID (based on supervisor_email)
+                if (supervisor_email !== undefined) {
                     updates.push("supervisors_id = ?");
-                    updateParams.push(supervisor_ID || null);
+                    updateParams.push(supervisorId);
                 }
 
                 // If no updates provided
@@ -111,9 +112,9 @@ async function updateEmployee (req, res) {
                     return res.end(JSON.stringify({ message: "No update data provided" }));
                 }
 
-                // Complete the query
-                updateQuery += updates.join(", ") + " WHERE employee_id = ?";
-                updateParams.push(employeeIdToUpdate);
+                // Complete the query - update where email matches
+                updateQuery += updates.join(", ") + " WHERE email = ?";
+                updateParams.push(email);
 
                 // Execute the update query
                 const [result] = await pool.execute(updateQuery, updateParams);
@@ -123,7 +124,8 @@ async function updateEmployee (req, res) {
                 return res.end(JSON.stringify({ 
                     message: "Success", 
                     affected_rows: result.affectedRows,
-                    updated_email: email || employee[0].email
+                    updated_email: email,
+                    supervisor_id: supervisorId
                 }));
             } catch (error) {
                 console.error("Error updating employee:", error);

@@ -1,6 +1,13 @@
 import React from 'react';
 
 const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, setActiveTab }) => {
+  const getAttractionValue = () => {
+    if (typeof formData.attraction_pos === 'number') {
+      return 'attration1'; // Convert from number to string form representation
+    }
+    return formData.attraction_pos || '';
+  };
+
   return (
     <div className="employee-form-container">
       <div className="content-header">
@@ -52,11 +59,11 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
           </select>
         </div>
         <div className="form-group">
-          <label htmlFor="attraction_pos">Attraction Posistion</label>
+          <label htmlFor="attraction_pos">Attraction Position</label>
           <select
             id="attraction_pos"
             name="attraction_pos"
-            value={formData.attraction_pos}
+            value={getAttractionValue()}
             onChange={handleInputChange}
             required
           >
@@ -64,8 +71,6 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
             <option value="attration1">attration1</option>
           </select>
         </div>
-
-  
 
         <div className="form-group">
           <label htmlFor="email">Email{editMode ? ' (New)' : ''}</label>
@@ -127,7 +132,7 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
         )}
 
         <div className="form-group">
-          <label htmlFor="supervisor_email">Supervisor Email(Optional)</label>
+          <label htmlFor="supervisor_email">Supervisor Email (Optional)</label>
           <input
             type="text"
             id="supervisor_email"
@@ -136,8 +141,6 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
             onChange={handleInputChange}
           />
         </div>
-
-
 
         <div className="form-actions">
           <button type="submit" className="submit-btn">

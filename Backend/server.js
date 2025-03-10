@@ -65,7 +65,7 @@ const server = http.createServer(async (req, res) => {
     else if(req.url === '/deleteEmployee' && req.method === 'DELETE'){
         deleteEmployee(req, res)
     }
-    else if(req.url === 'updateEmployee' && req.method === 'PUT'){
+    else if(req.url === '/updateEmployee' && req.method === 'PUT'){
         updateEmployee(req, res)
     }
     else if( req.url === '/testDatabaseConnection' && req.method === 'GET'){
