@@ -1,16 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../App.css";
 import "./problems.css"
+import AuthContext from "../../context/AuthContext";
 
 function Problems() {
     const [formData, setFormData] = useState({
         rating_comments: "",
         feedback_type: "General"
     });
+    const navigate = useNavigate();
+    const alertShown = useRef(false);
+    const { isLoggedIn, userType, isLoading } = useContext(AuthContext);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitMessage, setSubmitMessage] = useState("");
     const [submitStatus, setSubmitStatus] = useState("");
 
+    useEffect(() => {
+        if (!isLoading && !isLoggedIn && !alertShown.current) {
+            alertShown.current = true;
+            alert("Please login to report a problem!");
+            navigate("/login");
+        }
+    }, [isLoggedIn, navigate, isLoading]);
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
