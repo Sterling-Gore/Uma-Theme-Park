@@ -34,6 +34,7 @@ async function employeeLogin(req, res) {
         try {
             const { username, password } = JSON.parse(body);
             const customer = await getCustomerByEmail(username);
+            const customerUser = customer.role
 
             if (!customer) {
                 res.writeHead(401, { 'Content-Type': 'application/json' });
@@ -59,6 +60,7 @@ async function employeeLogin(req, res) {
                     path: '/'
                 })
             });
+
 
             res.end(JSON.stringify({ user: customer.role, id: customer.employee_id }));
 
