@@ -23,7 +23,7 @@ function Problems() {
             navigate("/login");
         }
     }, [isLoggedIn, navigate, isLoading]);
-    
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -49,8 +49,9 @@ function Problems() {
             };
 
             // Make API call to submit feedback
-            const response = await fetch("http://localhost:7000/submitFeedback", {
+            const response = await fetch("http://localhost:4000/submitFeedback", {
                 method: "POST",
+                mode: 'cors',
                 headers: {
                     "Content-Type": "application/json"
                 },
