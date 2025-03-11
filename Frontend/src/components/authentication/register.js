@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
-
 import { useNavigate } from 'react-router-dom';
+import './register.css';
 
 function Register() {
     const [error, setError] = useState("");
@@ -183,72 +183,70 @@ function Register() {
 
     return (
         <>
-        <div /*background*/>
-        <div /*centralized Register container*/>
-            <h1 /*title*/> Register </h1>
-            <form onSubmit = {handleSubmit} /*form area*/>
-                <div /*row*/ >
-                    <div /*input Group*/>
-                        <label /*label header*/ > FIRST NAME </label>
+        <div className="register-background">
+        <div className="register-container">
+            <h1 className="register-title"> Register </h1>
+            <form onSubmit={handleSubmit} className="register-form">
+                <div className="form-row">
+                    <div className="input-group">
+                        <label className="label-header"> FIRST NAME </label>
                         <input 
                             type="text"
-                            //clasName = ""
-                            placeholder = "First Name"
+                            className="form-input"
+                            placeholder="First Name"
                             value={formData.first_name}
                             onChange={(e) => {
                                 const onlyLetters = e.target.value.replace(/[^a-zA-Z]/g, ""); // Remove non-alphabet characters
                                 setFormData({ ...formData, first_name: onlyLetters });
                                 checkError();
                               }}                            
-                            //onChange = {(e) => setFormData({ ...formData, first_name: e.target.value})}
                             maxLength="50"
                             minLength="1"
-                            pattern= "[^0-9]+" // \w* stands for all word characters
+                            pattern="[^0-9]+" // \w* stands for all word characters
                         />
                     </div>
-                    <div /*input Group*/>
-                        <label /*label header*/ > LAST NAME </label>
+                    <div className="input-group">
+                        <label className="label-header"> LAST NAME </label>
                         <input 
                             type="text"
-                            //clasName = ""
-                            placeholder = "Last Name"
+                            className="form-input"
+                            placeholder="Last Name"
                             value={formData.last_name}
                             onChange={(e) => {
                                 const onlyLetters = e.target.value.replace(/[^a-zA-Z]/g, ""); // Remove non-alphabet characters
                                 setFormData({ ...formData, last_name: onlyLetters });
                                 checkError();
                             }}    
-                            //onChange = {(e) => setFormData({ ...formData, last_name: e.target.value})}
                             maxLength="50"
                             minLength="1"
-                            pattern= "[^0-9]+" // \w* stands for all word characters
+                            pattern="[^0-9]+" // \w* stands for all word characters
                         />
                     </div>
                 </div>
-                <div /*row*/ >
-                    <div /*input Group*/>
-                        <label /*label header*/ > EMAIL </label>
+                <div className="form-row">
+                    <div className="input-group">
+                        <label className="label-header"> EMAIL </label>
                         <input 
                             type="email"
-                            //clasName = ""
-                            placeholder = "Email"
+                            className="form-input"
+                            placeholder="Email"
                             value={formData.email}
-                            onChange = {(e) => {
+                            onChange={(e) => {
                                 setFormData({ ...formData, email: e.target.value});
                                 checkError();
                             }}
                         />
                     </div>
                 </div>
-                <div /*row*/ >
-                    <div /*input Group*/>
-                        <label /*label header*/ > PHONE NUMBER </label>
+                <div className="form-row">
+                    <div className="input-group">
+                        <label className="label-header"> PHONE NUMBER </label>
                         <input 
                             type="tel"
-                            //clasName = ""
-                            placeholder = "Phone Number"
+                            className="form-input"
+                            placeholder="Phone Number"
                             value={formData.phone_number}
-                            onChange = {(e) => {
+                            onChange={(e) => {
                                 const onlyDigits = e.target.value.replace(/\D/g, ""); // Remove non-digits
                                 setFormData({ ...formData, phone_number: onlyDigits});
                                 checkError();
@@ -259,57 +257,58 @@ function Register() {
                         />
                     </div>
                 </div>
-                <div /*row*/ >
-                    <div /*input Group*/>
-                        <label /*label header*/ > BIRTHDAY </label>
+                <div className="form-row">
+                    <div className="input-group">
+                        <label className="label-header"> BIRTHDAY </label>
                         <input 
                             type="date"
-                            //clasName = ""
-                            placeholder = "Birthday"
+                            className="form-input"
+                            placeholder="Birthday"
                             value={formData.birthday}
-                            onChange = {(e) => {
+                            onChange={(e) => {
                                 setFormData({ ...formData, birthday: e.target.value});
                                 checkError();
                             }}
-                            max = {new Date().toISOString().split('T')[0]}
+                            max={new Date().toISOString().split('T')[0]}
                         />
                     </div>
                 </div>
-                <div /*row*/ >
-                    <div /*input Group*/>
-                        <label /*label header*/ > STREET ADDRESS </label>
+                <div className="form-row">
+                    <div className="input-group">
+                        <label className="label-header"> STREET ADDRESS </label>
                         <input 
                             type="text"
-                            //clasName = ""
-                            placeholder = "Street Address"
+                            className="form-input"
+                            placeholder="Street Address"
                             value={formData.street}
-                            onChange = {(e) => {
-                                setFormData({ ...formData, street : e.target.value})
+                            onChange={(e) => {
+                                setFormData({ ...formData, street: e.target.value})
                                 checkError();
                             }}
                         />
                     </div>
                 </div>
-                <div /*row*/ >
-                    <div /*input Group*/>
-                        <label /*label header*/ > CITY </label>
+                <div className="form-row">
+                    <div className="input-group">
+                        <label className="label-header"> CITY </label>
                         <input 
                             type="text"
-                            //clasName = ""
-                            placeholder = "City"
+                            className="form-input"
+                            placeholder="City"
                             value={formData.city}
-                            onChange = {(e) => {
-                                setFormData({ ...formData, city : e.target.value});
+                            onChange={(e) => {
+                                setFormData({ ...formData, city: e.target.value});
                                 checkError();
                             }}
                         />
                     </div>
                 </div>
-                <div /*row*/ >
-                    <div /*input Group*/>
-                        <label /*label header*/ > STATE </label>
+                <div className="form-row">
+                    <div className="input-group">
+                        <label className="label-header"> STATE </label>
                         <select 
-                            value = {formData.state}
+                            className="form-input"
+                            value={formData.state}
                             onChange={(e) => {
                                 setFormData({ ...formData, state: e.target.value });
                                 checkError();
@@ -368,16 +367,16 @@ function Register() {
                             <option value="WY">Wyoming</option>
                         </select>
                     </div>
-                    <div /*input Group*/>
-                        <label /*label header*/ > ZIPCODE </label>
+                    <div className="input-group">
+                        <label className="label-header"> ZIPCODE </label>
                         <input 
                             type="text"
-                            //clasName = ""
-                            placeholder = "Zipcode"
+                            className="form-input"
+                            placeholder="Zipcode"
                             value={formData.zip}
-                            onChange = {(e) => {
+                            onChange={(e) => {
                                 const onlyDigits = e.target.value.replace(/\D/g, ""); // Remove non-digits
-                                setFormData({ ...formData, zip : onlyDigits});
+                                setFormData({ ...formData, zip: onlyDigits});
                                 checkError();
                             }}
                             maxLength="5"
@@ -386,16 +385,16 @@ function Register() {
                         />
                     </div>
                 </div>
-                <div /*row*/ >
-                    <div /*input Group*/>
-                        <label /*label header*/ > PASSWORD </label>
+                <div className="form-row">
+                    <div className="input-group">
+                        <label className="label-header"> PASSWORD </label>
                         <input 
-                            type="text"
-                            //clasName = ""
-                            placeholder = "Password"
+                            type="password"
+                            className="form-input"
+                            placeholder="Password"
                             value={formData.password}
-                            onChange = {(e) => {
-                                setFormData({ ...formData, password : e.target.value});
+                            onChange={(e) => {
+                                setFormData({ ...formData, password: e.target.value});
                                 checkError();
                             }}
                             maxLength={30}
@@ -403,35 +402,37 @@ function Register() {
                         />
                     </div>
                 </div>
-                <div /*row*/ >
-                    <div /*input Group*/>
-                        <label /*label header*/ > CONFIRM PASSWORD </label>
+                <div className="form-row">
+                    <div className="input-group">
+                        <label className="label-header"> CONFIRM PASSWORD </label>
                         <input 
-                            type="text"
-                            //clasName = ""
-                            placeholder = "Confirm Password"
+                            type="password"
+                            className="form-input"
+                            placeholder="Confirm Password"
                             value={confirm_password}
-                            onChange = {(e) => {
+                            onChange={(e) => {
                                 setConfirm_Password(e.target.value);
                                 checkError();
                             }}
-        
                             maxLength={30}
                             minLength={8}
                         />
                     </div>
                 </div>
                 {error !== "" ? (
-                    <p /*classname*/>{error}</p>
+                    <p className="error-message">{error}</p>
                 ) : (
                     <button
                         type="submit"
-                        /*classname*/
+                        className="register-button"
                     >
-                    create an account
+                    Create an Account
                     </button>
-                ) }
+                )}
             </form>
+            <div className="login-link">
+                Already have an account? <a href="/login">Log in</a>
+            </div>
         </div>
         </div>
         </>

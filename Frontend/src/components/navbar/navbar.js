@@ -1,6 +1,3 @@
-
-// Frontend/src/components/navbar/navbar.js
-
 import React, { useContext, memo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
@@ -53,9 +50,6 @@ const NavBar = memo(function NavBar() {
         <Link to="/" className="NavLink1">Home</Link>
         <Link to="/activities" className="NavLink1">Activities</Link>
         <Link to="/dining" className="NavLink1">Dining</Link>
-        <Link to="/shop" className="NavLink1">Shop</Link>
-        <Link to="/tickets" className="NavLink1">Tickets</Link>
-        <Link to="/problems" className="NavLink1">Problems</Link>
         
         {!isLoggedIn ? (
           <>
@@ -67,6 +61,9 @@ const NavBar = memo(function NavBar() {
           // Links for logged-in customers
           userType === 'Customer' && (
             <>
+              <Link to="/shop" className="NavLink1">Shop</Link>
+              <Link to="/tickets" className="NavLink1">Tickets</Link>
+              <Link to="/problems" className="NavLink1">Problems</Link>
               <Link to="/account" className="NavLink1">My Account</Link>
               <Link 
                 to="/" 

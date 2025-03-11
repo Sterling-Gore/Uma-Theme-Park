@@ -4,7 +4,6 @@ import React, { useContext } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import Home from "./pages/Home/Home.js";
-import Activities from "./pages/activities.js";
 import PageNotFound from "./pages/_PageNotFound.js";
 import Dining from "./pages/dining.js";
 import Problems from "./pages/Problems/problems.js";
@@ -18,6 +17,7 @@ import HandleLogin from "./components/authentication/HandleLogin.js";
 import EmployeeLogin from "./components/employeeAuth/EmployeeLogin.js";
 import AuthContext from "./context/AuthContext";
 import ProtectedRoute from "./components/authentication/ProtectedRoute.js";
+import Activities from "./pages/activities/activities.js";
 
 
 function App() {
