@@ -10,6 +10,7 @@ import Dining from "./pages/dining.js";
 import Problems from "./pages/Problems/problems.js";
 import Tickets from "./pages/Tickets/tickets.js";
 import Shop from "./pages/Shop/shop.js";
+import Shoppingcart from "./pages/ShoppingCart/shoppingcart.js";
 import Register from "./components/authentication/register.js";
 import ManagerPortal from "./pages/Manager/ManagerPortal.js";
 import EmployeePortal from "./pages/Employee/EmployeePortal.js";
@@ -36,6 +37,7 @@ function App() {
       <Route path="/activities" element={<Activities />} />
       <Route path="/dining" element={<Dining />} />
       <Route path="/shop" element={<Shop />} />
+      <Route path="/shopping-cart" element={<Shoppingcart />} />
       <Route path="/tickets" element={<Tickets />} />
       <Route path="/problems" element={<Problems />} />
       
