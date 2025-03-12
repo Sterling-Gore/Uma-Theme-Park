@@ -86,6 +86,7 @@ export const AuthProvider = ({ children }) => {
   // Login function
   const login = (type, id) => {
     localStorage.setItem("cart-tickets", JSON.stringify([]));
+    localStorage.setItem("cart-merchandise", JSON.stringify([]));
     console.log("login called with type:", type);
     setIsLoggedIn(true);
     setUserType(type);
@@ -95,6 +96,7 @@ export const AuthProvider = ({ children }) => {
   // Logout function
   const logout = () => {
     localStorage.setItem("cart-tickets", JSON.stringify([]));
+    localStorage.setItem("cart-merchandise", JSON.stringify([]));
     console.log("logout called");
     setIsLoggedIn(false);
     setUserType(null);
