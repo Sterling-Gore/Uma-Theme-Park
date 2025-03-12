@@ -13,13 +13,13 @@ function Account() {
         state: '',
         zipcode: ''
     });
-    
+
     const [passwordData, setPasswordData] = useState({
         current_password: '',
         new_password: '',
         confirm_password: ''
     });
-    
+
     const [isEditing, setIsEditing] = useState(false);
     const [isChangingPassword, setIsChangingPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -39,19 +39,19 @@ function Account() {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ userID: localStorage.getItem('userID')})
+                    body: JSON.stringify({ userID: localStorage.getItem('userID') })
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Failed to fetch customer info');
                 }
 
                 const data = await response.json();
-                
+
                 setFormData({
                     first_name: data.first_name || '',
                     last_name: data.last_name || '',
-                    date_of_birth: data.date_of_birth.slice(0,10) || '',
+                    date_of_birth: data.date_of_birth.slice(0, 10) || '',
                     email: data.email || '',
                     phone_number: data.phone_number || '',
                     street_address: data.street_address || '',
@@ -67,7 +67,7 @@ function Account() {
                 setIsLoading(false);
             }
         };
-        
+
         fetchUser();
     }, []);
 
@@ -78,7 +78,7 @@ function Account() {
             [name]: value
         }));
     };
-    
+
     const handlePasswordChange = (e) => {
         const { name, value } = e.target;
         setPasswordData(prevData => ({
@@ -96,22 +96,22 @@ function Account() {
         });
         setPasswordError(null);
     };
-    
+
     const handlePasswordSubmit = async (e) => {
         e.preventDefault();
-        
+
         // Validate passwords match
         if (passwordData.new_password !== passwordData.confirm_password) {
             setPasswordError("New passwords don't match");
             return;
         }
-        
+
         // Validate password strength
         if (passwordData.new_password.length < 8) {
             setPasswordError("Password must be at least 8 characters long");
             return;
         }
-        
+
         try {
             setIsLoading(true);
             const response = await fetch('http://localhost:4000/updatePassword', {
@@ -134,12 +134,12 @@ function Account() {
 
             setSuccessMessage('Password updated successfully!');
             setIsChangingPassword(false);
-            
+
             // Hide success message after 3 seconds
             setTimeout(() => {
                 setSuccessMessage('');
             }, 3000);
-            
+
         } catch (err) {
             console.error('Error updating password:', err);
             setPasswordError(err.message || 'Failed to update password. Please try again.');
@@ -150,7 +150,7 @@ function Account() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         try {
             setIsLoading(true);
             const response = await fetch('http://localhost:4000/updateAccountInfo', {
@@ -171,12 +171,12 @@ function Account() {
 
             setSuccessMessage('Account information updated successfully!');
             setIsEditing(false);
-            
+
             // Hide success message after 3 seconds
             setTimeout(() => {
                 setSuccessMessage('');
             }, 3000);
-            
+
         } catch (err) {
             console.error('Error updating account info:', err);
             setError('Failed to update account information. Please try again.');
@@ -202,22 +202,22 @@ function Account() {
     return (
         <div className="account-container">
             <h1 className="account-title">My Account</h1>
-            
+
             {error && <div className="error-message">{error}</div>}
             {successMessage && <div className="success-message">{successMessage}</div>}
-            
+
             <form className="account-form" onSubmit={handleSubmit}>
                 <div className="form-header">
                     <h2>Personal Information</h2>
-                    <button 
-                        type="button" 
+                    <button
+                        type="button"
                         className="toggle-edit-btn"
                         onClick={toggleEditMode}
                     >
                         {isEditing ? 'Cancel' : 'Edit'}
                     </button>
                 </div>
-                
+
                 <div className="form-row">
                     <div className="form-group">
                         <label htmlFor="first_name">First Name</label>
@@ -231,7 +231,7 @@ function Account() {
                             required
                         />
                     </div>
-                    
+
                     <div className="form-group">
                         <label htmlFor="last_name">Last Name</label>
                         <input
@@ -245,7 +245,7 @@ function Account() {
                         />
                     </div>
                 </div>
-                
+
                 <div className="form-row">
                     <div className="form-group">
                         <label htmlFor="date_of_birth">Date of Birth</label>
@@ -258,7 +258,7 @@ function Account() {
                             disabled={!isEditing}
                         />
                     </div>
-                    
+
                     <div className="form-group">
                         <label htmlFor="email">Email</label>
                         <input
@@ -272,7 +272,7 @@ function Account() {
                         />
                     </div>
                 </div>
-                
+
                 <div className="form-row">
                     <div className="form-group">
                         <label htmlFor="phone_number">Phone Number</label>
@@ -286,9 +286,9 @@ function Account() {
                         />
                     </div>
                 </div>
-                
+
                 <h2>Address Information</h2>
-                
+
                 <div className="form-group full-width">
                     <label htmlFor="street_address">Street Address</label>
                     <input
@@ -300,7 +300,7 @@ function Account() {
                         disabled={!isEditing}
                     />
                 </div>
-                
+
                 <div className="form-row">
                     <div className="form-group">
                         <label htmlFor="city">City</label>
@@ -313,7 +313,7 @@ function Account() {
                             disabled={!isEditing}
                         />
                     </div>
-                    
+
                     <div className="form-group">
                         <label htmlFor="state">State</label>
                         <input
@@ -325,7 +325,7 @@ function Account() {
                             disabled={!isEditing}
                         />
                     </div>
-                    
+
                     <div className="form-group">
                         <label htmlFor="zipcode">Zip Code</label>
                         <input
@@ -338,7 +338,7 @@ function Account() {
                         />
                     </div>
                 </div>
-                
+
                 {isEditing && (
                     <div className="form-actions">
                         <button type="submit" className="save-btn" disabled={isLoading}>
@@ -347,24 +347,24 @@ function Account() {
                     </div>
                 )}
             </form>
-            
+
             {/* Password Change Section */}
             <div className="password-section">
                 <div className="form-header">
                     <h2>Password</h2>
-                    <button 
-                        type="button" 
+                    <button
+                        type="button"
                         className="toggle-edit-btn"
                         onClick={togglePasswordChange}
                     >
                         {isChangingPassword ? 'Cancel' : 'Change Password'}
                     </button>
                 </div>
-                
+
                 {isChangingPassword && (
                     <form className="password-form" onSubmit={handlePasswordSubmit}>
                         {passwordError && <div className="error-message">{passwordError}</div>}
-                        
+
                         <div className="form-group">
                             <label htmlFor="current_password">Current Password</label>
                             <input
@@ -376,7 +376,7 @@ function Account() {
                                 required
                             />
                         </div>
-                        
+
                         <div className="form-group">
                             <label htmlFor="new_password">New Password</label>
                             <input
@@ -389,7 +389,7 @@ function Account() {
                                 minLength="8"
                             />
                         </div>
-                        
+
                         <div className="form-group">
                             <label htmlFor="confirm_password">Confirm New Password</label>
                             <input
@@ -401,11 +401,11 @@ function Account() {
                                 required
                             />
                         </div>
-                        
+
                         <div className="password-requirements">
                             <p>Password must be at least 8 characters long</p>
                         </div>
-                        
+
                         <div className="form-actions">
                             <button type="submit" className="save-btn" disabled={isLoading}>
                                 {isLoading ? 'Updating...' : 'Update Password'}
