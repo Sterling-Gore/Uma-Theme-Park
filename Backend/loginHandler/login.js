@@ -62,8 +62,8 @@ async function login(req, res) {
                 })
             });
 
-
-            res.end(JSON.stringify({ user: "Customer", id: customer.customer_id}));
+            const customerFullName = `${customer.first_name} ${customer.last_name}` 
+            res.end(JSON.stringify({ user: "Customer", id: customer.customer_id, fullName: customerFullName}));
  
         } catch (err) {
             console.error("Error processing login:", err);

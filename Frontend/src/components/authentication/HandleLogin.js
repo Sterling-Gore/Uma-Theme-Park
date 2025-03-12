@@ -40,9 +40,9 @@ function HandleLogin() {
                 
                 // Use the login function from AuthContext - it will handle localStorage
                 if (data.user) {
-                    login(data.user, data.id);
+                    login(data.user, data.id, data.fullName);
                 } else {
-                    login('customer'); // Default to customer if type not specified
+                    login('Customer'); // Default to customer if type not specified
                 }
                 
                 alert('Login Successful');

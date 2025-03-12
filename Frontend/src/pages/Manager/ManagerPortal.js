@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from './components/Sidebar';
 import ViewEmployees from './components/ViewEmployees';
 import EmployeeForm from './components/EmployeeForm';
 import Reports from './components/Reports';
 import './ManagerPortal.css';
+import AuthContext from '../../context/AuthContext';
 
 function ManagerPortal() {
   const [activeTab, setActiveTab] = useState('view');
   const [employees, setEmployees] = useState([]);
+  const { logout } = useContext(AuthContext)
   
   const [formData, setFormData] = useState({
     first_name: '',
@@ -247,9 +249,7 @@ function ManagerPortal() {
   
   const handleLogout = () => {
     // Clear localStorage first
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("userType");
-    
+    logout();
     // Call API
     fetch('http://localhost:4000/logout', {
       method: 'GET',
@@ -297,7 +297,7 @@ function ManagerPortal() {
       <div className="content-area">
         <div className="top-bar">
           <div className="user-info">
-            <span>Logged in as: Manager</span>
+            <span>Logged in as: {localStorage.getItem('fullName')}</span>
           </div>
           <button className="logout-btn" onClick={handleLogout}>
             <span className="logout-icon">🚪</span> Logout
