@@ -2,10 +2,9 @@
 
 import React, { useContext } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-
 import Home from "./pages/Home/Home.js";
 import PageNotFound from "./pages/_PageNotFound.js";
-import Dining from "./pages/dining.js";
+import Dining from "./pages/dining/dining.js";
 import Problems from "./pages/Problems/problems.js";
 import Tickets from "./pages/Tickets/tickets.js";
 import Shop from "./pages/Shop/shop.js";
@@ -18,6 +17,8 @@ import EmployeeLogin from "./components/employeeAuth/EmployeeLogin.js";
 import AuthContext from "./context/AuthContext";
 import ProtectedRoute from "./components/authentication/ProtectedRoute.js";
 import Activities from "./pages/activities/activities.js";
+import Account from "./pages/account/Account.js";
+
 
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
       <Route path="/shopping-cart" element={<Shoppingcart />} />
       <Route path="/tickets" element={<Tickets />} />
       <Route path="/problems" element={<Problems />} />
+      <Route path="/account" element={<Account />} />
       
       {/* Auth routes with redirects if already logged in */}
       <Route path="/register" element={

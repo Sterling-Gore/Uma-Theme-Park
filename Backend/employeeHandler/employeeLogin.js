@@ -4,15 +4,14 @@ const pool = require('../database');
 const bcrypt = require('bcrypt')
 
 async function authenticateUser (inputPassword, storedPassword) {
-    const decryptedPass = await bcrypt.compare(inputPassword, storedPassword);
-    return inputPassword === storedPassword;
+    return await bcrypt.compare(inputPassword, storedPassword);
 }
 
 function createToken(username) {
     return jwt.sign({ username }, process.env.SECRET_KEY, { expiresIn: '1h' });
 }
 
-async function getCustomerByEmail(email) {
+async function getEmployeeByEmail(email) {
     try {
         const sqlQuery = "SELECT * FROM theme_park.employee WHERE email = ?";
         const [rows] = await pool.execute(sqlQuery, [email]);
@@ -33,16 +32,15 @@ async function employeeLogin(req, res) {
     req.on('end', async () => {
         try {
             const { username, password } = JSON.parse(body);
-            const customer = await getCustomerByEmail(username);
-            const customerUser = customer.role
+            const employee = await getEmployeeByEmail(username);
 
-            if (!customer) {
+            if (!employee) {
                 res.writeHead(401, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ message: "Login failed: Email not found" }));
                 return;
             }
 
-            if (!authenticateUser(password, customer.password)) {
+            if (! await authenticateUser(password, employee.password)) {
                 res.writeHead(401, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ message: "Login failed: Incorrect password" }));
                 return;
@@ -61,8 +59,8 @@ async function employeeLogin(req, res) {
                 })
             });
 
-
-            res.end(JSON.stringify({ user: customer.role, id: customer.employee_id }));
+            const employeeFullName = `${employee.first_name} ${employee.last_name}`
+            res.end(JSON.stringify({ user: employee.role, id: employee.employee_id, fullName: employeeFullName }));
 
         } catch (err) {
             console.error("Error processing login:", err);

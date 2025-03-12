@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [userType, setUserType] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [userID, setUserID] = useState(null);
+  const [fullName, setFullName] = useState(null)
   
   // Use useRef to keep track of if it's the initial mount
   const isInitialMount = useRef(true);
@@ -22,12 +23,14 @@ export const AuthProvider = ({ children }) => {
         const storedLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
         const storedUserType = localStorage.getItem('userType');
         const storedUserID = localStorage.getItem('userID');
+        const storedFullName = localStorage.getItem('fullName');
         // Set initial state without triggering useEffect dependencies
         skipLocalStorageUpdate.current = true;
         setIsLoggedIn(storedLoggedIn);
         setUserType(storedUserType || null);
         setUserID(storedUserID || null);
-        
+        setFullName(storedFullName || null);
+
         // If stored state indicates logged in, verify with server
         if (storedLoggedIn) {
           try {
@@ -47,6 +50,7 @@ export const AuthProvider = ({ children }) => {
               setUserType(null);
               localStorage.removeItem('isLoggedIn');
               localStorage.removeItem('userType');
+              localStorage.removeItem('fullName');
             }
           } catch (error) {
             console.error("Auth verification failed:", error);
@@ -74,33 +78,37 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('userType', userType || '');
       localStorage.setItem('userID', userID || '');
+      localStorage.setItem('fullName', fullName || '');
       console.log("AuthContext updated:", isLoggedIn, userType, userID);
     } else {
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('userType');
       localStorage.removeItem('userID');
+      localStorage.removeItem('fullName');
       console.log("AuthContext cleared");
     }
-  }, [isLoggedIn, userType, userID]);
+  }, [isLoggedIn, userType, userID, fullName]);
 
   // Login function
-  const login = (type, id) => {
+  const login = (type, id, fullName) => {
     localStorage.setItem("cart-tickets", JSON.stringify([]));
     localStorage.setItem("cart-merchandise", JSON.stringify([]));
     console.log("login called with type:", type);
     setIsLoggedIn(true);
     setUserType(type);
     setUserID(id);
+    setFullName(fullName);
   };
 
   // Logout function
   const logout = () => {
-    localStorage.setItem("cart-tickets", JSON.stringify([]));
-    localStorage.setItem("cart-merchandise", JSON.stringify([]));
+    localStorage.removeItem("cart-tickets", JSON.stringify([]));
+    localStorage.removeItem("cart-merchandise", JSON.stringify([]));
     console.log("logout called");
     setIsLoggedIn(false);
     setUserType(null);
     setUserID(null);
+    setFullName(null);
   };
 
   return (
