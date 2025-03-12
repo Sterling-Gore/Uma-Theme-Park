@@ -5,7 +5,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import Home from "./pages/Home/Home.js";
 import PageNotFound from "./pages/_PageNotFound.js";
-import Dining from "./pages/dining.js";
+import Dining from "./pages/dining/dining.js";
 import Problems from "./pages/Problems/problems.js";
 import Tickets from "./pages/Tickets/tickets.js";
 import Shop from "./pages/Shop/shop.js";
