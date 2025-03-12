@@ -148,7 +148,7 @@ function Register() {
     
         useEffect(() => {
             checkError();
-        })
+        }, [formData, confirm_password])
 
 
     const handleSubmit = async (event) => {
@@ -198,7 +198,7 @@ function Register() {
                             onChange={(e) => {
                                 const onlyLetters = e.target.value.replace(/[^a-zA-Z]/g, ""); // Remove non-alphabet characters
                                 setFormData({ ...formData, first_name: onlyLetters });
-                                checkError();
+                                //checkError();
                               }}                            
                             maxLength="50"
                             minLength="1"
@@ -215,7 +215,7 @@ function Register() {
                             onChange={(e) => {
                                 const onlyLetters = e.target.value.replace(/[^a-zA-Z]/g, ""); // Remove non-alphabet characters
                                 setFormData({ ...formData, last_name: onlyLetters });
-                                checkError();
+                                //checkError();
                             }}    
                             maxLength="50"
                             minLength="1"
@@ -233,7 +233,7 @@ function Register() {
                             value={formData.email}
                             onChange={(e) => {
                                 setFormData({ ...formData, email: e.target.value});
-                                checkError();
+                                //checkError();
                             }}
                         />
                     </div>
@@ -249,7 +249,7 @@ function Register() {
                             onChange={(e) => {
                                 const onlyDigits = e.target.value.replace(/\D/g, ""); // Remove non-digits
                                 setFormData({ ...formData, phone_number: onlyDigits});
-                                checkError();
+                                //checkError();
                             }}
                             maxLength={10}
                             minLength={10}
@@ -267,7 +267,7 @@ function Register() {
                             value={formData.birthday}
                             onChange={(e) => {
                                 setFormData({ ...formData, birthday: e.target.value});
-                                checkError();
+                                //checkError();
                             }}
                             max={new Date().toISOString().split('T')[0]}
                         />
@@ -283,7 +283,7 @@ function Register() {
                             value={formData.street}
                             onChange={(e) => {
                                 setFormData({ ...formData, street: e.target.value})
-                                checkError();
+                                //checkError();
                             }}
                         />
                     </div>
@@ -298,7 +298,7 @@ function Register() {
                             value={formData.city}
                             onChange={(e) => {
                                 setFormData({ ...formData, city: e.target.value});
-                                checkError();
+                                //checkError();
                             }}
                         />
                     </div>
@@ -311,7 +311,7 @@ function Register() {
                             value={formData.state}
                             onChange={(e) => {
                                 setFormData({ ...formData, state: e.target.value });
-                                checkError();
+                                //checkError();
                             }}
                         >
                             <option value="">Select State</option>
@@ -377,7 +377,7 @@ function Register() {
                             onChange={(e) => {
                                 const onlyDigits = e.target.value.replace(/\D/g, ""); // Remove non-digits
                                 setFormData({ ...formData, zip: onlyDigits});
-                                checkError();
+                                //checkError();
                             }}
                             maxLength="5"
                             minLength="5"
@@ -395,7 +395,7 @@ function Register() {
                             value={formData.password}
                             onChange={(e) => {
                                 setFormData({ ...formData, password: e.target.value});
-                                checkError();
+                                //checkError();
                             }}
                             maxLength={30}
                             minLength={8}
@@ -412,7 +412,7 @@ function Register() {
                             value={confirm_password}
                             onChange={(e) => {
                                 setConfirm_Password(e.target.value);
-                                checkError();
+                                //checkError();
                             }}
                             maxLength={30}
                             minLength={8}
