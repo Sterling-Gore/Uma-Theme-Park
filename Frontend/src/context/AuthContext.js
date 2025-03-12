@@ -87,7 +87,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem('fullName');
       console.log("AuthContext cleared");
     }
-  }, [isLoggedIn, userType, userID]);
+  }, [isLoggedIn, userType, userID, fullName]);
 
   // Login function
   const login = (type, id, fullName) => {
