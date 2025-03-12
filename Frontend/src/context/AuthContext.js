@@ -95,8 +95,8 @@ export const AuthProvider = ({ children }) => {
 
   // Logout function
   const logout = () => {
-    localStorage.setItem("cart-tickets", JSON.stringify([]));
-    localStorage.setItem("cart-merchandise", JSON.stringify([]));
+    localStorage.removeItem("cart-tickets", JSON.stringify([]));
+    localStorage.removeItem("cart-merchandise", JSON.stringify([]));
     console.log("logout called");
     setIsLoggedIn(false);
     setUserType(null);
