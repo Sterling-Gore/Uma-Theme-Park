@@ -14,22 +14,32 @@ function Account() {
         zipcode: ''
     });
     
+    const [passwordData, setPasswordData] = useState({
+        current_password: '',
+        new_password: '',
+        confirm_password: ''
+    });
+    
     const [isEditing, setIsEditing] = useState(false);
+    const [isChangingPassword, setIsChangingPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [passwordError, setPasswordError] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
         const fetchUser = async () => {
             setIsLoading(true);
             try {
-                const response = await fetch('http://localhost:4000/getAccountInfo', {
+                // Use URL parameters for GET request instead of body
+                const userID = localStorage.getItem('userID');
+                const response = await fetch(`http://localhost:4000/getAccountInfo`, {
                     method: 'POST',
                     mode: 'cors',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ userID: localStorage.getItem('userID') })
+                    body: JSON.stringify({ userID: localStorage.getItem('userID')})
                 });
                 
                 if (!response.ok) {
@@ -37,7 +47,7 @@ function Account() {
                 }
 
                 const data = await response.json();
-            
+                
                 setFormData({
                     first_name: data.first_name || '',
                     last_name: data.last_name || '',
@@ -68,6 +78,75 @@ function Account() {
             [name]: value
         }));
     };
+    
+    const handlePasswordChange = (e) => {
+        const { name, value } = e.target;
+        setPasswordData(prevData => ({
+            ...prevData,
+            [name]: value
+        }));
+    };
+
+    const togglePasswordChange = () => {
+        setIsChangingPassword(!isChangingPassword);
+        setPasswordData({
+            current_password: '',
+            new_password: '',
+            confirm_password: ''
+        });
+        setPasswordError(null);
+    };
+    
+    const handlePasswordSubmit = async (e) => {
+        e.preventDefault();
+        
+        // Validate passwords match
+        if (passwordData.new_password !== passwordData.confirm_password) {
+            setPasswordError("New passwords don't match");
+            return;
+        }
+        
+        // Validate password strength
+        if (passwordData.new_password.length < 8) {
+            setPasswordError("Password must be at least 8 characters long");
+            return;
+        }
+        
+        try {
+            setIsLoading(true);
+            const response = await fetch('http://localhost:4000/updatePassword', {
+                method: 'PUT',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userID: localStorage.getItem('userID'),
+                    current_password: passwordData.current_password,
+                    new_password: passwordData.new_password
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to update password');
+            }
+
+            setSuccessMessage('Password updated successfully!');
+            setIsChangingPassword(false);
+            
+            // Hide success message after 3 seconds
+            setTimeout(() => {
+                setSuccessMessage('');
+            }, 3000);
+            
+        } catch (err) {
+            console.error('Error updating password:', err);
+            setPasswordError(err.message || 'Failed to update password. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -93,6 +172,7 @@ function Account() {
             setSuccessMessage('Account information updated successfully!');
             setIsEditing(false);
             
+            // Hide success message after 3 seconds
             setTimeout(() => {
                 setSuccessMessage('');
             }, 3000);
@@ -109,6 +189,10 @@ function Account() {
         setIsEditing(!isEditing);
         setError(null);
         setSuccessMessage('');
+        // Close password form if open
+        if (isChangingPassword) {
+            setIsChangingPassword(false);
+        }
     };
 
     if (isLoading && formData.first_name === '') {
@@ -263,6 +347,73 @@ function Account() {
                     </div>
                 )}
             </form>
+            
+            {/* Password Change Section */}
+            <div className="password-section">
+                <div className="form-header">
+                    <h2>Password</h2>
+                    <button 
+                        type="button" 
+                        className="toggle-edit-btn"
+                        onClick={togglePasswordChange}
+                    >
+                        {isChangingPassword ? 'Cancel' : 'Change Password'}
+                    </button>
+                </div>
+                
+                {isChangingPassword && (
+                    <form className="password-form" onSubmit={handlePasswordSubmit}>
+                        {passwordError && <div className="error-message">{passwordError}</div>}
+                        
+                        <div className="form-group">
+                            <label htmlFor="current_password">Current Password</label>
+                            <input
+                                type="password"
+                                id="current_password"
+                                name="current_password"
+                                value={passwordData.current_password}
+                                onChange={handlePasswordChange}
+                                required
+                            />
+                        </div>
+                        
+                        <div className="form-group">
+                            <label htmlFor="new_password">New Password</label>
+                            <input
+                                type="password"
+                                id="new_password"
+                                name="new_password"
+                                value={passwordData.new_password}
+                                onChange={handlePasswordChange}
+                                required
+                                minLength="8"
+                            />
+                        </div>
+                        
+                        <div className="form-group">
+                            <label htmlFor="confirm_password">Confirm New Password</label>
+                            <input
+                                type="password"
+                                id="confirm_password"
+                                name="confirm_password"
+                                value={passwordData.confirm_password}
+                                onChange={handlePasswordChange}
+                                required
+                            />
+                        </div>
+                        
+                        <div className="password-requirements">
+                            <p>Password must be at least 8 characters long</p>
+                        </div>
+                        
+                        <div className="form-actions">
+                            <button type="submit" className="save-btn" disabled={isLoading}>
+                                {isLoading ? 'Updating...' : 'Update Password'}
+                            </button>
+                        </div>
+                    </form>
+                )}
+            </div>
         </div>
     );
 }

@@ -16,6 +16,7 @@ const { deleteEmployee } = require('./managerPortal/deleteEmployee');
 const { updateEmployee } = require('./managerPortal/updateEmployee');
 const { submitFeedback } = require('./feedback/submitFeedback');
 const { getAccountInfo } = require('./accountHandler/getAccountInfo');
+const { UpdatePassword } = require('./accountHandler/updatePassword');
 
 
 const PORT = process.env.PORT || 7000;
@@ -72,10 +73,13 @@ const server = http.createServer(async (req, res) => {
         updateEmployee(req, res)
     }
     else if (req.url === '/submitFeedback' && req.method === 'POST'){
-        submitFeedback(req, res);
+        submitFeedback(req, res)
     }
     else if (req. url === '/getAccountInfo' && req.method === 'POST'){
         getAccountInfo(req, res)
+    }
+    else if(req.url === '/updatePassword' && req.method === 'PUT'){
+        UpdatePassword(req, res)
     }
     else if( req.url === '/testDatabaseConnection' && req.method === 'GET'){
         pool.getConnection((err, connection) => {
