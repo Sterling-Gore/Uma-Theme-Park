@@ -9,6 +9,7 @@ function Shoppingcart()
     const { isLoggedIn, userType, isLoading } = useContext(AuthContext);
     const alertShown = useRef(false);
     const [cartItemsTickets, setCartItemsTickets] = useState([]);
+    const [cartItemsMerchs, setCartItemsMerchs] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
 
     const [step, setStep] = useState(1);
@@ -46,10 +47,6 @@ function Shoppingcart()
 
 
     useEffect(() => {
-        // Retrieve the cart data from localStorage
-        //const storedCart = JSON.parse(localStorage.getItem("cart-tickets")) || [];
-        //setCartItemsTickets(storedCart);
-
         initializeCart();
         
     }, []);
@@ -57,6 +54,7 @@ function Shoppingcart()
     useEffect(() => {
         checkError();
     }, [card])
+
 
     //useEffect(() => {CalculateTotalPrice();}, []);
  
@@ -67,19 +65,24 @@ function Shoppingcart()
     } 
     
     const initializeCart = () => {
-        const storedCart = JSON.parse(localStorage.getItem("cart-tickets")) || [];
-        const storedCartWithID = storedCart.map((item, index) => ({
+        const storedCartTickets = JSON.parse(localStorage.getItem("cart-tickets")) || [];
+        //this is used to add an id to each ticket in the shopping cart
+        const storedCartTicketsWithID = storedCartTickets.map((item, index) => ({
             ...item,
             id:  `${index}`,
         }));
 
-        setCartItemsTickets(storedCartWithID);
-        CalculateTotalPrice(storedCartWithID);
+        const storedCartMerchs = JSON.parse(localStorage.getItem("cart-merchandise")) || [];
+        
+
+        setCartItemsTickets(storedCartTicketsWithID);
+        setCartItemsMerchs(storedCartMerchs);
+        CalculateTotalPrice(storedCartTicketsWithID, storedCartMerchs);
     };
 
-    const CalculateTotalPrice = (storedCart = null) => {
+    const CalculateTotalPrice = (storedCartTickets = null, storedCartMerchs = null) => {
         let accumulatedPrice = 0;
-        if(storedCart === null)
+        if(storedCartTickets === null)
         {
             cartItemsTickets.map((item) => (
                 accumulatedPrice += item.price
@@ -87,8 +90,21 @@ function Shoppingcart()
         }
         else
         {
-            storedCart.map((item) => (
+            storedCartTickets.map((item) => (
                 accumulatedPrice += item.price
+            ));
+        }
+
+        if(storedCartMerchs === null)
+        {
+            cartItemsMerchs.map((item) => (
+                accumulatedPrice += (item.price * item.in_shopping_cart)
+            ));
+        }
+        else
+        {
+            storedCartMerchs.map((item) => (
+                accumulatedPrice += (item.price * item.in_shopping_cart)
             ));
         }
         
@@ -101,8 +117,39 @@ function Shoppingcart()
         setCartItemsTickets(updatedCart);
 
         localStorage.setItem("cart-tickets", JSON.stringify(updatedCart));
-        CalculateTotalPrice(updatedCart);
+        CalculateTotalPrice(updatedCart, cartItemsMerchs);
         console.log(indexID);
+    };
+
+    const DeleteMerhandise = (indexID) => {
+        const updatedCart = cartItemsMerchs.filter(item => item.id !== indexID);
+        setCartItemsMerchs(updatedCart);
+
+        localStorage.setItem("cart-merchandise", JSON.stringify(updatedCart));
+        CalculateTotalPrice(cartItemsTickets, updatedCart);
+        console.log(indexID);
+    };
+
+    const AddOneMerchandise = (indexID) => {
+        const updatedCartItems = cartItemsMerchs.map((item) =>
+            item.id === indexID && item.stock > 0
+                ? { ...item, stock: item.stock - 1, in_shopping_cart: Number(item.in_shopping_cart) + 1 }
+                : item
+        );
+        localStorage.setItem("cart-merchandise", JSON.stringify(updatedCartItems));
+        setCartItemsMerchs(updatedCartItems);
+        CalculateTotalPrice(cartItemsTickets, updatedCartItems);
+    };
+
+    const RemoveOneMerchandise = (indexID) => {
+        const updatedCartItems = cartItemsMerchs.map((item) =>
+            item.id === indexID && item.in_shopping_cart > 0
+                ? { ...item, stock: item.stock + 1, in_shopping_cart: Number(item.in_shopping_cart) - 1 }
+                : item
+        );
+        localStorage.setItem("cart-merchandise", JSON.stringify(updatedCartItems));
+        setCartItemsMerchs(updatedCartItems);
+        CalculateTotalPrice(cartItemsTickets, updatedCartItems);
     };
 
     const isExpired = (dateString) => {
@@ -189,7 +236,9 @@ function Shoppingcart()
         setStep(3);
         //clear localstorage
         localStorage.setItem("cart-tickets", JSON.stringify([]));
+        localStorage.setItem("cart-merchandise", JSON.stringify([]));
         setCartItemsTickets([]);
+        setCartItemsMerchs([]);
     };
 
 
@@ -198,11 +247,10 @@ function Shoppingcart()
             {step === 1 && (
             <>
             <h1>Your Shopping Cart</h1>
-            
-            <h1>Tickets</h1>
 
-                {cartItemsTickets.length > 0 ? (
+                {cartItemsTickets.length > 0 || cartItemsMerchs.length > 0? (
                     <>
+                    {cartItemsTickets.length > 0 && <h1>Tickets</h1>}
                     {cartItemsTickets.map((item, index) => (
                         <div key={index}>
                         <li >
@@ -231,7 +279,30 @@ function Shoppingcart()
                         </li>
                         </div>
                     ))}
-                    <p> {totalPrice} </p>
+
+
+
+
+                    {cartItemsMerchs.length > 0 && <h1>Merchandise</h1>}
+                    {cartItemsMerchs.map((item, index) => (
+                        <div key={index}>
+                        <li >
+                            <button onClick={() => (DeleteMerhandise(item.id))}> Remove Merchandise</button>
+                            <p >{item.in_shopping_cart}x {item.name}{item.in_shopping_cart > 1 ? ('s') : ('')}</p>
+                            {item.stock < 6 && <p>{item.stock} Remaining</p>}
+                            <button onClick={() => AddOneMerchandise(item.id)}>+</button>
+                            <button onClick={() => RemoveOneMerchandise(item.id)}>-</button>
+                            
+                            <div  /*price*/>
+                                <p >${item.price * item.in_shopping_cart} USD (${item.price} per item)</p>
+                            </div>
+                        </li>
+                        </div>
+                    ))}
+
+
+
+                    <p> ${totalPrice} USD</p>
                     <button onClick={() => setStep(2)}>Checkout</button>
                     </>
                 ) : (
