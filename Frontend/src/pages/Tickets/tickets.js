@@ -20,6 +20,7 @@ function Tickets() {
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedDates, setSelectedDates] = useState([]);
     const [selectedDatesForFoodPass, setSelectedDatesForFoodPass] = useState([]);
+    const [price, setPrice] = useState(0);
 
     const today = new Date();
     today.setHours(0,0,0,0);
@@ -160,16 +161,17 @@ function Tickets() {
             numOfDays,
             selectedDates,
             selectedDatesForFoodPass,
+            price,
         };
     
         // Retrieve existing cart from local storage (if any)
-        const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
+        const existingCart = JSON.parse(localStorage.getItem("cart-tickets")) || [];
     
         // Add the new ticket selection
         const updatedCart = [...existingCart, ticketData];
     
         // Save updated cart back to local storage
-        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        localStorage.setItem("cart-tickets", JSON.stringify(updatedCart));
     
         navigate("/shopping-cart");
     }
@@ -271,7 +273,7 @@ function Tickets() {
 
                     {selectedDates.length !== numOfDays ? 
                     (<p className="step-indicator">Select {numOfDays} day{numOfDays > 1 ? 's' : ''}</p>) : 
-                    (<button onClick={() => setStep(3)}>Continue</button>)}
+                    (<button onClick={() => (setStep(3))}> Continue </button>)}
                 </>
             )}
 
@@ -293,7 +295,9 @@ function Tickets() {
                             ))}
                         </ul>
                     </div>
-                    <button onClick={() => setStep(4)}>Continue</button>
+                    <button onClick={() => (setStep(4),setPrice((selectedDatesForFoodPass.length * (numOfStandardTickets*3 + numOfSeniorTickets*2 + numOfChildrenTickets) ) + numOfDays * (4*numOfSeniorTickets + 6*numOfChildrenTickets + 10*numOfStandardTickets)))}>
+                        Continue
+                        </button>
                 </>
             )}
 
@@ -304,7 +308,7 @@ function Tickets() {
                     <p>{numOfDays}-Day Ticket</p>
                     <ul>
                         {selectedDates.map((date, index) => (
-                            <li key={index}>{date} {selectedDatesForFoodPass.includes(date) ? '(Includes Food Pass)' : ''}</li>
+                            <li key={index}>{date} {selectedDatesForFoodPass.includes(date) ? `(Includes $${numOfStandardTickets*3 + numOfSeniorTickets*2 + numOfChildrenTickets} Food Pass)` : ''}</li>
                         ))}
                     </ul>
                     <div className="ticket-summary">
@@ -318,6 +322,10 @@ function Tickets() {
                     <div className="ticket-summary">
                         <p>{numOfSeniorTickets > 0 ? `${numOfSeniorTickets} Senior Ticket${numOfSeniorTickets > 1 ? 's' : ''} ($${numOfDays * 4} Per Ticket)` : ""}</p>
                         <p>{numOfSeniorTickets > 0 ? `$${numOfDays * 4 * numOfSeniorTickets}` : ""}</p>
+                    </div>
+                    <div /*price*/>
+                        <p>Subtotal</p>
+                        <p>${(selectedDatesForFoodPass.length * (numOfStandardTickets*3 + numOfSeniorTickets*2 + numOfChildrenTickets) ) + numOfDays * (4*numOfSeniorTickets + 6*numOfChildrenTickets + 10*numOfStandardTickets)} USD</p>
                     </div>
                     <button onClick={handleAddToCart}>Add to Cart</button>
                 </>
