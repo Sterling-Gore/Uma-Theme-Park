@@ -41,6 +41,35 @@ function Shop()
             }
         }, [isLoggedIn, navigate, isLoading]);
 
+
+        useEffect(() => {
+            const fetchMerchandise = async () => {
+              try {
+                const response = await fetch('http://localhost:4000/getMerchandise', {
+                  method: 'GET',
+                  credentials: 'include',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                });
+                
+                if (!response.ok) {
+                  throw new Error('Failed to fetch merchandise');
+                }
+                
+                const data = await response.json();
+                if (data.success) {
+                    console.log(data.data);
+                  //setEmployees(data.data);
+                }
+              } catch (error) {
+                console.error('Error fetching merchandise:', error);
+              }
+            };
+            
+            fetchMerchandise();
+          }, []);
+
         useEffect(() => {
             //pull from database to get the merchandise
             //here's an example

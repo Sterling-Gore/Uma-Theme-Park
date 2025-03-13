@@ -11,6 +11,8 @@ const { logout } = require('./loginHandler/logout')
 const { registerEmployee } = require('./registerUsers/registerEmployee')
 const { employeeLogin } = require('./employeeHandler/employeeLogin')
 const pool = require('./database');
+//Mercandise
+const { getMerchandise } = require('./shoppingCart/getMerchandise');
 const { viewEmployees } = require('./managerPortal/viewEmployees');
 const { deleteEmployee } = require('./managerPortal/deleteEmployee');
 const { updateEmployee } = require('./managerPortal/updateEmployee');
@@ -72,6 +74,9 @@ const server = http.createServer(async (req, res) => {
     }
     else if(req.url === '/updateEmployee' && req.method === 'PUT'){
         updateEmployee(req, res)
+    }
+    else if(req.url === '/getMerchandise' && req.method === 'GET'){
+        getMerchandise(req, res)
     }
     else if (req.url === '/submitFeedback' && req.method === 'POST'){
         submitFeedback(req, res)
