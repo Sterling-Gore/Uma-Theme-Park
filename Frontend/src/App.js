@@ -18,6 +18,7 @@ import AuthContext from "./context/AuthContext";
 import ProtectedRoute from "./components/authentication/ProtectedRoute.js";
 import Activities from "./pages/activities/activities.js";
 import Account from "./pages/account/Account.js";
+import MyOrders from "./pages/account/MyOrders/MyOrders.js";
 
 
 
@@ -42,6 +43,7 @@ function App() {
       <Route path="/tickets" element={<Tickets />} />
       <Route path="/problems" element={<Problems />} />
       <Route path="/account" element={<Account />} />
+      <Route path="/myorders" element={<MyOrders />} />
       
       {/* Auth routes with redirects if already logged in */}
       <Route path="/register" element={

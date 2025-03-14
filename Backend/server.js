@@ -22,6 +22,7 @@ const { submitFeedback } = require('./feedback/submitFeedback');
 const { getAccountInfo } = require('./accountHandler/getAccountInfo');
 const { UpdatePassword } = require('./accountHandler/updatePassword');
 const { UpdateAccount } = require('./accountHandler/UpdateAccount');
+const { getTicketOrders } = require('./myorders/getTicketOrders');
 
 
 const PORT = process.env.PORT || 7000;
@@ -95,9 +96,12 @@ const server = http.createServer(async (req, res) => {
     else if(req.url === '/updatePassword' && req.method === 'PUT'){
         UpdatePassword(req, res)
     }
-    else if(req.url === '/updateAccountInfo' && req.method === 'PUT')[
+    else if(req.url === '/updateAccountInfo' && req.method === 'PUT'){
         UpdateAccount(req, res)
-    ]
+    }
+    else if(req.url === '/getTicketOrders' && req.method === 'POST'){
+        getTicketOrders(req, res)
+    }
     else if( req.url === '/testDatabaseConnection' && req.method === 'GET'){
         pool.getConnection((err, connection) => {
             if (err) {
