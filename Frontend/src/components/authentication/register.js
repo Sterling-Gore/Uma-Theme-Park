@@ -199,7 +199,8 @@ function Register() {
                                 const onlyLetters = e.target.value.replace(/[^a-zA-Z]/g, ""); // Remove non-alphabet characters
                                 setFormData({ ...formData, first_name: onlyLetters });
                                 //checkError();
-                              }}                            
+                              }}     
+                            required                       
                             maxLength="50"
                             minLength="1"
                             pattern="[^0-9]+" // \w* stands for all word characters
@@ -216,7 +217,8 @@ function Register() {
                                 const onlyLetters = e.target.value.replace(/[^a-zA-Z]/g, ""); // Remove non-alphabet characters
                                 setFormData({ ...formData, last_name: onlyLetters });
                                 //checkError();
-                            }}    
+                            }}   
+                            required 
                             maxLength="50"
                             minLength="1"
                             pattern="[^0-9]+" // \w* stands for all word characters
@@ -235,6 +237,7 @@ function Register() {
                                 setFormData({ ...formData, email: e.target.value});
                                 //checkError();
                             }}
+                            required
                         />
                     </div>
                 </div>
@@ -251,6 +254,7 @@ function Register() {
                                 setFormData({ ...formData, phone_number: onlyDigits});
                                 //checkError();
                             }}
+                            required
                             maxLength={10}
                             minLength={10}
                             pattern="\d*"
@@ -259,16 +263,17 @@ function Register() {
                 </div>
                 <div className="form-row">
                     <div className="input-group">
-                        <label className="label-header"> BIRTHDAY </label>
+                        <label className="label-header"> DATE OF BIRTH </label>
                         <input 
                             type="date"
                             className="form-input"
-                            placeholder="Birthday"
+                            placeholder="Date Of Birth"
                             value={formData.birthday}
                             onChange={(e) => {
                                 setFormData({ ...formData, birthday: e.target.value});
                                 //checkError();
                             }}
+                            required
                             max={new Date().toISOString().split('T')[0]}
                         />
                     </div>
@@ -285,6 +290,7 @@ function Register() {
                                 setFormData({ ...formData, street: e.target.value})
                                 //checkError();
                             }}
+                            required
                         />
                     </div>
                 </div>
@@ -300,6 +306,7 @@ function Register() {
                                 setFormData({ ...formData, city: e.target.value});
                                 //checkError();
                             }}
+                            required
                         />
                     </div>
                 </div>
@@ -313,6 +320,7 @@ function Register() {
                                 setFormData({ ...formData, state: e.target.value });
                                 //checkError();
                             }}
+                            required
                         >
                             <option value="">Select State</option>
                             <option value="AL">Alabama</option>
@@ -379,9 +387,11 @@ function Register() {
                                 setFormData({ ...formData, zip: onlyDigits});
                                 //checkError();
                             }}
+                            required
                             maxLength="5"
                             minLength="5"
                             pattern="\d*"
+                            
                         />
                     </div>
                 </div>
@@ -397,6 +407,7 @@ function Register() {
                                 setFormData({ ...formData, password: e.target.value});
                                 //checkError();
                             }}
+                            required
                             maxLength={30}
                             minLength={8}
                         />
@@ -414,6 +425,7 @@ function Register() {
                                 setConfirm_Password(e.target.value);
                                 //checkError();
                             }}
+                            required
                             maxLength={30}
                             minLength={8}
                         />

@@ -1,10 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useContext, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import AuthContext from "../../../context/AuthContext";
 import './MyOrders.css';
 
 function MyOrders() {
+    const navigate = useNavigate();
+    const { isLoggedIn, userType, isLoading } = useContext(AuthContext);
+    const alertShown = useRef(false);
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+
+     // Redirect employees and managers to their portals
+    useEffect(() => {
+        if (!isLoading) {
+            if (userType === "employee") {
+                navigate('/EmployeePortal');
+            } else if (userType === "manager") {
+                navigate('/ManagerPortal');
+            }
+        }
+    }, [userType, navigate, isLoading]);
+
+    // Verify auth status for ticket purchase
+    useEffect(() => {
+        if (!isLoading && !isLoggedIn && !alertShown.current) {
+            alertShown.current = true;
+            alert("Please login to purchase tickets!");
+            navigate("/login");
+        }
+    }, [isLoggedIn, navigate, isLoading]);
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -74,20 +100,59 @@ function MyOrders() {
         fetchOrders();
     }, []);
 
+    // Only render content after loading and redirects are done
+    if (isLoading || userType === "employee" || userType === "manager") {
+        return null;
+    }
+
     if (loading) {
         return <div className="loading-container">Loading your orders...</div>;
     }
 
     if (error) {
-        return <div className="error-container">{error}</div>;
+        return (
+        <>
+        <div className="navigation-buttons">
+            <button
+                className="nav-btn"
+                onClick={() => window.location.href = '/account'}
+            >
+                Back to My Account
+            </button>
+        </div>
+        <div className="error-container">
+            {error}
+        </div>
+        </>);
     }
 
     if (orders.length === 0) {
-        return <div className="empty-orders">You have no ticket orders yet.</div>;
-    }
+        return (
+        <>
+        <div className="navigation-buttons">
+            <button
+                className="nav-btn"
+                onClick={() => window.location.href = '/account'}
+            >
+                Back to My Account
+            </button>
+        </div>
+        <div className="empty-orders">
+            You have no ticket orders yet.
+        </div>
+        </>
+    );}
 
     return (
         <div className="my-orders-container">
+            <div className="navigation-buttons">
+                <button
+                    className="nav-btn"
+                    onClick={() => window.location.href = '/account'}
+                >
+                    Back to My Account
+                </button>
+            </div>
             <h1>My Ticket Orders</h1>
 
             <div className="orders-list">

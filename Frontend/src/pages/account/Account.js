@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useContext, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import AuthContext from "../../context/AuthContext";
 import './Account.css';
 
 function Account() {
+    const navigate = useNavigate();
+    const { isLoggedIn, userType, isLoading } = useContext(AuthContext);
+    const alertShown = useRef(false);
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
@@ -22,14 +27,36 @@ function Account() {
 
     const [isEditing, setIsEditing] = useState(false);
     const [isChangingPassword, setIsChangingPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingPage, setIsLoadingPage] = useState(true);
     const [error, setError] = useState(null);
     const [passwordError, setPasswordError] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
+    const [formError, setFormError] = useState("");
+    const [passwordFormError, setPasswordFormError] = useState("");
+
+    // Redirect employees and managers to their portals
+    useEffect(() => {
+        if (!isLoading) {
+            if (userType === "employee") {
+                navigate('/EmployeePortal');
+            } else if (userType === "manager") {
+                navigate('/ManagerPortal');
+            }
+        }
+    }, [userType, navigate, isLoading]);
+
+    // Verify auth status for ticket purchase
+    useEffect(() => {
+        if (!isLoading && !isLoggedIn && !alertShown.current) {
+            alertShown.current = true;
+            alert("Please login to purchase tickets!");
+            navigate("/login");
+        }
+    }, [isLoggedIn, navigate, isLoading]);
 
     useEffect(() => {
         const fetchUser = async () => {
-            setIsLoading(true);
+            setIsLoadingPage(true);
             try {
                 // Use URL parameters for GET request instead of body
                 const userID = localStorage.getItem('userID');
@@ -64,12 +91,171 @@ function Account() {
                 console.error('Error fetching customer info:', err);
                 setError('Failed to load account information. Please try again later.');
             } finally {
-                setIsLoading(false);
+                setIsLoadingPage(false);
             }
         };
 
         fetchUser();
     }, []);
+
+
+
+    const validateEmail = (email) => {
+        return email.match(
+          /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        );
+        
+      };
+
+    const checkBirthdate = (date) => {
+        const today = new Date();
+        const birthday = new Date(date);
+
+        let years = today.getFullYear() - birthday.getFullYear();
+
+
+        // Adjust if the full year hasn't passed yet
+        if (
+            today.getMonth() < birthday.getMonth() || 
+            (today.getMonth() === birthday.getMonth() && today.getDate() < (birthday.getDate()+1))
+        ) {
+            years--;
+        }
+
+        return years;
+
+    };
+
+
+    function checkError()
+    {
+        console.log("CHECKING...")
+        console.log(formData.phone_number.length)
+        console.log(formError)
+        if ( formData.first_name === "")
+        {
+            setFormError("Fill in First Name");
+            return true;
+        }
+        if ( formData.last_name === "")
+        {
+            setFormError("Fill in Last Name");
+            return true;
+        }
+        if ( formData.email === "")
+        {
+            setFormError("Fill in Email");
+            return true;
+        }
+        if ( !validateEmail(formData.email))
+        {
+            setFormError("Must Enter a Valid Email");
+            return true;
+        }
+        if ( formData.phone_number === '')
+        {
+            setFormError("Fill in Phone Number");
+            return true;
+        }
+        if ( formData.phone_number.length < 10)
+        {
+            setFormError("Phone Number Must Have 10 Digits");
+            return true;
+        }
+        if ( formData.date_of_birth === "")
+        {
+            setFormError("Fill in data of birth");
+            return true;
+        }
+        if (checkBirthdate(formData.date_of_birth) < 13)
+        {
+            setFormError("Must be at least 13 years old")
+            return true;
+        }        
+        if ( formData.street_address === "")
+        {
+            setFormError("Fill in Street Address");
+            return true;
+        }
+        if ( formData.city === "")
+        {
+            setFormError("Fill in City");
+            return true;
+        }
+        if ( formData.state === "")
+        {
+            setFormError("Fill in State");
+            return true;
+        }
+        if ( formData.zip === "")
+        {
+            setFormError("Fill in Zipcode");
+            return true;
+        }
+        if ( formData.zipcode.length < 5)
+        {
+            setFormError("Zipcode Must Have 5 Digits");
+            return true;
+        }
+            
+        
+        setFormError("");
+        return false;
+    }
+
+    useEffect(() => {
+        checkError();
+    }, [formData])
+
+
+    function checkPasswordError()
+    {
+        console.log(passwordData.new_password);
+        console.log(passwordData.confirm_password);
+        if (passwordData.current_password === "")
+        {
+            setPasswordFormError("Fill in Current Password");
+            return true;
+        }
+        if ( passwordData.new_password === "")
+        {
+            setPasswordFormError("Fill in New Password");
+            return true;
+        }
+        if ( passwordData.new_password.length < 8)
+        {
+            setPasswordFormError("New Password Must be at Least 8 Characters Long");
+            return true;
+        }
+        if ( passwordData.confirm_password === "")
+        {
+            setPasswordFormError("Fill in Confirm Password");
+            return true;
+        }
+        if ( passwordData.confirm_password.length < 8)
+        {
+            setPasswordFormError("Confirm Password Must be at Least 8 Characters Long");
+            return true;
+        }
+        if ( passwordData.confirm_password !== passwordData.new_password)
+        {
+            setPasswordFormError("Confirm Password Must Match New Password");
+            return true;
+        }
+            
+        
+        setPasswordFormError("");
+        return false;
+    }
+
+    useEffect(() => {
+        checkPasswordError();
+    }, [passwordData])
+
+    // Only render content after loading and redirects are done
+    if (isLoading || userType === "employee" || userType === "manager") {
+        return null;
+    }
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -113,7 +299,7 @@ function Account() {
         }
 
         try {
-            setIsLoading(true);
+            setIsLoadingPage(true);
             const response = await fetch('http://localhost:4000/updatePassword', {
                 method: 'PUT',
                 mode: 'cors',
@@ -144,7 +330,7 @@ function Account() {
             console.error('Error updating password:', err);
             setPasswordError(err.message || 'Failed to update password. Please try again.');
         } finally {
-            setIsLoading(false);
+            setIsLoadingPage(false);
         }
     };
 
@@ -152,7 +338,7 @@ function Account() {
         e.preventDefault();
 
         try {
-            setIsLoading(true);
+            setIsLoadingPage(true);
             const response = await fetch('http://localhost:4000/updateAccountInfo', {
                 method: 'PUT',
                 mode: 'cors',
@@ -181,7 +367,7 @@ function Account() {
             console.error('Error updating account info:', err);
             setError('Failed to update account information. Please try again.');
         } finally {
-            setIsLoading(false);
+            setIsLoadingPage(false);
         }
     };
 
@@ -195,7 +381,7 @@ function Account() {
         }
     };
 
-    if (isLoading && formData.first_name === '') {
+    if (isLoadingPage && formData.first_name === '') {
         return <div className="account-container loading">Loading account information...</div>;
     }
 
@@ -240,7 +426,14 @@ function Account() {
                             id="first_name"
                             name="first_name"
                             value={formData.first_name}
-                            onChange={handleInputChange}
+                            //onChange={handleInputChange}
+                            onChange={(e) => {
+                                const onlyLetters = e.target.value.replace(/[^a-zA-Z]/g, ""); // Remove non-alphabet characters
+                                setFormData({ ...formData, first_name: onlyLetters });
+                                //checkError();
+                              }}  
+                            maxLength="50"
+                            minLength="1"
                             disabled={!isEditing}
                             required
                         />
@@ -253,7 +446,14 @@ function Account() {
                             id="last_name"
                             name="last_name"
                             value={formData.last_name}
-                            onChange={handleInputChange}
+                            //onChange={handleInputChange}
+                            onChange={(e) => {
+                                const onlyLetters = e.target.value.replace(/[^a-zA-Z]/g, ""); // Remove non-alphabet characters
+                                setFormData({ ...formData, last_name: onlyLetters });
+                                //checkError();
+                            }}    
+                            maxLength="50"
+                            minLength="1"
                             disabled={!isEditing}
                             required
                         />
@@ -268,8 +468,14 @@ function Account() {
                             id="date_of_birth"
                             name="date_of_birth"
                             value={formData.date_of_birth}
-                            onChange={handleInputChange}
-                            disabled={!isEditing}
+                            //onChange={handleInputChange}
+                            onChange={(e) => {
+                                setFormData({ ...formData, date_of_birth: e.target.value});
+                                //checkError();
+                            }}
+                            max={new Date().toISOString().split('T')[0]}
+                            //disabled={!isEditing}
+                            disabled={true}
                         />
                     </div>
 
@@ -280,7 +486,11 @@ function Account() {
                             id="email"
                             name="email"
                             value={formData.email}
-                            onChange={handleInputChange}
+                            //onChange={handleInputChange}
+                            onChange={(e) => {
+                                setFormData({ ...formData, email: e.target.value});
+                                //checkError();
+                            }}
                             disabled={!isEditing}
                             required
                         />
@@ -295,7 +505,14 @@ function Account() {
                             id="phone_number"
                             name="phone_number"
                             value={formData.phone_number}
-                            onChange={handleInputChange}
+                            //onChange={handleInputChange}
+                            onChange={(e) => {
+                                const onlyDigits = e.target.value.replace(/\D/g, ""); // Remove non-digits
+                                setFormData({ ...formData, phone_number: onlyDigits});
+                                //checkError();
+                            }}
+                            maxLength={10}
+                            minLength={10}
                             disabled={!isEditing}
                         />
                     </div>
@@ -310,7 +527,11 @@ function Account() {
                         id="street_address"
                         name="street_address"
                         value={formData.street_address}
-                        onChange={handleInputChange}
+                        //onChange={handleInputChange}
+                        onChange={(e) => {
+                            setFormData({ ...formData, street_address: e.target.value})
+                            //checkError();
+                        }}
                         disabled={!isEditing}
                     />
                 </div>
@@ -323,21 +544,94 @@ function Account() {
                             id="city"
                             name="city"
                             value={formData.city}
-                            onChange={handleInputChange}
+                            //onChange={handleInputChange}
+                            onChange={(e) => {
+                                setFormData({ ...formData, city: e.target.value});
+                                //checkError();
+                            }}
                             disabled={!isEditing}
                         />
                     </div>
 
                     <div className="form-group">
                         <label htmlFor="state">State</label>
+                        <select 
+                            type="text"
+                            id="state"
+                            name="state"
+                            value={formData.state}
+                            onChange={(e) => {
+                                setFormData({ ...formData, state: e.target.value });
+                                //checkError();
+                            }}
+                            disabled={!isEditing}
+                            required
+                        >
+                            <option value="">Select State</option>
+                            <option value="AL">Alabama</option>
+                            <option value="AK">Alaska</option>
+                            <option value="AZ">Arizona</option>
+                            <option value="AR">Arkansas</option>
+                            <option value="CA">California</option>
+                            <option value="CO">Colorado</option>
+                            <option value="CT">Connecticut</option>
+                            <option value="DE">Delaware</option>
+                            <option value="FL">Florida</option>
+                            <option value="GA">Georgia</option>
+                            <option value="HI">Hawaii</option>
+                            <option value="ID">Idaho</option>
+                            <option value="IL">Illinois</option>
+                            <option value="IN">Indiana</option>
+                            <option value="IA">Iowa</option>
+                            <option value="KS">Kansas</option>
+                            <option value="KY">Kentucky</option>
+                            <option value="LA">Louisiana</option>
+                            <option value="ME">Maine</option>
+                            <option value="MD">Maryland</option>
+                            <option value="MA">Massachusetts</option>
+                            <option value="MI">Michigan</option>
+                            <option value="MN">Minnesota</option>
+                            <option value="MS">Mississippi</option>
+                            <option value="MO">Missouri</option>
+                            <option value="MT">Montana</option>
+                            <option value="NE">Nebraska</option>
+                            <option value="NV">Nevada</option>
+                            <option value="NH">New Hampshire</option>
+                            <option value="NJ">New Jersey</option>
+                            <option value="NM">New Mexico</option>
+                            <option value="NY">New York</option>
+                            <option value="NC">North Carolina</option>
+                            <option value="ND">North Dakota</option>
+                            <option value="OH">Ohio</option>
+                            <option value="OK">Oklahoma</option>
+                            <option value="OR">Oregon</option>
+                            <option value="PA">Pennsylvania</option>
+                            <option value="RI">Rhode Island</option>
+                            <option value="SC">South Carolina</option>
+                            <option value="SD">South Dakota</option>
+                            <option value="TN">Tennessee</option>
+                            <option value="TX">Texas</option>
+                            <option value="UT">Utah</option>
+                            <option value="VT">Vermont</option>
+                            <option value="VA">Virginia</option>
+                            <option value="WA">Washington</option>
+                            <option value="WV">West Virginia</option>
+                            <option value="WI">Wisconsin</option>
+                            <option value="WY">Wyoming</option>
+                        </select>
+                        {/*
                         <input
                             type="text"
                             id="state"
                             name="state"
                             value={formData.state}
-                            onChange={handleInputChange}
+                            //onChange={handleInputChange}
+                            onChange={(e) => {
+                                setFormData({ ...formData, state: e.target.value });
+                                //checkError();
+                            }}
                             disabled={!isEditing}
-                        />
+                        /> */}
                     </div>
 
                     <div className="form-group">
@@ -347,18 +641,37 @@ function Account() {
                             id="zipcode"
                             name="zipcode"
                             value={formData.zipcode}
-                            onChange={handleInputChange}
+                            //onChange={handleInputChange}
+                            onChange={(e) => {
+                                const onlyDigits = e.target.value.replace(/\D/g, ""); // Remove non-digits
+                                setFormData({ ...formData, zipcode: onlyDigits});
+                                //checkError();
+                            }}
+                            maxLength="5"
+                            minLength="5"
+                            pattern="\d*"
                             disabled={!isEditing}
                         />
                     </div>
                 </div>
 
                 {isEditing && (
-                    <div className="form-actions">
-                        <button type="submit" className="save-btn" disabled={isLoading}>
-                            {isLoading ? 'Saving...' : 'Save Changes'}
-                        </button>
-                    </div>
+                    <>
+                    {formError !== "" ? (
+                            <>
+                            <p className="error-message">{formError}</p>
+                            </>
+
+                        ) : 
+                        (
+                        <div className="form-actions">
+                            <button type="submit" className="save-btn" disabled={isLoadingPage}>
+                                {isLoadingPage ? 'Saving...' : 'Save Changes'}
+                            </button>
+                        </div>
+                    )}
+                    </>
+                    //setPasswordFormError
                 )}
             </form>
 
@@ -420,11 +733,21 @@ function Account() {
                             <p>Password must be at least 8 characters long</p>
                         </div>
 
-                        <div className="form-actions">
-                            <button type="submit" className="save-btn" disabled={isLoading}>
-                                {isLoading ? 'Updating...' : 'Update Password'}
-                            </button>
-                        </div>
+                        
+                        {passwordFormError !== "" ? (
+                                <>
+                                <p className="error-message">{passwordFormError}</p>
+                                </>
+
+                            ) : 
+                            (
+                            <div className="form-actions">
+                                <button type="submit" className="save-btn" disabled={isLoadingPage}>
+                                    {isLoadingPage ? 'Updating...' : 'Update Password'}
+                                </button>
+                            </div>
+                        )}
+                        
                     </form>
                 )}
             </div>

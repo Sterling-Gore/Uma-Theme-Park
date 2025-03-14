@@ -1,14 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useContext, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import AuthContext from "../../../context/AuthContext";
 import './MerchandiseOrders.css';
 
 function MerchandiseOrders() {
+    const navigate = useNavigate();
+    const { isLoggedIn, userType, isLoading } = useContext(AuthContext);
+    const alertShown = useRef(false);
     const [orders, setOrders] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+
+
+     // Redirect employees and managers to their portals
+    useEffect(() => {
+        if (!isLoading) {
+            if (userType === "employee") {
+                setLoading(false);
+                navigate('/EmployeePortal');
+            } else if (userType === "manager") {
+                setLoading(false);
+                navigate('/ManagerPortal');
+            }
+        }
+    }, [userType, navigate, isLoading]);
+
+    // Verify auth status for ticket purchase
+    useEffect(() => {
+        if (!isLoading && !isLoggedIn && !alertShown.current) {
+            setLoading(false);
+            alertShown.current = true;
+            alert("Please login to purchase tickets!");
+            navigate("/login");
+        }
+    }, [isLoggedIn, navigate, isLoading]);
 
     useEffect(() => {
         const fetchOrders = async () => {
             try {
+                setLoading(true);
 
                 const userID = localStorage.getItem('userID');
 
@@ -40,7 +71,7 @@ function MerchandiseOrders() {
                 console.error('Error fetching orders:', err);
                 setError(err.message);
             } finally {
-                setIsLoading(false);
+                setLoading(false);
             }
         };
 
@@ -65,7 +96,13 @@ function MerchandiseOrders() {
         }).format(amount);
     };
 
-    if (isLoading) {
+
+    // Only render content after loading and redirects are done
+    if (isLoading || userType === "employee" || userType === "manager") {
+        return <></>;
+    }
+
+    if (loading) {
         return (
             <div className="merchandise-orders loading">
                 <h2>Orders</h2>
@@ -77,6 +114,14 @@ function MerchandiseOrders() {
     if (error) {
         return (
             <div className="merchandise-orders error">
+                <div className="navigation-buttons">
+                    <button
+                        className="nav-btn"
+                        onClick={() => window.location.href = '/account'}
+                    >
+                        Back to My Account
+                    </button>
+                </div>
                 <h2>Orders</h2>
                 <div className="error-message">
                     <p>Error loading orders: {error}</p>
@@ -88,15 +133,33 @@ function MerchandiseOrders() {
 
     if (orders.length === 0) {
         return (
+            <>
+            <div className="navigation-buttons">
+            <button
+                className="nav-btn"
+                onClick={() => window.location.href = '/account'}
+            >
+                Back to My Account
+            </button>
+            </div>
             <div className="merchandise-orders empty">
                 <h2>Orders</h2>
                 <p>You haven't placed any orders yet.</p>
             </div>
+            </>
         );
     }
 
     return (
         <div className="merchandise-orders">
+            <div className="navigation-buttons">
+            <button
+                className="nav-btn"
+                onClick={() => window.location.href = '/account'}
+            >
+                Back to My Account
+            </button>
+            </div>
             <h2>Your Merchandise Orders</h2>
 
             <div className="orders-list">
