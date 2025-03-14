@@ -201,6 +201,20 @@ function Account() {
 
     return (
         <div className="account-container">
+            <div className="navigation-buttons">
+                <button
+                    className="nav-btn"
+                    onClick={() => window.location.href = '/myorders'}
+                >
+                    My Tickets
+                </button>
+                <button
+                    className="nav-btn"
+                    onClick={() => window.location.href = '/merchandise-orders'}
+                >
+                    Merchandise Orders
+                </button>
+            </div>
             <h1 className="account-title">My Account</h1>
 
             {error && <div className="error-message">{error}</div>}
