@@ -49,7 +49,7 @@ function Dining() {
         <div className="food-pass-container">
           <div className="food-pass-info">
             <h2>All-Day Dining Pass</h2>
-            <p className="food-pass-price">$6.99 per person</p>
+            <p className="food-pass-price">$5.99 per person</p>
             <p className="food-pass-description">
               Enjoy unlimited dining at select food stands throughout the park! Our All-Day Dining Pass gives you access to a main meal, side, and drink every 90 minutes at participating locations. Perfect for families and anyone planning to spend the whole day experiencing our attractions.
             </p>
