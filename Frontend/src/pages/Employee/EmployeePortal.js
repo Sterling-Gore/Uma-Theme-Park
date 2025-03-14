@@ -1,47 +1,47 @@
-
-// Frontend/src/pages/Employee/EmployeePortal.js
-
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import Sidebar from './components/Sidebar';
+import Dashboard from './components/dashboard';
+import Profile from './components/profile';
+import Tasks from './components/tasks';
+import Reports from './components/reports';
+import './EmployeePortal.css';
+import AuthContext from '../../context/AuthContext';
 
 function EmployeePortal() {
-  const navigate = useNavigate();
-  
+  const { logout } = useContext(AuthContext);
+  const [activeTab, setActiveTab] = useState('dashboard'); // ✅ Manage activeTab state here
+
   const handleLogout = () => {
-    // Clear localStorage first
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("userType");
-    
-    // Call API directly
+    logout();
     fetch('http://localhost:4000/logout', {
       method: 'GET',
-      credentials: 'include'
+      credentials: 'include',
     }).finally(() => {
-
       window.location.href = '/';
     });
   };
-  
+
   return (
     <div className="employee-portal">
-      <h1>Employee Portal</h1>
-      <p>Welcome to the employee dashboard. You are successfully logged in as an employee.</p>
-      
-      <h3>Quick Links</h3>
-      <ul>
-        <li>View Schedule</li>
-        <li>Submit Time Off</li>
-        <li>View Company Announcements</li>
-      </ul>
-      
-      <button 
-        onClick={handleLogout}
-      >
-        Logout
-      </button>
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} /> {/* ✅ Pass setActiveTab to Sidebar */}
+      <div className="content-area">
+        <div className="top-bar">
+          <div className="user-info">
+            <span>Logged in as: {localStorage.getItem('fullName')}</span>
+          </div>
+          <button className="logout-btn" onClick={handleLogout}>
+            <span className="logout-icon">🚪</span> Logout
+          </button>
+        </div>
+        <div className="main-content">
+          {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
+          {activeTab === 'profile' && <Profile setActiveTab={setActiveTab} />}
+          {activeTab === 'tasks' && <Tasks setActiveTab={setActiveTab} />}
+          {activeTab === 'reports' && <Reports setActiveTab={setActiveTab} />}
+        </div>
+      </div>
     </div>
   );
 }
 
 export default EmployeePortal;
-
