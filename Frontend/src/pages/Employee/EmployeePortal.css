@@ -1,0 +1,171 @@
+/* EmployeePortal.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-color: #3a86ff;
+  --secondary-color: #ff006e;
+  --accent-color: #ffbe0b;
+  --background-color: #f5f7fa;
+  --sidebar-bg: #2b2d42;
+  --sidebar-active: #3a86ff;
+  --text-color: #2b2d42;
+  --light-text: #8d99ae;
+  --success-color: #38b000;
+  --error-color: #ff5252;
+  --border-radius: 8px;
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.employee-portal {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--background-color);
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-color);
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+}
+
+.employee-portal *,
+.employee-portal *::before,
+.employee-portal *::after {
+  box-sizing: inherit;
+}
+
+/* Sidebar Styles */
+.employee-portal .sidebar {
+  width: 250px;
+  background-color: var(--sidebar-bg);
+  color: white;
+  padding: 20px 0;
+  height: 100vh;
+  position: fixed;
+  overflow-y: auto;
+  z-index: 2;
+}
+
+.employee-portal .sidebar-header {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.employee-portal .sidebar-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.employee-portal .sidebar-nav {
+  margin-top: 20px;
+}
+
+.employee-portal .sidebar-nav button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  color: white;
+  text-align: left;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+.employee-portal .sidebar-nav button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.employee-portal .sidebar-nav button.active {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-left: 3px solid var(--sidebar-active);
+  color: var(--accent-color);
+}
+
+.employee-portal .sidebar-nav .icon {
+  margin-right: 10px;
+  font-size: 1.2rem;
+}
+
+/* Content Area Styles */
+.employee-portal .content-area {
+  flex: 1;
+  margin-left: 250px;
+  padding: 20px;
+  background-color: var(--background-color);
+}
+
+.employee-portal .top-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.employee-portal .user-info {
+  background: var(--primary-color);
+  color: white;
+  padding: 8px 15px;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+}
+
+.employee-portal .main-content {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 20px;
+  box-shadow: var(--box-shadow);
+}
+
+.employee-portal .content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.employee-portal .content-header h2 {
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .employee-portal .sidebar {
+    width: 200px;
+  }
+  
+  .employee-portal .content-area {
+    margin-left: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .employee-portal {
+    flex-direction: column;
+  }
+  
+  .employee-portal .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  
+  .employee-portal .content-area {
+    margin-left: 0;
+  }
+  
+  .employee-portal .content-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
