@@ -56,7 +56,7 @@ function Dining() {
             <p className="food-pass-note">
               <strong>Note:</strong> Specialty desserts, alcoholic beverages, and premium menu items may require additional purchase.
             </p>
-            <a href="/tickets" className="buy-tickets-button">Buy Food Pass</a>
+            <a href="/tickets" className="buy-tickets-button">Buy Tickets</a>
           </div>
           <div className="food-pass-image-placeholder">
             <div className="image-text">Food Pass</div>
