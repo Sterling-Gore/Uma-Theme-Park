@@ -23,6 +23,7 @@ const { getAccountInfo } = require('./accountHandler/getAccountInfo');
 const { UpdatePassword } = require('./accountHandler/updatePassword');
 const { UpdateAccount } = require('./accountHandler/UpdateAccount');
 const { getTicketOrders } = require('./myorders/getTicketOrders');
+const { getMerchandiseOrders } = require('./myorders/getMerchandiseOrders')
 
 
 const PORT = process.env.PORT || 7000;
@@ -101,6 +102,9 @@ const server = http.createServer(async (req, res) => {
     }
     else if(req.url === '/getTicketOrders' && req.method === 'POST'){
         getTicketOrders(req, res)
+    }
+    else if(req.url === '/getMerchandiseOrders' && req.method === 'POST'){
+        getMerchandiseOrders(req, res)
     }
     else if( req.url === '/testDatabaseConnection' && req.method === 'GET'){
         pool.getConnection((err, connection) => {

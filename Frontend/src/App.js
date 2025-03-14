@@ -19,6 +19,7 @@ import ProtectedRoute from "./components/authentication/ProtectedRoute.js";
 import Activities from "./pages/activities/activities.js";
 import Account from "./pages/account/Account.js";
 import MyOrders from "./pages/account/MyOrders/MyOrders.js";
+import MerchandiseOrders from "./pages/account/MyOrders/MerchandiseOrders.js";
 
 
 
@@ -44,6 +45,7 @@ function App() {
       <Route path="/problems" element={<Problems />} />
       <Route path="/account" element={<Account />} />
       <Route path="/myorders" element={<MyOrders />} />
+      <Route path="/merchandise-orders" element={<MerchandiseOrders />} />
       
       {/* Auth routes with redirects if already logged in */}
       <Route path="/register" element={
