@@ -8,6 +8,10 @@ async function getTickets(userID) {
                 c.first_name, 
                 t.total_cost,
                 t.number_of_days,
+                t.number_of_standards,
+                t.number_of_children,
+                t.number_of_seniors,
+                t.purchase_date,
                 td.ticket_date,
                 td.includes_food_pass
             FROM 

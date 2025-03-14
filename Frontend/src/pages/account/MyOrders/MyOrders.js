@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './MyOrders.css'; 
+import './MyOrders.css';
 
 function MyOrders() {
     const [orders, setOrders] = useState([]);
@@ -42,6 +42,10 @@ function MyOrders() {
                                 customerName: order.first_name,
                                 totalCost: order.total_cost,
                                 numberOfDays: order.number_of_days,
+                                numberOfStandards: order.number_of_standards,
+                                numberOfChildren: order.number_of_children,
+                                numberOfSeniors: order.number_of_seniors,
+                                purchaseDate: new Date(order.purchase_date).toLocaleDateString(),
                                 dates: []
                             };
                         }
@@ -96,7 +100,18 @@ function MyOrders() {
 
                         <div className="order-details">
                             <p><strong>Name:</strong> {order.customerName}</p>
+                            <p><strong>Purchase Date:</strong> {order.purchaseDate}</p>
                             <p><strong>Number of Days:</strong> {order.numberOfDays}</p>
+
+                            <div className="ticket-counts">
+                                <h3>Ticket Breakdown:</h3>
+                                <ul>
+                                    <li><strong>Standard Tickets:</strong> {order.numberOfStandards}</li>
+                                    <li><strong>Children Tickets:</strong> {order.numberOfChildren}</li>
+                                    <li><strong>Senior Tickets:</strong> {order.numberOfSeniors}</li>
+                                    <li><strong>Total Tickets:</strong> {order.numberOfStandards + order.numberOfChildren + order.numberOfSeniors}</li>
+                                </ul>
+                            </div>
 
                             <div className="dates-section">
                                 <h3>Ticket Dates:</h3>
