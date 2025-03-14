@@ -23,6 +23,8 @@ function Shoppingcart()
             type: "",
         });
 
+    const [refreshMerchandise, setRefreshMerchandise] = useState(false);
+
 
 
     // Redirect employees and managers to their portals
@@ -49,11 +51,15 @@ function Shoppingcart()
     useEffect(() => {
         initializeCart();
         
-    }, []);
+    }, [refreshMerchandise]);
 
     useEffect(() => {
         checkError();
     }, [card])
+
+    useEffect(() => {
+        CalculateTotalPrice(cartItemsTickets, cartItemsMerchs);
+    }, [cartItemsTickets, cartItemsMerchs]);
 
 
     //useEffect(() => {CalculateTotalPrice();}, []);
@@ -63,8 +69,77 @@ function Shoppingcart()
     if (isLoading || userType === "employee" || userType === "manager") {
         return null;
     } 
+
+    const fetchMerchandise = async () => {
+        try {
+          const response = await fetch('http://localhost:4000/getMerchandise', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to fetch merchandise');
+          }
+          
+          const data = await response.json();
+          if (data.success) {
+              return data.data;
+            //setEmployees(data.data);
+              
+          }
+        } catch (error) {
+          console.error('Error fetching merchandise:', error);
+        }
+    };
+
+    const fetchMerchStockAmount = async (item_id) => {
+        try {
+            const response = await fetch('http://localhost:4000/getMerchandiseStockQuantity', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ "merchandise_id": item_id }),
+              });
+          if (!response.ok) {
+            throw new Error("Error fetching Stock Quanity");
+          }
+          const data = await response.json();
+          return data.stock_amount;
+        } catch (error) {
+          console.error("Error fetching Stock Qunatity:", error);
+          return 0;
+        }
+    };
+
+    const postPurchase = async (dataToSend) => {
+        try {
+            const response = await fetch('http://localhost:4000/purchaseTicketsAndMerch', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify( dataToSend ),
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error("Error Posting Purchase");
+                
+            }
+            return true;
+
+        } catch (error) {
+          console.error("Error Posting purchase:", error);
+          return false;
+        }
+    };
     
-    const initializeCart = () => {
+    const initializeCart = async () => {
         const storedCartTickets = JSON.parse(localStorage.getItem("cart-tickets")) || [];
         //this is used to add an id to each ticket in the shopping cart
         const storedCartTicketsWithID = storedCartTickets.map((item, index) => ({
@@ -72,12 +147,47 @@ function Shoppingcart()
             id:  `${index}`,
         }));
 
-        const storedCartMerchs = JSON.parse(localStorage.getItem("cart-merchandise")) || [];
+        //const storedCartMerchs = JSON.parse(localStorage.getItem("cart-merchandise")) || [];
         
 
         setCartItemsTickets(storedCartTicketsWithID);
-        setCartItemsMerchs(storedCartMerchs);
-        CalculateTotalPrice(storedCartTicketsWithID, storedCartMerchs);
+        //setCartItemsMerchs(storedCartMerchs);
+        //CalculateTotalPrice(storedCartTicketsWithID, storedCartMerchs);
+
+        const FetchedMerch = await fetchMerchandise();
+        const merch = FetchedMerch.map(item => {
+            return {
+                ...item,
+                in_shopping_cart: 0,
+            };
+        });
+        const storedMerchInCart = JSON.parse(localStorage.getItem("cart-merchandise")) || [];
+        const updatedMerch = merch.map(item => {
+            const storedItem = storedMerchInCart.find(cartItem => cartItem.merchandise_id === item.merchandise_id);
+            if (storedItem) {
+                let newInCart = Number(storedItem.in_shopping_cart);
+                let availableStock = Number(item.stock_amount);
+    
+                // Ensure in_shopping_cart does not exceed available stock
+                if (newInCart > availableStock) {
+                    newInCart = availableStock;
+                }
+    
+                return {
+                    ...item,
+                    in_shopping_cart: newInCart,
+                    stock_amount: availableStock - newInCart
+                };
+            }
+
+            return item;
+        }).filter(item => item.in_shopping_cart != 0);
+        
+        setCartItemsMerchs(updatedMerch);
+        console.log(updatedMerch);
+
+        //console.log(merch);
+        
     };
 
     const CalculateTotalPrice = (storedCartTickets = null, storedCartMerchs = null) => {
@@ -98,13 +208,13 @@ function Shoppingcart()
         if(storedCartMerchs === null)
         {
             cartItemsMerchs.map((item) => (
-                accumulatedPrice += (item.price * item.in_shopping_cart)
+                accumulatedPrice += (item.merchandise_price * item.in_shopping_cart)
             ));
         }
         else
         {
             storedCartMerchs.map((item) => (
-                accumulatedPrice += (item.price * item.in_shopping_cart)
+                accumulatedPrice += (item.merchandise_price * item.in_shopping_cart)
             ));
         }
         
@@ -117,39 +227,39 @@ function Shoppingcart()
         setCartItemsTickets(updatedCart);
 
         localStorage.setItem("cart-tickets", JSON.stringify(updatedCart));
-        CalculateTotalPrice(updatedCart, cartItemsMerchs);
+        //CalculateTotalPrice(updatedCart, cartItemsMerchs);
         console.log(indexID);
     };
 
     const DeleteMerhandise = (indexID) => {
-        const updatedCart = cartItemsMerchs.filter(item => item.id !== indexID);
+        const updatedCart = cartItemsMerchs.filter(item => item.merchandise_id !== indexID);
         setCartItemsMerchs(updatedCart);
 
         localStorage.setItem("cart-merchandise", JSON.stringify(updatedCart));
-        CalculateTotalPrice(cartItemsTickets, updatedCart);
+        //CalculateTotalPrice(cartItemsTickets, updatedCart);
         console.log(indexID);
     };
 
     const AddOneMerchandise = (indexID) => {
         const updatedCartItems = cartItemsMerchs.map((item) =>
-            item.id === indexID && item.stock > 0
-                ? { ...item, stock: item.stock - 1, in_shopping_cart: Number(item.in_shopping_cart) + 1 }
+            item.merchandise_id === indexID && item.stock_amount > 0
+                ? { ...item, stock_amount: item.stock_amount - 1, in_shopping_cart: Number(item.in_shopping_cart) + 1 }
                 : item
         );
         localStorage.setItem("cart-merchandise", JSON.stringify(updatedCartItems));
         setCartItemsMerchs(updatedCartItems);
-        CalculateTotalPrice(cartItemsTickets, updatedCartItems);
+        //CalculateTotalPrice(cartItemsTickets, updatedCartItems);
     };
 
     const RemoveOneMerchandise = (indexID) => {
         const updatedCartItems = cartItemsMerchs.map((item) =>
-            item.id === indexID && item.in_shopping_cart > 0
-                ? { ...item, stock: item.stock + 1, in_shopping_cart: Number(item.in_shopping_cart) - 1 }
+            item.merchandise_id === indexID && item.in_shopping_cart > 0
+                ? { ...item, stock_amount: item.stock_amount + 1, in_shopping_cart: Number(item.in_shopping_cart) - 1 }
                 : item
         );
         localStorage.setItem("cart-merchandise", JSON.stringify(updatedCartItems));
         setCartItemsMerchs(updatedCartItems);
-        CalculateTotalPrice(cartItemsTickets, updatedCartItems);
+        //CalculateTotalPrice(cartItemsTickets, updatedCartItems);
     };
 
     const isExpired = (dateString) => {
@@ -228,17 +338,66 @@ function Shoppingcart()
     };
 
 
+    const handleCheckout = async () => {
+        try {
+          for (const item of cartItemsMerchs) {
+            const fetched_stock_amount = await fetchMerchStockAmount(item.merchandise_id);
+            console.log(`Item ${item.merchandise_id}: Quantity in cart = ${item.in_shopping_cart}, Fetched quantity = ${fetched_stock_amount}`);
+            if (item.in_shopping_cart > fetched_stock_amount) {
+              alert(`ERROR: Quantity for ${item.merchandise_name} exceeds available quantity (${fetched_stock_amount})`);
+              setRefreshMerchandise( !refreshMerchandise); 
+              return false;
+            }
+          }
+          setStep(2);
+          return true;
+          // Proceed with checkout logic here
+        } catch (error) {
+          console.error("Error during checkout:", error.message);
+          return false;
+        }
+      };
 
-    const handlePlaceOrder = () => {
+    const handlePlaceOrder = async () => {
+        console.log("PLEASE WORK");
         //give the data to backend
-
-
-        setStep(3);
-        //clear localstorage
-        localStorage.setItem("cart-tickets", JSON.stringify([]));
-        localStorage.setItem("cart-merchandise", JSON.stringify([]));
-        setCartItemsTickets([]);
-        setCartItemsMerchs([]);
+        const ableToPurchase = await handleCheckout();
+        if(ableToPurchase)
+        {
+            try {
+                const storedUserID = localStorage.getItem('userID');
+                const dataToSend = {
+                    Tickets: cartItemsTickets,
+                    Merchandise: cartItemsMerchs,
+                    userID: storedUserID
+                };
+                const successfulPurchase = await postPurchase(dataToSend);
+                if(successfulPurchase)
+                {
+                    setStep(3);
+                    //clear localstorage
+                    localStorage.removeItem("cart-tickets", JSON.stringify([]));
+                    localStorage.removeItem("cart-merchandise", JSON.stringify([]));
+                    setCartItemsTickets([]);
+                    setCartItemsMerchs([]);
+                    return;
+                }
+                else
+                {
+                    throw new Error('Failed to handle purchase');
+                }
+                // Proceed with checkout logic here
+              } catch (error) {
+                alert("Error during purchase:", error.message);
+                setStep(2);
+              }
+        }
+        else
+        {
+            setStep(1);
+        }
+    
+        
     };
 
 
@@ -287,14 +446,14 @@ function Shoppingcart()
                     {cartItemsMerchs.map((item, index) => (
                         <div key={index}>
                         <li >
-                            <button onClick={() => (DeleteMerhandise(item.id))}> Remove Merchandise</button>
-                            <p >{item.in_shopping_cart}x {item.name}{item.in_shopping_cart > 1 ? ('s') : ('')}</p>
-                            {item.stock < 6 && <p>{item.stock} Remaining</p>}
-                            <button onClick={() => AddOneMerchandise(item.id)}>+</button>
-                            <button onClick={() => RemoveOneMerchandise(item.id)}>-</button>
+                            <button onClick={() => (DeleteMerhandise(item.merchandise_id))}> Remove Merchandise</button>
+                            <p >{item.in_shopping_cart}x {item.merchandise_name}{item.in_shopping_cart > 1 ? ('s') : ('')}</p>
+                            {item.stock_amount < 6 && <p>{item.stock_amount} Remaining</p>}
+                            <button onClick={() => AddOneMerchandise(item.merchandise_id)}>+</button>
+                            <button onClick={() => RemoveOneMerchandise(item.merchandise_id)}>-</button>
                             
                             <div  /*price*/>
-                                <p >${item.price * item.in_shopping_cart} USD (${item.price} per item)</p>
+                                <p >${item.merchandise_price * item.in_shopping_cart} USD (${item.merchandise_price} per item)</p>
                             </div>
                         </li>
                         </div>
@@ -303,7 +462,7 @@ function Shoppingcart()
 
 
                     <p> ${totalPrice} USD</p>
-                    <button onClick={() => setStep(2)}>Checkout</button>
+                    <button onClick={() => handleCheckout()}>Checkout</button>
                     </>
                 ) : (
                     <p>No items in cart.</p>
@@ -317,7 +476,7 @@ function Shoppingcart()
         {step === 2 && (
             <>
             <button onClick={() => setStep(1)}>Go Back</button>
-            <form  onSubmit={handlePlaceOrder}>
+            <div  /*onSubmit={handlePlaceOrder}*/>
                         <div>
                             <label className="label-header"> CARD NUMBER </label>
                             <input
@@ -398,15 +557,24 @@ function Shoppingcart()
                         {error !== "" ? (
                             <p className="error-message">{error}</p>
                         ) : (
+                            
                             <button
-                                type="submit"
+                                
                                 className="register-button"
+                                onClick={() => handlePlaceOrder()}
                             >
                             Place Order
                             </button>
                         )}
+                        <button
+                                
+                                className="register-button"
+                                onClick={() => handlePlaceOrder()}
+                            >
+                            Place Order
+                            </button>
 
-                    </form>
+                    </div>
             
             </>
         )}

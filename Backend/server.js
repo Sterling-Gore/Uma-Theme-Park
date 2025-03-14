@@ -11,6 +11,10 @@ const { logout } = require('./loginHandler/logout')
 const { registerEmployee } = require('./registerUsers/registerEmployee')
 const { employeeLogin } = require('./employeeHandler/employeeLogin')
 const pool = require('./database');
+//Mercandise
+const { getMerchandise } = require('./shoppingCart/getMerchandise');
+const { getMerchandiseStockQuantity } = require('./shoppingCart/getMerchandiseStockQuantity');
+const { purchaseTicketsAndMerch } = require('./shoppingCart/purchaseTicketsAndMerch');
 const { viewEmployees } = require('./managerPortal/viewEmployees');
 const { deleteEmployee } = require('./managerPortal/deleteEmployee');
 const { updateEmployee } = require('./managerPortal/updateEmployee');
@@ -72,6 +76,15 @@ const server = http.createServer(async (req, res) => {
     }
     else if(req.url === '/updateEmployee' && req.method === 'PUT'){
         updateEmployee(req, res)
+    }
+    else if(req.url === '/getMerchandise' && req.method === 'GET'){
+        getMerchandise(req, res)
+    }
+    else if(req.url === '/getMerchandiseStockQuantity' && req.method === 'POST'){
+        getMerchandiseStockQuantity(req, res)
+    }
+    else if(req.url === '/purchaseTicketsAndMerch' && req.method === 'POST'){
+        purchaseTicketsAndMerch(req, res)
     }
     else if (req.url === '/submitFeedback' && req.method === 'POST'){
         submitFeedback(req, res)

@@ -41,6 +41,70 @@ function Shop()
             }
         }, [isLoggedIn, navigate, isLoading]);
 
+
+        useEffect(() => {
+            const fetchMerchandise = async () => {
+              try {
+                const response = await fetch('http://localhost:4000/getMerchandise', {
+                  method: 'GET',
+                  credentials: 'include',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                });
+                
+                if (!response.ok) {
+                  throw new Error('Failed to fetch merchandise');
+                }
+                
+                const data = await response.json();
+                if (data.success) {
+                  //setEmployees(data.data);
+                    const merch = data.data.map((item,index) => {
+                        return {
+                            ...item,
+                            in_shopping_cart: 0,
+                            image: thunderMountain,
+                        };
+                    });
+                    const storedMerchInCart = JSON.parse(localStorage.getItem("cart-merchandise")) || [];
+                    const updatedMerch = merch.map(item => {
+                        const storedItem = storedMerchInCart.find(cartItem => cartItem.merchandise_id === item.merchandise_id);
+                        if (storedItem) {
+                            let newInCart = Number(storedItem.in_shopping_cart);
+                            let availableStock = Number(item.stock_amount);
+                
+                            // Ensure in_shopping_cart does not exceed available stock
+                            if (newInCart > availableStock) {
+                                newInCart = availableStock;
+                            }
+                
+                            return {
+                                ...item,
+                                in_shopping_cart: newInCart,
+                                stock_amount: availableStock - newInCart
+                            };
+                        }
+
+                        return item;
+                    });
+
+                    setMerchandises(updatedMerch);
+                    console.log(updatedMerch);
+
+                    //console.log(merch);
+                    
+                }
+              } catch (error) {
+                console.error('Error fetching merchandise:', error);
+              }
+            };
+
+            fetchMerchandise();
+            
+          }, []);
+
+          /*
         useEffect(() => {
             //pull from database to get the merchandise
             //here's an example
@@ -108,7 +172,7 @@ function Shop()
 
 
                 
-        }, []);
+        }, []); */
 
 
         useEffect(() => {
@@ -128,12 +192,13 @@ function Shop()
         }
 
         const addToCart = (merchandise_id) => {
+            console.log("ADD");
             setMerchandises((prevMerch) =>
                 prevMerch.map((item) =>
-                    item.id === merchandise_id && item.stock > 0
+                    item.merchandise_id === merchandise_id && item.stock_amount > 0
                         ? {
                               ...item,
-                              stock: item.stock - 1,
+                              stock_amount: item.stock_amount - 1,
                               in_shopping_cart: Number(item.in_shopping_cart) + 1,
                           }
                         : item
@@ -144,8 +209,8 @@ function Shop()
         const removeFromCart = (merchandise_id) => {
             setMerchandises((prevMerch) =>
                 prevMerch.map((item) =>
-                    item.id === merchandise_id && item.in_shopping_cart > 0
-                        ? { ...item, stock: item.stock + 1, in_shopping_cart: Number(item.in_shopping_cart) - 1 }
+                    item.merchandise_id === merchandise_id && item.in_shopping_cart > 0
+                        ? { ...item, stock_amount: item.stock_amount + 1, in_shopping_cart: Number(item.in_shopping_cart) - 1 }
                         : item
                 )
             );
@@ -159,17 +224,17 @@ function Shop()
                 
                 <div className="attractions-grid">
                     {merchandises.map((Merchandise) => (
-                        <div className="attraction-card" key={Merchandise.id}>
+                        <div className="attraction-card" key={Merchandise.merchandise_id}>
                             <div className="attraction-image-container">
                                 <div className="attraction-image" style={{ backgroundImage: `url(${Merchandise.image})` }}></div>
                             </div>
                             <div className="attraction-content">
-                                <h2 className="attraction-name">{Merchandise.name}</h2>
-                                <p className="attraction-description">${Merchandise.price} USD</p>
+                                <h2 className="attraction-name">{Merchandise.merchandise_name}</h2>
+                                <p className="attraction-description">${Merchandise.merchandise_price} USD</p>
                                 <div className="attraction-details">
                                     <span className="attraction-detail">
-                                        {Merchandise.stock < 6 && (
-                                            <><strong>Remaining Stock:</strong> {Merchandise.stock}</>
+                                        {Merchandise.stock_amount < 6 && (
+                                            <><strong>Remaining Stock:</strong> {Merchandise.stock_amount}</>
                                         )}
                                         
                                     </span>
@@ -180,10 +245,10 @@ function Shop()
                                     </span>
                                 </div>
                                 <div className="attraction-footer">
-                                    <button className="attraction-button" onClick={() => addToCart(Merchandise.id)}>
+                                    <button className="attraction-button" onClick={() => addToCart(Merchandise.merchandise_id)}>
                                         Add One To Cart
                                     </button>
-                                    <button className="attraction-button" onClick={() => removeFromCart(Merchandise.id)}>
+                                    <button className="attraction-button" onClick={() => removeFromCart(Merchandise.merchandise_id)}>
                                         Remove One From Cart
                                     </button>
                                 </div>
