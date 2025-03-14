@@ -79,15 +79,49 @@ function MyOrders() {
     }
 
     if (error) {
-        return <div className="error-container">{error}</div>;
+        return (
+        <>
+        <div className="navigation-buttons">
+            <button
+                className="nav-btn"
+                onClick={() => window.location.href = '/account'}
+            >
+                Back to My Account
+            </button>
+        </div>
+        <div className="error-container">
+            {error}
+        </div>
+        </>);
     }
 
     if (orders.length === 0) {
-        return <div className="empty-orders">You have no ticket orders yet.</div>;
-    }
+        return (
+        <>
+        <div className="navigation-buttons">
+            <button
+                className="nav-btn"
+                onClick={() => window.location.href = '/account'}
+            >
+                Back to My Account
+            </button>
+        </div>
+        <div className="empty-orders">
+            You have no ticket orders yet.
+        </div>
+        </>
+    );}
 
     return (
         <div className="my-orders-container">
+            <div className="navigation-buttons">
+                <button
+                    className="nav-btn"
+                    onClick={() => window.location.href = '/account'}
+                >
+                    Back to My Account
+                </button>
+            </div>
             <h1>My Ticket Orders</h1>
 
             <div className="orders-list">

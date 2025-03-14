@@ -77,6 +77,14 @@ function MerchandiseOrders() {
     if (error) {
         return (
             <div className="merchandise-orders error">
+                <div className="navigation-buttons">
+                    <button
+                        className="nav-btn"
+                        onClick={() => window.location.href = '/account'}
+                    >
+                        Back to My Account
+                    </button>
+                </div>
                 <h2>Orders</h2>
                 <div className="error-message">
                     <p>Error loading orders: {error}</p>
@@ -88,15 +96,33 @@ function MerchandiseOrders() {
 
     if (orders.length === 0) {
         return (
+            <>
+            <div className="navigation-buttons">
+            <button
+                className="nav-btn"
+                onClick={() => window.location.href = '/account'}
+            >
+                Back to My Account
+            </button>
+            </div>
             <div className="merchandise-orders empty">
                 <h2>Orders</h2>
                 <p>You haven't placed any orders yet.</p>
             </div>
+            </>
         );
     }
 
     return (
         <div className="merchandise-orders">
+            <div className="navigation-buttons">
+            <button
+                className="nav-btn"
+                onClick={() => window.location.href = '/account'}
+            >
+                Back to My Account
+            </button>
+            </div>
             <h2>Your Merchandise Orders</h2>
 
             <div className="orders-list">
