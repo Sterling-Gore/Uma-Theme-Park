@@ -64,7 +64,7 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
         <h2>{editMode ? 'Modify Employee' : 'Create New Employee'}</h2>
         {editMode && (
           <div className="employee-identifier">
-            <p>Editing employee: <strong>{formData.email}</strong></p>
+            <p>Editing employee: <strong>{formData.first_name}</strong></p>
           </div>
         )}
       </div>

@@ -61,7 +61,7 @@ function ManagerPortal() {
         first_name: '',
         last_name: '',
         role: '',
-        attraction: '', // Updated from attraction_pos to attraction
+        attraction: '', 
         email: '',
         phone_number: '',
         password: '',
@@ -80,18 +80,9 @@ function ManagerPortal() {
   };
 
   const handleEdit = (employee) => {
-    console.log("Editing employee:", employee); // Debug log
+    console.log("Editing employee:", employee); 
     
-    // Find supervisor email if supervisor ID exists
-    let supervisorEmail = '';
-    if (employee.supervisors_id) {
-      const supervisor = employees.find(emp => emp.employee_id === employee.supervisors_id);
-      if (supervisor) {
-        supervisorEmail = supervisor.email;
-      }
-    }
-    
-    // Set form data with employee data - focusing on email as identifier
+
     setFormData({
       first_name: employee.first_name,
       last_name: employee.last_name,
@@ -99,7 +90,7 @@ function ManagerPortal() {
       attraction: employee.attraction, // Use the attraction field directly
       email: employee.email,
       phone_number: employee.phone_number,
-      supervisor_email: supervisorEmail,
+      supervisor_email: employee.supervisor_email,
     });
     
     setEditMode(true);
