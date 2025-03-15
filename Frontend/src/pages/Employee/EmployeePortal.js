@@ -16,14 +16,12 @@ function EmployeePortal() {
   const { logout } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState('dashboard'); // ✅ Manage activeTab state here
 
-  // Redirect employees and managers to their portals
+  // Redirect customers to their portals
   useEffect(() => {
       if (!isLoading) {
           if (userType === "Customer") {
               navigate('/');
-          }  else if (userType === "manager") {
-              navigate('/ManagerPortal');
-          }
+          }  
       }
   }, [userType, navigate, isLoading]);
 
@@ -37,7 +35,7 @@ function EmployeePortal() {
   }, [isLoggedIn, navigate, isLoading]);
 
   // Only render content after loading and redirects are done
-  if (isLoading || userType === "Customer" || userType === "manager") {
+  if (isLoading || userType === "Customer" ) {
     return null;
   }
 
