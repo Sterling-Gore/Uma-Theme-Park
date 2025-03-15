@@ -518,11 +518,9 @@ function Shoppingcart()
                             type="text"
                             value={card.holder_name}
                             onChange={(e) => {
-                                const onlyLetters = e.target.value.replace(/[^a-zA-Z]/g, ""); // Remove non-alphabet characters
-                                setCard({ ...card, holder_name: onlyLetters });
-                                //setCardHolder(onlyLetters);
-                                //checkError();
-                            }}   
+                                const onlyLettersAndSpaces = e.target.value.replace(/[^a-zA-Z\s]/g, ""); // Allow letters and spaces
+                                setCard({ ...card, holder_name: onlyLettersAndSpaces });
+                            }}  
                             placeholder="Card Holder Name"
                             maxLength="100"
                             minLength="1"
@@ -566,13 +564,7 @@ function Shoppingcart()
                             Place Order
                             </button>
                         )}
-                        <button
-                                
-                                className="register-button"
-                                onClick={() => handlePlaceOrder()}
-                            >
-                            Place Order
-                            </button>
+                        
 
                     </div>
             

@@ -1,15 +1,46 @@
-import React, { useState, useContext } from 'react';
+import React, { useEffect, useContext, useRef, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/dashboard';
 import Profile from './components/profile';
 import Tasks from './components/tasks';
+import HandleMerchandise from './components/HandleMerchandise';
 import Reports from './components/reports';
 import './EmployeePortal.css';
 import AuthContext from '../../context/AuthContext';
 
 function EmployeePortal() {
+  const navigate = useNavigate();
+  const { isLoggedIn, userType, isLoading } = useContext(AuthContext);
+  const alertShown = useRef(false);
   const { logout } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState('dashboard'); // ✅ Manage activeTab state here
+
+  // Redirect employees and managers to their portals
+  useEffect(() => {
+      if (!isLoading) {
+          if (userType === "Customer") {
+              navigate('/');
+          }  else if (userType === "manager") {
+              navigate('/ManagerPortal');
+          }
+      }
+  }, [userType, navigate, isLoading]);
+
+  // Verify auth status for ticket purchase
+  useEffect(() => {
+      if (!isLoading && !isLoggedIn && !alertShown.current) {
+          alertShown.current = true;
+          alert("Please login to access employee page!");
+          navigate("/login");
+      }
+  }, [isLoggedIn, navigate, isLoading]);
+
+  // Only render content after loading and redirects are done
+  if (isLoading || userType === "Customer" || userType === "manager") {
+    return null;
+  }
+
 
   const handleLogout = () => {
     logout();
@@ -37,6 +68,7 @@ function EmployeePortal() {
           {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
           {activeTab === 'profile' && <Profile setActiveTab={setActiveTab} />}
           {activeTab === 'tasks' && <Tasks setActiveTab={setActiveTab} />}
+          {activeTab === 'handleMerchandise' && <HandleMerchandise setActiveTabe={setActiveTab}/>}
           {activeTab === 'reports' && <Reports setActiveTab={setActiveTab} />}
         </div>
       </div>
@@ -45,3 +77,4 @@ function EmployeePortal() {
 }
 
 export default EmployeePortal;
+ 
