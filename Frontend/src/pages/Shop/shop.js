@@ -175,9 +175,16 @@ function Shop()
                                     </span>
                                 </div>
                                 <div className="attraction-footer">
-                                    <button className="attraction-button" onClick={() => addToCart(Merchandise.merchandise_id)}>
-                                        Add One To Cart
-                                    </button>
+                                    {Merchandise.stock_amount === 0 ? (
+                                        <p className="attraction-button">
+                                            Out Of Stock
+                                        </p>
+                                    ) : (   
+                                        <button className="attraction-button" onClick={() => addToCart(Merchandise.merchandise_id)}>
+                                            Add One To Cart
+                                        </button>
+                                    )}
+                                    
                                     <button className="attraction-button" onClick={() => removeFromCart(Merchandise.merchandise_id)}>
                                         Remove One From Cart
                                     </button>
