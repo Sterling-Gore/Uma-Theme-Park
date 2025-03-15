@@ -15,7 +15,7 @@ function ManagerPortal() {
     first_name: '',
     last_name: '',
     role: '',
-    attraction_pos: '',
+    attraction: '', 
     email: '',
     phone_number: '',
     password: '',
@@ -61,7 +61,7 @@ function ManagerPortal() {
         first_name: '',
         last_name: '',
         role: '',
-        attraction_pos: '',
+        attraction: '', // Updated from attraction_pos to attraction
         email: '',
         phone_number: '',
         password: '',
@@ -82,14 +82,6 @@ function ManagerPortal() {
   const handleEdit = (employee) => {
     console.log("Editing employee:", employee); // Debug log
     
-    // Convert attraction_pos to the format expected by the backend
-    let attractionPos = employee.attraction_pos;
-    
-    // If what we have is attraction_name but we need attraction_pos
-    if (employee.attraction_name === "attration1" && !attractionPos) {
-      attractionPos = 1;
-    }
-    
     // Find supervisor email if supervisor ID exists
     let supervisorEmail = '';
     if (employee.supervisors_id) {
@@ -104,11 +96,10 @@ function ManagerPortal() {
       first_name: employee.first_name,
       last_name: employee.last_name,
       role: employee.role,
-      attraction_pos: attractionPos,
-      email: employee.email, // This is now our primary identifier
+      attraction: employee.attraction, // Use the attraction field directly
+      email: employee.email,
       phone_number: employee.phone_number,
       supervisor_email: supervisorEmail,
-      // We don't need to include supervisor_ID directly anymore
     });
     
     setEditMode(true);
@@ -128,11 +119,6 @@ function ManagerPortal() {
         if (!updateData.email) {
           alert('Error: Email is missing. Cannot update.');
           return;
-        }
-        
-        // Ensure attraction_pos is in the format expected by backend
-        if (updateData.attraction_pos === "attration1") {
-          updateData.attraction_pos = 1;
         }
         
         console.log("Sending update data:", updateData); // Debug log
@@ -174,11 +160,6 @@ function ManagerPortal() {
       try {
         // Create a clean copy of formData for sending
         const createData = { ...formData };
-        
-        // Ensure attraction_pos is in the format expected by backend
-        if (createData.attraction_pos === "attration1") {
-          createData.attraction_pos = 1;
-        }
         
         console.log("Sending create data:", createData); // Debug log
         

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
-const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, setActiveTab }) => {
+const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, setActiveTab, employees }) => {
   const [attractions, setAttractions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch attractions when component mounts
+
   useEffect(() => {
     const fetchAttractions = async () => {
       try {
@@ -38,6 +38,26 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
     return '';
   };
 
+  // Find supervisor information if available
+  useEffect(() => {
+    if (editMode && formData.email && !formData.supervisor_email && employees) {
+      const employee = employees.find(emp => emp.email === formData.email);
+      if (employee && employee.supervisors_id) {
+        const supervisor = employees.find(emp => emp.employee_id === employee.supervisors_id);
+        if (supervisor) {
+          // Create a synthetic event to update the supervisor email
+          const event = {
+            target: {
+              name: 'supervisor_email',
+              value: supervisor.email
+            }
+          };
+          handleInputChange(event);
+        }
+      }
+    }
+  }, [editMode, formData.email, formData.supervisor_email, employees, handleInputChange]);
+
   return (
     <div className="employee-form-container">
       <div className="content-header">
@@ -56,7 +76,7 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
             type="text"
             id="first_name"
             name="first_name"
-            value={formData.first_name}
+            value={formData.first_name || ''}
             onChange={handleInputChange}
             required
           />
@@ -68,7 +88,7 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
             type="text"
             id="last_name"
             name="last_name"
-            value={formData.last_name}
+            value={formData.last_name || ''}
             onChange={handleInputChange}
             required
           />
@@ -79,7 +99,7 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
           <select
             id="role"
             name="role"
-            value={formData.role}
+            value={formData.role || ''}
             onChange={handleInputChange}
             required
           >
@@ -123,7 +143,7 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
             type="email"
             id="email"
             name="email"
-            value={formData.email}
+            value={formData.email || ''}
             onChange={handleInputChange}
             required
           />
@@ -140,7 +160,7 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
             type="tel"
             id="phone_number"
             name="phone_number"
-            value={formData.phone_number}
+            value={formData.phone_number || ''}
             onChange={handleInputChange}
             required
           />
@@ -185,9 +205,6 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
             value={formData.supervisor_email || ""}
             onChange={handleInputChange}
           />
-            <small className="form-help-text">
-              Leave blank to keep current supervisor.
-            </small>
         </div>
 
         <div className="form-actions">
