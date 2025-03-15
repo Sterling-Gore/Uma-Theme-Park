@@ -194,9 +194,9 @@ function MerchandiseOrders() {
                             </div>
                         </div>
 
-                        <div className="order-actions">
+                        {/* <div className="order-actions">
                             <button className="view-details-btn">View Details</button>
-                        </div>
+                        </div> */}
                     </div>
                 ))}
             </div>
