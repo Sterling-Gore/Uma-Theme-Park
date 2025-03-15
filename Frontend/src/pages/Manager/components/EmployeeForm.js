@@ -1,12 +1,62 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
-const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, setActiveTab }) => {
+const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, setActiveTab, employees }) => {
+  const [attractions, setAttractions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+
+  useEffect(() => {
+    const fetchAttractions = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:4000/getAttractionName');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        setAttractions(data);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching attractions:', err);
+        setError('Failed to load attractions. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAttractions();
+  }, []);
+
+  // Get attraction value from formData
   const getAttractionValue = () => {
-    if (typeof formData.attraction_pos === 'number') {
-      return 'attration1'; // Convert from number to string form representation
+    if (formData.attraction) {
+      return formData.attraction;
     }
-    return formData.attraction_pos || '';
+    return '';
   };
+
+  // Find supervisor information if available
+  useEffect(() => {
+    if (editMode && formData.email && !formData.supervisor_email && employees) {
+      const employee = employees.find(emp => emp.email === formData.email);
+      if (employee && employee.supervisors_id) {
+        const supervisor = employees.find(emp => emp.employee_id === employee.supervisors_id);
+        if (supervisor) {
+          // Create a synthetic event to update the supervisor email
+          const event = {
+            target: {
+              name: 'supervisor_email',
+              value: supervisor.email
+            }
+          };
+          handleInputChange(event);
+        }
+      }
+    }
+  }, [editMode, formData.email, formData.supervisor_email, employees, handleInputChange]);
 
   return (
     <div className="employee-form-container">
@@ -14,7 +64,7 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
         <h2>{editMode ? 'Modify Employee' : 'Create New Employee'}</h2>
         {editMode && (
           <div className="employee-identifier">
-            <p>Editing employee: <strong>{formData.email}</strong></p>
+            <p>Editing employee: <strong>{formData.first_name}</strong></p>
           </div>
         )}
       </div>
@@ -26,7 +76,7 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
             type="text"
             id="first_name"
             name="first_name"
-            value={formData.first_name}
+            value={formData.first_name || ''}
             onChange={handleInputChange}
             required
           />
@@ -38,7 +88,7 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
             type="text"
             id="last_name"
             name="last_name"
-            value={formData.last_name}
+            value={formData.last_name || ''}
             onChange={handleInputChange}
             required
           />
@@ -49,7 +99,7 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
           <select
             id="role"
             name="role"
-            value={formData.role}
+            value={formData.role || ''}
             onChange={handleInputChange}
             required
           >
@@ -58,17 +108,32 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
             <option value="manager">manager</option>
           </select>
         </div>
+        
         <div className="form-group">
-          <label htmlFor="attraction_pos">Attraction Position</label>
+          <label htmlFor="attraction">Assigned Attraction</label>
           <select
-            id="attraction_pos"
-            name="attraction_pos"
+            id="attraction"
+            name="attraction"
             value={getAttractionValue()}
             onChange={handleInputChange}
             required
+            disabled={loading}
           >
             <option value="">Select Attraction</option>
-            <option value="attration1">attration1</option>
+            {error ? (
+              <option value="" disabled>{error}</option>
+            ) : loading ? (
+              <option value="" disabled>Loading attractions...</option>
+            ) : (
+              attractions.map(attraction => (
+                <option 
+                  key={attraction.attraction_id} 
+                  value={attraction.attraction_id}
+                >
+                  {attraction.attraction_name}
+                </option>
+              ))
+            )}
           </select>
         </div>
 
@@ -78,7 +143,7 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
             type="email"
             id="email"
             name="email"
-            value={formData.email}
+            value={formData.email || ''}
             onChange={handleInputChange}
             required
           />
@@ -95,7 +160,7 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
             type="tel"
             id="phone_number"
             name="phone_number"
-            value={formData.phone_number}
+            value={formData.phone_number || ''}
             onChange={handleInputChange}
             required
           />

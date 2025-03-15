@@ -16,7 +16,7 @@ async function updateEmployee(req, res) {
                     first_name, 
                     last_name, 
                     role, 
-                    attraction_pos, 
+                    attraction, // Changed from attraction_pos to attraction
                     phone_number, 
                     password, 
                     supervisor_email 
@@ -58,6 +58,21 @@ async function updateEmployee(req, res) {
                     }
                 }
 
+                // Validate attraction exists if provided
+                if (attraction) {
+                    const [attractionExists] = await pool.execute(
+                        "SELECT attraction_id FROM theme_park.attractions WHERE attraction_id = ?",
+                        [attraction]
+                    );
+                    
+                    if (attractionExists.length === 0) {
+                        res.writeHead(400, { 'Content-Type': 'application/json' });
+                        return res.end(JSON.stringify({ 
+                            message: "Specified attraction does not exist" 
+                        }));
+                    }
+                }
+
                 // Build SQL update query parts
                 let updateQuery = "UPDATE theme_park.employee SET ";
                 const updateParams = [];
@@ -78,14 +93,10 @@ async function updateEmployee(req, res) {
                     updateParams.push(role);
                 }
 
-                if (attraction_pos) {
-                    // Handle attraction_pos conversion if needed
-                    let posValue = attraction_pos;
-                    if (attraction_pos === "attration1") {
-                        posValue = 1;
-                    }
-                    updates.push("attraction_pos = ?");
-                    updateParams.push(posValue);
+                if (attraction) {
+                    // Now uses the direct attraction ID as a foreign key
+                    updates.push("attraction = ?");
+                    updateParams.push(attraction);
                 }
 
                 if (phone_number) {

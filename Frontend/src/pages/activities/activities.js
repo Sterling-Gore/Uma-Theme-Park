@@ -1,84 +1,123 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import "../../App.css";
 import "./activities.css";
 
-// Import images directly
-import thunderMountain from "../../assets/thunderMountain.jpg";
-// For the other images, make sure they exist in your assets folder
-// If they don't exist yet, you'll need to add them
-import enchantedCastle from "../../assets/thunderMountain.jpg";
-import splashRapids from "../../assets/thunderMountain.jpg";
-import skyFlyer from "../../assets/thunderMountain.jpg";
-
 function Activities() {
     const navigate = useNavigate();
+    const [attractions, setAttractions] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const attractions = [
-        {
-            id: 1,
-            name: "Thunder Mountain",
-            description: "Experience the thrill of our premier roller coaster! Thunder Mountain takes you through twisting tracks at speeds up to 60 mph with breathtaking drops and heart-stopping loops.",
-            minHeight: "48 inches",
-            thrillLevel: "High",
-            image: thunderMountain
-        },
-        {
-            id: 2,
-            name: "Enchanted Castle",
-            description: "Step into a world of fantasy and wonder! Our Enchanted Castle features magical interactive experiences, charming characters, and a spectacular light show that will leave you spellbound.",
-            minHeight: "None",
-            thrillLevel: "Low",
-            image: enchantedCastle
-        },
-        {
-            id: 3,
-            name: "Splash Rapids",
-            description: "Beat the heat with our exhilarating water adventure! Splash Rapids sends you down rushing waters, through misty caves, and culminates in a jaw-dropping 40-foot plunge.",
-            minHeight: "42 inches",
-            thrillLevel: "Medium",
-            image: splashRapids
-        },
-        {
-            id: 4,
-            name: "Sky Flyer",
-            description: "Soar through the clouds on our newest attraction! Sky Flyer suspends you 200 feet in the air as you swing, spin, and fly like never before with panoramic views of the entire park.",
-            minHeight: "52 inches",
-            thrillLevel: "High",
-            image: skyFlyer
+    useEffect(() => {
+        const fetchAttractions = async () => {
+            try {
+                const response = await fetch('http://localhost:4000/getAttractions', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    }
+                  });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch attractions');
+                }
+                const result = await response.json();
+
+                if (result.success) {
+                    setAttractions(result.data);
+                } else {
+                    throw new Error(result.message || 'Failed to fetch attractions');
+                }
+            } catch (error) {
+                console.error('Error fetching attractions:', error);
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAttractions();
+    }, []);
+
+
+    const getStatusClass = (status) => {
+        switch (status) {
+            case 'closed':
+                return 'status-closed';
+            case 'maintenance':
+                return 'status-maintenance';
+            case 'open':
+                return ''; //default green
+            default:
+                return '';
         }
-    ];
+    };
+
+
+    const formatDuration = (duration) => {
+        if (!duration) return 'N/A';
+
+        const [hours, minutes, seconds] = duration.split(':').map(Number);
+
+        let formatted = '';
+        if (hours > 0) formatted += `${hours}h `;
+        if (minutes > 0) formatted += `${minutes}m `;
+        if (seconds > 0) formatted += `${seconds}s`;
+
+        return formatted.trim() || 'N/A';
+    };
+
+    // Show loading message
+    if (loading) {
+        return (
+            <div className="activities-background">
+                <div className="activities-container">
+                    <h1 className="activities-title">Park Attractions</h1>
+                    <p className="activities-intro">Loading attractions...</p>
+                </div>
+            </div>
+        );
+    }
+
+
+    if (error) {
+        return (
+            <div className="activities-background">
+                <div className="activities-container">
+                    <h1 className="activities-title">Park Attractions</h1>
+                    <p className="activities-intro">Error loading attractions: {error}</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="activities-background">
             <div className="activities-container">
                 <h1 className="activities-title">Park Attractions</h1>
                 <p className="activities-intro">Discover the excitement and adventure waiting for you at our world-class attractions!</p>
-                
+
                 <div className="attractions-grid">
                     {attractions.map((attraction) => (
-                        <div className="attraction-card" key={attraction.id}>
-                            <div className="attraction-image-container">
-                                <div className="attraction-image" style={{ backgroundImage: `url(${attraction.image})` }}></div>
-                            </div>
+                        <div className="attraction-card" key={attraction.attraction_id}>
                             <div className="attraction-content">
-                                <h2 className="attraction-name">{attraction.name}</h2>
+                                <h2 className="attraction-name">{attraction.attraction_name}</h2>
                                 <p className="attraction-description">{attraction.description}</p>
                                 <div className="attraction-details">
                                     <span className="attraction-detail">
-                                        <strong>Minimum Height:</strong> {attraction.minHeight}
+                                        <strong>Capacity:</strong> {attraction.attraction_capacity} people
                                     </span>
                                     <span className="attraction-detail">
-                                        <strong>Thrill Level:</strong> {attraction.thrillLevel}
+                                        <strong>Duration:</strong> {formatDuration(attraction.attraction_duration)}
                                     </span>
                                 </div>
                                 <div className="attraction-footer">
                                     <button className="attraction-button" onClick={() => navigate(`/tickets`)}>
                                         Buy Tickets
                                     </button>
-                                    <span className="attraction-status">
-                                        {/* Status will be fetched from backend */}
-                                        Open
+                                    <span className={`attraction-status ${getStatusClass(attraction.attraction_status)}`}>
+                                        {attraction.attraction_status.charAt(0).toUpperCase() + attraction.attraction_status.slice(1)}
                                     </span>
                                 </div>
                             </div>
