@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import ViewEmployees from './components/ViewEmployees';
 import EmployeeForm from './components/EmployeeForm';
@@ -10,12 +11,13 @@ function ManagerPortal() {
   const [activeTab, setActiveTab] = useState('view');
   const [employees, setEmployees] = useState([]);
   const { logout } = useContext(AuthContext)
-  
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
     role: '',
-    attraction: '', 
+    attraction: '',
     email: '',
     phone_number: '',
     password: '',
@@ -37,11 +39,11 @@ function ManagerPortal() {
             'Content-Type': 'application/json'
           }
         });
-        
+
         if (!response.ok) {
           throw new Error('Failed to fetch employees');
         }
-        
+
         const data = await response.json();
         if (data.success) {
           setEmployees(data.data);
@@ -50,7 +52,7 @@ function ManagerPortal() {
         console.error('Error fetching employees:', error);
       }
     };
-    
+
     fetchEmployees();
   }, [refreshEmployees]);
 
@@ -61,7 +63,7 @@ function ManagerPortal() {
         first_name: '',
         last_name: '',
         role: '',
-        attraction: '', 
+        attraction: '',
         email: '',
         phone_number: '',
         password: '',
@@ -80,40 +82,40 @@ function ManagerPortal() {
   };
 
   const handleEdit = (employee) => {
-    console.log("Editing employee:", employee); 
-    
+    console.log("Editing employee:", employee);
+
 
     setFormData({
       first_name: employee.first_name,
       last_name: employee.last_name,
       role: employee.role,
-      attraction: employee.attraction, // Use the attraction field directly
+      attraction: employee.attraction,
       email: employee.email,
       phone_number: employee.phone_number,
       supervisor_email: employee.supervisor_email,
     });
-    
+
     setEditMode(true);
     setActiveTab('edit');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (editMode) {
-      // Update existing employee
+
       try {
-        // Create a clean copy of formData for sending
+
         const updateData = { ...formData };
-        
-        // Make sure we have email (required by backend)
+
+
         if (!updateData.email) {
           alert('Error: Email is missing. Cannot update.');
           return;
         }
-        
+
         console.log("Sending update data:", updateData); // Debug log
-        
+
         const response = await fetch('http://localhost:4000/updateEmployee', {
           method: 'PUT',
           credentials: 'include',
@@ -122,21 +124,21 @@ function ManagerPortal() {
           },
           body: JSON.stringify(updateData)
         });
-        
-        // Log the raw response for debugging
+
+
         console.log("Update response status:", response.status);
-        
+
         if (!response.ok) {
           const errorText = await response.text();
           console.error("Update error response:", errorText);
           throw new Error(`Failed to update employee: ${response.status} ${errorText}`);
         }
-        
+
         const data = await response.json();
-        console.log("Update response data:", data); // Debug log
-        
+        console.log("Update response data:", data);
+
         if (data.success || data.message === "Success") {
-          // Update successful
+
           setRefreshEmployees(!refreshEmployees); // Trigger refresh
           setActiveTab('view');
         } else {
@@ -149,11 +151,11 @@ function ManagerPortal() {
     } else {
       // Create new employee
       try {
-        // Create a clean copy of formData for sending
+
         const createData = { ...formData };
-        
+
         console.log("Sending create data:", createData); // Debug log
-        
+
         const response = await fetch('http://localhost:4000/createEmployee', {
           method: 'POST',
           credentials: 'include',
@@ -162,19 +164,19 @@ function ManagerPortal() {
           },
           body: JSON.stringify(createData)
         });
-        
-        // Log the raw response for debugging
+
+
         console.log("Create response status:", response.status);
-        
+
         if (!response.ok) {
           const errorText = await response.text();
           console.error("Create error response:", errorText);
           throw new Error(`Failed to create employee: ${response.status} ${errorText}`);
         }
-        
+
         const data = await response.json();
         console.log("Create response data:", data); // Debug log
-        
+
         if (data.message === "Success") {
           // Creation successful
           setRefreshEmployees(!refreshEmployees); // Trigger refresh
@@ -198,13 +200,13 @@ function ManagerPortal() {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ email }) // Send identifier
+          body: JSON.stringify({ email })
         });
-        
+
         if (!response.ok) {
           throw new Error('Failed to delete employee');
         }
-        
+
         const data = await response.json();
         if (data.success || data.message === "Success") {
           // Deletion successful
@@ -218,7 +220,7 @@ function ManagerPortal() {
       }
     }
   };
-  
+
   const handleLogout = () => {
     // Clear localStorage first
     logout();
@@ -227,32 +229,32 @@ function ManagerPortal() {
       method: 'GET',
       credentials: 'include'
     }).finally(() => {
-      window.location.href = '/';
+      navigate('/')
     });
   };
 
   // Determine which component to render based on activeTab
   const renderContent = () => {
-    switch(activeTab) {
+    switch (activeTab) {
       case 'view':
         return (
-          <ViewEmployees 
-            employees={employees} 
-            handleEdit={handleEdit} 
-            handleDelete={handleDelete} 
-            searchTerm={searchTerm} 
-            setSearchTerm={setSearchTerm} 
+          <ViewEmployees
+            employees={employees}
+            handleEdit={handleEdit}
+            handleDelete={handleDelete}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
           />
         );
       case 'create':
       case 'edit':
         return (
-          <EmployeeForm 
-            formData={formData} 
-            handleInputChange={handleInputChange} 
-            handleSubmit={handleSubmit} 
-            editMode={editMode} 
-            setActiveTab={setActiveTab} 
+          <EmployeeForm
+            formData={formData}
+            handleInputChange={handleInputChange}
+            handleSubmit={handleSubmit}
+            editMode={editMode}
+            setActiveTab={setActiveTab}
             employees={employees} // Pass employees for supervisor dropdown
           />
         );
