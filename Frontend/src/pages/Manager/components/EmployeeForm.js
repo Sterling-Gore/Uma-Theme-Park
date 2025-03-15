@@ -1,11 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, setActiveTab }) => {
+  const [attractions, setAttractions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch attractions when component mounts
+  useEffect(() => {
+    const fetchAttractions = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:4000/getAttractionName');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        setAttractions(data);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching attractions:', err);
+        setError('Failed to load attractions. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAttractions();
+  }, []);
+
+  // Get attraction value from formData
   const getAttractionValue = () => {
-    if (typeof formData.attraction_pos === 'number') {
-      return 'attration1'; // Convert from number to string form representation
+    if (formData.attraction) {
+      return formData.attraction;
     }
-    return formData.attraction_pos || '';
+    return '';
   };
 
   return (
@@ -58,17 +88,32 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
             <option value="manager">manager</option>
           </select>
         </div>
+        
         <div className="form-group">
-          <label htmlFor="attraction_pos">Attraction Position</label>
+          <label htmlFor="attraction">Assigned Attraction</label>
           <select
-            id="attraction_pos"
-            name="attraction_pos"
+            id="attraction"
+            name="attraction"
             value={getAttractionValue()}
             onChange={handleInputChange}
             required
+            disabled={loading}
           >
             <option value="">Select Attraction</option>
-            <option value="attration1">attration1</option>
+            {error ? (
+              <option value="" disabled>{error}</option>
+            ) : loading ? (
+              <option value="" disabled>Loading attractions...</option>
+            ) : (
+              attractions.map(attraction => (
+                <option 
+                  key={attraction.attraction_id} 
+                  value={attraction.attraction_id}
+                >
+                  {attraction.attraction_name}
+                </option>
+              ))
+            )}
           </select>
         </div>
 
@@ -140,6 +185,9 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
             value={formData.supervisor_email || ""}
             onChange={handleInputChange}
           />
+            <small className="form-help-text">
+              Leave blank to keep current supervisor.
+            </small>
         </div>
 
         <div className="form-actions">
