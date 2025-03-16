@@ -6,6 +6,8 @@ import Profile from './components/profile';
 import Tasks from './components/tasks';
 import HandleMerchandise from './components/HandleMerchandise';
 import CreateMerchandise from './components/createMerchandise';
+import HandleAttraction from './components/handleAttraction';
+import CreateAttraction from './components/createAttraction';
 import Reports from './components/reports';
 import './EmployeePortal.css';
 import AuthContext from '../../context/AuthContext';
@@ -69,6 +71,8 @@ function EmployeePortal() {
           {activeTab === 'tasks' && <Tasks setActiveTab={setActiveTab} />}
           {activeTab === 'handleMerchandise' && <HandleMerchandise setActiveTab={setActiveTab}/>}
           {activeTab === 'createMerchandise' && <CreateMerchandise setActiveTab={setActiveTab}/>}
+          {activeTab === 'handleAttractions' && <HandleAttraction setActiveTab={setActiveTab}/>}
+          {activeTab === 'createAttraction' && <CreateAttraction setActiveTab={setActiveTab}/>}
           {activeTab === 'reports' && <Reports setActiveTab={setActiveTab} />}
         </div>
       </div>

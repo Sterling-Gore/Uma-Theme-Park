@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import "../../../App.css";
 
 
-const HandleMerchandise = ({ setActiveTab }) => {
+const HandleAttraction = ({ setActiveTab }) => {
     const alertShown = useRef(false);
     const [merchandises, setMerchandises] = useState([]);
     const [refreshMerchandise, setRefreshMerchandise] = useState(false);
@@ -375,4 +375,4 @@ const HandleMerchandise = ({ setActiveTab }) => {
   );
 };
 
-export default HandleMerchandise;
+export default HandleAttraction;

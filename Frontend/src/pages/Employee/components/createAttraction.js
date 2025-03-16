@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import "../../../App.css";
 
-const CreateMerchandise = ({ setActiveTab }) => {
+const CreateAttraction = ({ setActiveTab }) => {
     const alertShown = useRef(false);
     const [merchandises, setMerchandises] = useState([]);
     const [formData, setFormData] = useState({
@@ -253,4 +253,4 @@ const CreateMerchandise = ({ setActiveTab }) => {
     );
 };
 
-export default CreateMerchandise;
+export default CreateAttraction;
