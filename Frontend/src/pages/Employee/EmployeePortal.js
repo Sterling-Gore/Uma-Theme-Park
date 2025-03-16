@@ -5,6 +5,9 @@ import Dashboard from './components/dashboard';
 import Profile from './components/profile';
 import Tasks from './components/tasks';
 import HandleMerchandise from './components/HandleMerchandise';
+import CreateMerchandise from './components/createMerchandise';
+import HandleAttraction from './components/handleAttraction';
+import CreateAttraction from './components/createAttraction';
 import Reports from './components/reports';
 import './EmployeePortal.css';
 import AuthContext from '../../context/AuthContext';
@@ -16,14 +19,12 @@ function EmployeePortal() {
   const { logout } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState('dashboard'); // ✅ Manage activeTab state here
 
-  // Redirect employees and managers to their portals
+  // Redirect customers to their portals
   useEffect(() => {
       if (!isLoading) {
           if (userType === "Customer") {
               navigate('/');
-          }  else if (userType === "manager") {
-              navigate('/ManagerPortal');
-          }
+          }  
       }
   }, [userType, navigate, isLoading]);
 
@@ -37,7 +38,7 @@ function EmployeePortal() {
   }, [isLoggedIn, navigate, isLoading]);
 
   // Only render content after loading and redirects are done
-  if (isLoading || userType === "Customer" || userType === "manager") {
+  if (isLoading || userType === "Customer" ) {
     return null;
   }
 
@@ -68,7 +69,10 @@ function EmployeePortal() {
           {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
           {activeTab === 'profile' && <Profile setActiveTab={setActiveTab} />}
           {activeTab === 'tasks' && <Tasks setActiveTab={setActiveTab} />}
-          {activeTab === 'handleMerchandise' && <HandleMerchandise setActiveTabe={setActiveTab}/>}
+          {activeTab === 'handleMerchandise' && <HandleMerchandise setActiveTab={setActiveTab}/>}
+          {activeTab === 'createMerchandise' && <CreateMerchandise setActiveTab={setActiveTab}/>}
+          {activeTab === 'handleAttractions' && <HandleAttraction setActiveTab={setActiveTab}/>}
+          {activeTab === 'createAttraction' && <CreateAttraction setActiveTab={setActiveTab}/>}
           {activeTab === 'reports' && <Reports setActiveTab={setActiveTab} />}
         </div>
       </div>

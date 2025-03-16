@@ -155,11 +155,18 @@ function Shop()
                 <div className="attractions-grid">
                     {merchandises.map((Merchandise) => (
                         <div className="attraction-card" key={Merchandise.merchandise_id}>
-                            <div className="attraction-image-container">
-                                <div className="attraction-image" style={{ backgroundImage: `url(${Merchandise.image})` }}></div>
-                            </div>
+                            
                             <div className="attraction-content">
                                 <h2 className="attraction-name">{Merchandise.merchandise_name}</h2>
+                                {Merchandise.viewing_image && Merchandise.mimeType ? (
+                                    <img 
+                                        src={`data:${Merchandise.mimeType};base64,${Merchandise.viewing_image}`}
+                                        alt="Merchandise Image"
+                                        style={{ width: '300px', height: '300px', objectFit: 'contain' }} 
+                                    />
+                                ) : (
+                                    <p>Loading Image ... </p>
+                                )}
                                 <p className="attraction-description">${Merchandise.merchandise_price} USD</p>
                                 <div className="attraction-details">
                                     <span className="attraction-detail">

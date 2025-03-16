@@ -15,6 +15,10 @@ function ProtectedRoute({ element, requiredUserType }) {
     return <Navigate to="/login" />;
   }
 
+  if (requiredUserType === 'employee' && userType === 'manager') {
+    return element;
+  }
+
   if (requiredUserType && userType !== requiredUserType) {
     if (userType === 'customer') {
       return <Navigate to="/" />;
