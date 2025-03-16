@@ -13,6 +13,7 @@ const HandleMerchandise = ({ setActiveTab }) => {
     const [deleteMerch, setDeleteMerch] = useState(null);
 
 
+    
 
     useEffect(() => {
         const fetchMerchandise = async () => {
@@ -36,7 +37,7 @@ const HandleMerchandise = ({ setActiveTab }) => {
                     return {
                         ...item,
                         is_editing_stock : false,
-                        is_editing_price : false
+                        is_editing_price : false,
                     };
                 });
 
@@ -248,6 +249,15 @@ const HandleMerchandise = ({ setActiveTab }) => {
                     </div>
                     <div className="attraction-content">
                         <h2 className="attraction-name">{Merchandise.merchandise_name}</h2>
+                        {Merchandise.viewing_image && Merchandise.mimeType ? (
+                        <img 
+                            src={`data:${Merchandise.mimeType};base64,${Merchandise.viewing_image}`}
+                            alt="Merchandise Image"
+                            style={{ width: '300px', height: '300px', objectFit: 'contain' }} 
+                        />
+                    ) : (
+                        <p>Loading Image ... </p>
+                    )}
                         <p className="attraction-description">${Merchandise.merchandise_price} USD</p>
                         <div className="attraction-details">
                             <span className="attraction-detail">

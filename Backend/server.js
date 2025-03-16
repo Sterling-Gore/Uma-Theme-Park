@@ -14,6 +14,7 @@ const pool = require('./database');
 //Mercandise
 const { getMerchandise } = require('./shoppingCart/getMerchandise');
 const { deleteMerchandise } = require('./employeePortal/deleteMerchandise');
+const { createMerchandise } = require('./employeePortal/createMerchandise');
 const { updateMerchandiseStock } = require('./employeePortal/updateMerchandiseStock');
 const { updateMerchandisePrice } = require('./employeePortal/updateMerchandisePrice');
 const { getMerchandiseStockQuantity } = require('./shoppingCart/getMerchandiseStockQuantity');
@@ -89,6 +90,9 @@ const server = http.createServer(async (req, res) => {
     }
     else if(req.url === '/deleteMerchandise' && req.method === 'POST'){
         deleteMerchandise(req, res)
+    }
+    else if(req.url === '/createMerchandise' && req.method === 'POST'){
+        createMerchandise(req, res)
     }
     else if(req.url === '/updateMerchandiseStock' && req.method === 'POST'){
         updateMerchandiseStock(req, res)

@@ -5,6 +5,7 @@ import Dashboard from './components/dashboard';
 import Profile from './components/profile';
 import Tasks from './components/tasks';
 import HandleMerchandise from './components/HandleMerchandise';
+import CreateMerchandise from './components/createMerchandise';
 import Reports from './components/reports';
 import './EmployeePortal.css';
 import AuthContext from '../../context/AuthContext';
@@ -66,7 +67,8 @@ function EmployeePortal() {
           {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
           {activeTab === 'profile' && <Profile setActiveTab={setActiveTab} />}
           {activeTab === 'tasks' && <Tasks setActiveTab={setActiveTab} />}
-          {activeTab === 'handleMerchandise' && <HandleMerchandise setActiveTabe={setActiveTab}/>}
+          {activeTab === 'handleMerchandise' && <HandleMerchandise setActiveTab={setActiveTab}/>}
+          {activeTab === 'createMerchandise' && <CreateMerchandise setActiveTab={setActiveTab}/>}
           {activeTab === 'reports' && <Reports setActiveTab={setActiveTab} />}
         </div>
       </div>

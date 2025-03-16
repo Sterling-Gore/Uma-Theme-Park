@@ -36,6 +36,13 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           Edit Merchandise
         </button>
         <button 
+          className={activeTab === 'createMerchandise' ? 'active' : ''} 
+          onClick={() => setActiveTab('createMerchandise')}
+        >
+          <span className="icon">✅</span>
+          Create Merchandise
+        </button>
+        <button 
           className={activeTab === 'reports' ? 'active' : ''} 
           onClick={() => setActiveTab('reports')}
         >
