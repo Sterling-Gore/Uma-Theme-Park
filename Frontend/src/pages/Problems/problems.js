@@ -49,7 +49,7 @@ function Problems() {
             };
 
             // Make API call to submit feedback
-            const response = await fetch("http://localhost:4000/submitFeedback", {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/submitFeedback`, {
                 method: "POST",
                 mode: 'cors',
                 headers: {

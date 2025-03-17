@@ -12,7 +12,7 @@ function Activities() {
     useEffect(() => {
         const fetchAttractions = async () => {
             try {
-                const response = await fetch('http://localhost:4000/getAttractions', {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getAttractions`, {
                     method: 'GET',
                     credentials: 'include',
                     headers: {

@@ -23,7 +23,7 @@ function HandleLogin() {
         };
         
         try {
-            const response = await fetch('http://localhost:4000/login', {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/login`, {
                 method: 'POST',
                 mode: 'cors',
                 headers: {

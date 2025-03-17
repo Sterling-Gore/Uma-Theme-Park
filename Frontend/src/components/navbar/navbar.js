@@ -20,7 +20,7 @@ const NavBar = memo(function NavBar() {
     e.preventDefault();
     // Simple direct logout
     try {
-      fetch('http://localhost:4000/logout', {
+      fetch(`${process.env.REACT_APP_BACKEND_API}/logout`, {
         method: 'GET',
         mode: 'cors',
         headers: {

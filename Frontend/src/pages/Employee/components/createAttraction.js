@@ -75,7 +75,7 @@ const CreateAttraction = ({ setActiveTab }) => {
                     image : base64String
                 }
 
-                const response = await fetch('http://localhost:4000/createAttraction', {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/createAttraction`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {

@@ -45,7 +45,7 @@ function Shop()
         useEffect(() => {
             const fetchMerchandise = async () => {
               try {
-                const response = await fetch('http://localhost:4000/getMerchandise', {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getMerchandise`, {
                   method: 'GET',
                   credentials: 'include',
                   headers: {

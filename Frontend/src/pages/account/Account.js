@@ -60,7 +60,7 @@ function Account() {
             try {
                 // Use URL parameters for GET request instead of body
                 const userID = localStorage.getItem('userID');
-                const response = await fetch(`http://localhost:4000/getAccountInfo`, {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getAccountInfo`, {
                     method: 'POST',
                     mode: 'cors',
                     headers: {
@@ -300,7 +300,7 @@ function Account() {
 
         try {
             setIsLoadingPage(true);
-            const response = await fetch('http://localhost:4000/updatePassword', {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/updatePassword`, {
                 method: 'PUT',
                 mode: 'cors',
                 headers: {
@@ -339,7 +339,7 @@ function Account() {
 
         try {
             setIsLoadingPage(true);
-            const response = await fetch('http://localhost:4000/updateAccountInfo', {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/updateAccountInfo`, {
                 method: 'PUT',
                 mode: 'cors',
                 headers: {

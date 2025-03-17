@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
         // If stored state indicates logged in, verify with server
         if (storedLoggedIn) {
           try {
-            const response = await fetch("http://localhost:4000/protected", {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/protected`, {
               method: "GET",
               mode: 'cors',
               headers: {

@@ -18,7 +18,7 @@ const HandleMerchandise = ({ setActiveTab }) => {
     useEffect(() => {
         const fetchMerchandise = async () => {
             try {
-            const response = await fetch('http://localhost:4000/getMerchandise', {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getMerchandise`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
@@ -87,7 +87,7 @@ const HandleMerchandise = ({ setActiveTab }) => {
                 id : merchandise_id,
                 newStock : Number(newStockAmount)
             }
-            const response = await fetch('http://localhost:4000/updateMerchandiseStock', {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/updateMerchandiseStock`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -153,7 +153,7 @@ const HandleMerchandise = ({ setActiveTab }) => {
                 id : merchandise_id,
                 newPrice : Number(newPrice)
             }
-            const response = await fetch('http://localhost:4000/updateMerchandisePrice', {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/updateMerchandisePrice`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -205,7 +205,7 @@ const HandleMerchandise = ({ setActiveTab }) => {
             const dataToSend = {
                 id : deleteMerch.merchandise_id,
             }
-            const response = await fetch('http://localhost:4000/deleteMerchandise', {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/deleteMerchandise`, {
             method: 'POST',
             credentials: 'include',
             headers: {

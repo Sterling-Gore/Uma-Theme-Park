@@ -2,7 +2,7 @@
 
 export const handleLogout = async (navigate, logout) => {
     try {
-        const response = await fetch('http://localhost:4000/logout', {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/logout`, {
             method: 'GET',
             mode: 'cors',
             headers: {
