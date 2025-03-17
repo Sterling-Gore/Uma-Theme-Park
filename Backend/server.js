@@ -17,6 +17,12 @@ const { deleteMerchandise } = require('./employeePortal/deleteMerchandise');
 const { createMerchandise } = require('./employeePortal/createMerchandise');
 const { updateMerchandiseStock } = require('./employeePortal/updateMerchandiseStock');
 const { updateMerchandisePrice } = require('./employeePortal/updateMerchandisePrice');
+const { createAttraction } = require('./employeePortal/createAttraction');
+const { updateAttractionStatus } = require('./employeePortal/updateAttractionStatus');
+const { updateAttractionDescription } = require('./employeePortal/updateAttractionDescription');
+const { updateAttractionCapacity } = require('./employeePortal/updateAttractionCapacity');
+const { updateAttractionDuration } = require('./employeePortal/updateAttractionDuration');
+const { deleteAttraction } = require('./employeePortal/deleteAttraction');
 const { getMerchandiseStockQuantity } = require('./shoppingCart/getMerchandiseStockQuantity');
 const { purchaseTicketsAndMerch } = require('./shoppingCart/purchaseTicketsAndMerch');
 const { viewEmployees } = require('./managerPortal/viewEmployees');
@@ -99,6 +105,24 @@ const server = http.createServer(async (req, res) => {
     }
     else if(req.url === '/updateMerchandisePrice' && req.method === 'POST'){
         updateMerchandisePrice(req, res)
+    }
+    else if(req.url === '/createAttraction' && req.method === 'POST'){
+        createAttraction(req, res)
+    }
+    else if(req.url === '/updateAttractionStatus' && req.method === 'POST'){
+        updateAttractionStatus(req, res)
+    }
+    else if(req.url === '/updateAttractionDescription' && req.method === 'POST'){
+        updateAttractionDescription(req, res)
+    }
+    else if(req.url === '/updateAttractionDuration' && req.method === 'POST'){
+        updateAttractionDuration(req, res)
+    }
+    else if(req.url === '/updateAttractionCapacity' && req.method === 'POST'){
+        updateAttractionCapacity(req, res)
+    }
+    else if(req.url === '/deleteAttraction' && req.method === 'POST'){
+        deleteAttraction(req, res)
     }
     else if(req.url === '/getMerchandiseStockQuantity' && req.method === 'POST'){
         getMerchandiseStockQuantity(req, res)

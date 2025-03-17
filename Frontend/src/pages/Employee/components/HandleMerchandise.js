@@ -258,29 +258,42 @@ const HandleMerchandise = ({ setActiveTab }) => {
                         ) : (
                             <p>Loading Image ... </p>
                         )}
-                        <p className="attraction-description">${Merchandise.merchandise_price} USD</p>
-                        <div className="attraction-details">
-                            <span className="attraction-detail">
-                                
-                                <><strong>Stock Amount:</strong> {Merchandise.stock_amount}</>
-                                
-                            </span>
-                            <span className="attraction-detail">
-                             {/*}   {Merchandise.in_shopping_cart > 0 && (
-                                    <><strong>Amount In Shopping Cart:</strong> {Merchandise.in_shopping_cart}</>
-                                )}*/}
-                            </span>
-                        </div>
-
                         <div className="attraction-footer">
+                            <p className="attraction-description"> <strong>Price:</strong> ${Merchandise.merchandise_price} USD</p>
+                            {!isEditing && (
+                            <button className="attraction-button" onClick={() => EditMerchandisePrice(Merchandise.merchandise_id)}>
+                                Update Price
+                            </button>
+                            )}
+                        </div>
+                        <div className="attraction-footer">
+                            <div className="attraction-details">
+                                <span className="attraction-detail">
+                                    
+                                    <><strong>Stock Amount:</strong> {Merchandise.stock_amount}</>
+                                    
+                                </span>
+                                <span className="attraction-detail">
+                                {/*}   {Merchandise.in_shopping_cart > 0 && (
+                                        <><strong>Amount In Shopping Cart:</strong> {Merchandise.in_shopping_cart}</>
+                                    )}*/}
+                                </span>
+                            </div>
                             {!isEditing && (
                             <button className="attraction-button" onClick={() => EditMerchandiseStock(Merchandise.merchandise_id)}>
                                 Update Stock Amount
                             </button>
                             )}
+                        </div>
+
+
+                        {Merchandise.is_editing_price && (<label className="label-header"> Set Price </label>)}
+                        {Merchandise.is_editing_stock && ( <label className="label-header"> Set Stock Amount </label> )}
+                        <div className="attraction-footer">
+                            
                             {Merchandise.is_editing_stock && (
                                 <>
-                                <label className="label-header"> Set Stock Amount </label>
+                                {/*<label className="label-header"> Set Stock Amount </label>*/}
                                 <input
                                 type="text"
                                 value={newStockAmount}
@@ -292,7 +305,7 @@ const HandleMerchandise = ({ setActiveTab }) => {
                                 }}   
                                 placeholder="Stock Amount"
                                 maxLength="3"
-                                minLength="3"
+                                minLength="1"
                                 required
                                 />
                                 {newStockAmount.length > 0 && (
@@ -308,14 +321,10 @@ const HandleMerchandise = ({ setActiveTab }) => {
                         
 
                         
-                            {!isEditing && (
-                            <button className="attraction-button" onClick={() => EditMerchandisePrice(Merchandise.merchandise_id)}>
-                                Update Price
-                            </button>
-                            )}
+                            
                             {Merchandise.is_editing_price && (
                                 <>
-                                <label className="label-header"> Set Price </label>
+                                {/*<label className="label-header"> Set Price </label>*/}
                                 <input
                                 type="text"
                                 value={newPrice}
@@ -327,7 +336,7 @@ const HandleMerchandise = ({ setActiveTab }) => {
                                 }}   
                                 placeholder="Price"
                                 maxLength="3"
-                                minLength="3"
+                                minLength="1"
                                 required
                                 />
                                 {newPrice.length > 0 && (

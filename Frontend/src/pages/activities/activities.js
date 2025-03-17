@@ -103,6 +103,15 @@ function Activities() {
                         <div className="attraction-card" key={attraction.attraction_id}>
                             <div className="attraction-content">
                                 <h2 className="attraction-name">{attraction.attraction_name}</h2>
+                                {attraction.viewing_image && attraction.mimeType ? (
+                                <img 
+                                    src={`data:${attraction.mimeType};base64,${attraction.viewing_image}`}
+                                    alt="Attraction Image"
+                                    style={{ width: '300px', height: '300px', objectFit: 'contain' }} 
+                                />
+                            ) : (
+                                <p>Loading Image ... </p>
+                            )}
                                 <p className="attraction-description">{attraction.description}</p>
                                 <div className="attraction-details">
                                     <span className="attraction-detail">

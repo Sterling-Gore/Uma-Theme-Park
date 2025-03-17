@@ -4,90 +4,92 @@ import "../../../App.css";
 
 const HandleAttraction = ({ setActiveTab }) => {
     const alertShown = useRef(false);
-    const [merchandises, setMerchandises] = useState([]);
-    const [refreshMerchandise, setRefreshMerchandise] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-    const [newStockAmount, setNewStockAmount] = useState("");
+
+    const [isEditing, setIsEditing] = useState(false);;
     const [step, setStep] = useState(1);
-    const [newPrice, setNewPrice] = useState("");
-    const [deleteMerch, setDeleteMerch] = useState(null);
+
+    const [attractions, setAttractions] = useState([]);
+    const [refreshAttractions, setRefreshAttractions] = useState(false);
+    const [newCapacity, setNewCapacity] = useState("");
+    const [newDuration, setNewDuration] = useState("");
+    const [newStatus, setNewStatus] = useState("");
+    const [newDescription, setNewDescription] = useState("");
+    const [deleteAttraction, setDeleteAttraction] = useState(null);
 
 
     
-
     useEffect(() => {
-        const fetchMerchandise = async () => {
+        const fetchAttractions = async () => {
             try {
-            const response = await fetch('http://localhost:4000/getMerchandise', {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                'Content-Type': 'application/json'
+                const response = await fetch('http://localhost:4000/getAttractions', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                    });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch attractions');
                 }
-            });
-            
-            if (!response.ok) {
-                throw new Error('Failed to fetch merchandise');
-            }
-            
-            const data = await response.json();
-            if (data.success) {
-                //setEmployees(data.data);
-                const merch = data.data.map((item,index) => {
-                    return {
-                        ...item,
-                        is_editing_stock : false,
-                        is_editing_price : false,
-                    };
-                });
+                const result = await response.json();
 
-                setMerchandises(merch);
-                console.log(merch);
-
-                //console.log(merch);
-                
-            }
+                if (result.success) {
+                    const attractions = result.data.map((attraction,index) => {
+                        return {
+                            ...attraction,
+                            is_editing_capacity : false,
+                            is_editing_duration : false,
+                            is_editing_status : false,
+                            is_editing_description : false,
+                        };
+                    });
+                    setAttractions(attractions);
+                } else {
+                    throw new Error(result.message || 'Failed to fetch attractions');
+                }
             } catch (error) {
-            console.error('Error fetching merchandise:', error);
-            }
+                console.error('Error fetching attractions:', error);
+                //setError(error.message);
+            } 
         };
 
-        fetchMerchandise();
-        
-    }, [refreshMerchandise]);
+        fetchAttractions();
+    }, [refreshAttractions]);
 
-    const EditMerchandiseStock = (merchandise_id) => {
+
+
+    const EditAttractionCapacity = (attraction_id) => {
         setIsEditing(true);
-        const newMerchandise = merchandises.map(item => {
-            if (item.merchandise_id === merchandise_id)
+        const newAttraction = attractions.map(attraction => {
+            if (attraction.attraction_id === attraction_id)
             {
-                item.is_editing_stock = true;
+                attraction.is_editing_capacity = true;
             }
-            return item;
+            return attraction;
         });
-        setMerchandises(newMerchandise);
+        setAttractions(newAttraction);
     };
 
-    const cancelEditMerchandiseStock = (merchandise_id) => {
+    const cancelEditAttractionCapacity = (attraction_id) => {
         setIsEditing(false);
-        setNewStockAmount("");
-        const newMerchandise = merchandises.map(item => {
-            if (item.merchandise_id === merchandise_id)
+        setNewCapacity("");
+        const newAttraction = attractions.map(attraction => {
+            if (attraction.attraction_id === attraction_id)
             {
-                item.is_editing_stock = false;
+                attraction.is_editing_capacity = false;
             }
-            return item;
+            return attraction;
         });
-        setMerchandises(newMerchandise);
+        setAttractions(newAttraction);
     };
 
-    const submitEditMerchandiseStock = async (merchandise_id) => {
+    const submitEditAttractionCapacity = async (attraction_id) => {
         try {
             const dataToSend = {
-                id : merchandise_id,
-                newStock : Number(newStockAmount)
+                id : attraction_id,
+                newCapacity : Number(newCapacity)
             }
-            const response = await fetch('http://localhost:4000/updateMerchandiseStock', {
+            const response = await fetch('http://localhost:4000/updateAttractionCapacity', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -97,63 +99,53 @@ const HandleAttraction = ({ setActiveTab }) => {
         });
         
         if (!response.ok) {
-            throw new Error('Failed to update merchandise');
+            throw new Error('Failed to update attraction');
         }
         
         setIsEditing(false);
-        setNewStockAmount("");
-        /*
-        const newMerchandise = merchandises.map(item => {
-            if (item.merchandise_id === merchandise_id)
-            {
-                item.is_editing_stock = false;
-            }
-            return item;
-        });
-        setMerchandises(newMerchandise);*/
-        setRefreshMerchandise(!refreshMerchandise);
+        setNewCapacity("");
+        setRefreshAttractions(!refreshAttractions);
 
         } catch (error) {
-            console.error('Error fetching merchandise:', error);
+            console.error('Error fetching attraction:', error);
             alertShown.current = true;
-            alert("Error updating merchandise");
+            alert("Error updating attraction");
         }
-        
+    };
 
-    }
-
-    const EditMerchandisePrice = (merchandise_id) => {
+    
+    const EditAttractionDuration = (attraction_id) => {
         setIsEditing(true);
-        const newMerchandise = merchandises.map(item => {
-            if (item.merchandise_id === merchandise_id)
+        const newAttraction = attractions.map(attraction => {
+            if (attraction.attraction_id === attraction_id)
             {
-                item.is_editing_price = true;
+                attraction.is_editing_duration = true;
             }
-            return item;
+            return attraction;
         });
-        setMerchandises(newMerchandise);
+        setAttractions(newAttraction);
     };
 
-    const cancelEditMerchandisePrice = (merchandise_id) => {
+    const cancelEditAttractionDuration = (attraction_id) => {
         setIsEditing(false);
-        setNewPrice("");
-        const newMerchandise = merchandises.map(item => {
-            if (item.merchandise_id === merchandise_id)
+        setNewDuration("");
+        const newAttraction = attractions.map(attraction => {
+            if (attraction.attraction_id === attraction_id)
             {
-                item.is_editing_price = false;
+                attraction.is_editing_duration = false;
             }
-            return item;
+            return attraction;
         });
-        setMerchandises(newMerchandise);
+        setAttractions(newAttraction);
     };
 
-    const submitEditMerchandisePrice = async (merchandise_id) => {
+    const submitEditAttractionDuration = async (attraction_id) => {
         try {
             const dataToSend = {
-                id : merchandise_id,
-                newPrice : Number(newPrice)
+                id : attraction_id,
+                newDuration : newDuration
             }
-            const response = await fetch('http://localhost:4000/updateMerchandisePrice', {
+            const response = await fetch('http://localhost:4000/updateAttractionDuration', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -163,38 +155,141 @@ const HandleAttraction = ({ setActiveTab }) => {
         });
         
         if (!response.ok) {
-            throw new Error('Failed to update merchandise');
+            throw new Error('Failed to update attraction');
         }
         
         setIsEditing(false);
-        setNewPrice("");
-        /*
-        const newMerchandise = merchandises.map(item => {
-            if (item.merchandise_id === merchandise_id)
-            {
-                item.is_editing_stock = false;
-            }
-            return item;
-        });
-        setMerchandises(newMerchandise);*/
-        setRefreshMerchandise(!refreshMerchandise);
+        setNewDuration("");
+        setRefreshAttractions(!refreshAttractions);
 
         } catch (error) {
-            console.error('Error fetching merchandise:', error);
+            console.error('Error fetching attraction:', error);
             alertShown.current = true;
-            alert("Error updating merchandise");
+            alert("Error updating attraction");
+        }
+    };
+
+    const EditAttractionStatus = (attraction_id) => {
+        setIsEditing(true);
+        const newAttraction = attractions.map(attraction => {
+            if (attraction.attraction_id === attraction_id)
+            {
+                attraction.is_editing_status = true;
+            }
+            return attraction;
+        });
+        setAttractions(newAttraction);
+    };
+
+    const cancelEditAttractionStatus = (attraction_id) => {
+        setIsEditing(false);
+        setNewStatus("");
+        const newAttraction = attractions.map(attraction => {
+            if (attraction.attraction_id === attraction_id)
+            {
+                attraction.is_editing_status = false;
+            }
+            return attraction;
+        });
+        setAttractions(newAttraction);
+    };
+
+    const submitEditAttractionStatus = async (attraction_id) => {
+        try {
+            const dataToSend = {
+                id : attraction_id,
+                newStatus : newStatus
+            }
+            const response = await fetch('http://localhost:4000/updateAttractionStatus', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataToSend),
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to update attraction');
         }
         
+        setIsEditing(false);
+        setNewStatus("");
+        setRefreshAttractions(!refreshAttractions);
 
-    }
+        } catch (error) {
+            console.error('Error fetching attraction:', error);
+            alertShown.current = true;
+            alert("Error updating attraction");
+        }
+    };
 
-    const startDeletion = (merchandise_id) => {
-        for(const item of merchandises)
+
+    const EditAttractionDescription = (attraction_id) => {
+        setIsEditing(true);
+        const newAttraction = attractions.map(attraction => {
+            if (attraction.attraction_id === attraction_id)
+            {
+                attraction.is_editing_description = true;
+                setNewDescription(attraction.description);
+            }
+            return attraction;
+        });
+        setAttractions(newAttraction);
+    };
+
+    const cancelEditAttractionDescription = (attraction_id) => {
+        setIsEditing(false);
+        setNewDescription("");
+        const newAttraction = attractions.map(attraction => {
+            if (attraction.attraction_id === attraction_id)
+            {
+                attraction.is_editing_description = false;
+            }
+            return attraction;
+        });
+        setAttractions(newAttraction);
+    };
+
+    const submitEditAttractionDescription = async (attraction_id) => {
+        try {
+            const dataToSend = {
+                id : attraction_id,
+                newDescription : newDescription
+            }
+            const response = await fetch('http://localhost:4000/updateAttractionDescription', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataToSend),
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to update attraction');
+        }
+        
+        setIsEditing(false);
+        setNewDescription("");
+        setRefreshAttractions(!refreshAttractions);
+
+        } catch (error) {
+            console.error('Error fetching attraction:', error);
+            alertShown.current = true;
+            alert("Error updating attraction");
+        }
+    };
+
+
+
+    const startDeletion = (attraction_id) => {
+        for(const item of attractions)
         {
-            if(item.merchandise_id == merchandise_id)
+            if(item.attraction_id == attraction_id)
             {
                 console.log(item);
-                setDeleteMerch(item);
+                setDeleteAttraction(item);
             }
         }
         setStep(2);
@@ -203,9 +298,9 @@ const HandleAttraction = ({ setActiveTab }) => {
     const confirmDeletion = async () => {
         try {
             const dataToSend = {
-                id : deleteMerch.merchandise_id,
+                id : deleteAttraction.attraction_id,
             }
-            const response = await fetch('http://localhost:4000/deleteMerchandise', {
+            const response = await fetch('http://localhost:4000/deleteAttraction', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -215,164 +310,249 @@ const HandleAttraction = ({ setActiveTab }) => {
         });
         
         if (!response.ok) {
-            throw new Error('Failed to update merchandise');
+            throw new Error('Failed to delete attraction');
         }
         
         
-        setRefreshMerchandise(!refreshMerchandise);
+        setRefreshAttractions(!refreshAttractions);
         setStep(1);
 
         } catch (error) {
-            console.error('Error fetching merchandise:', error);
+            console.error('Error deleting attraction:', error);
             alertShown.current = true;
-            alert("Error deleting merchandise");
+            alert("Error deleting attraction");
         }
     };
 
     const cancelDeletion = () => {
-        setDeleteMerch(null);
+        setDeleteAttraction(null);
         setStep(1);
     };
 
 
 
-  return (
-    <div className="profile-container">
-      <h2>Online Store Merchandise</h2>
-      <p>View and update your merchandise information here.</p>
-      {step === 1 && (
-      <div className="attractions-grid">
-            {merchandises.map((Merchandise) => (
-                <div className="attraction-card" key={Merchandise.merchandise_id}>
-                    <div className="attraction-image-container">
-                       {/*} <div className="attraction-image" style={{ backgroundImage: `url(${Merchandise.image})` }}></div> */}
-                    </div>
-                    <div className="attraction-content">
-                        <h2 className="attraction-name">{Merchandise.merchandise_name}</h2>
-                        {Merchandise.viewing_image && Merchandise.mimeType ? (
-                            <img 
-                                src={`data:${Merchandise.mimeType};base64,${Merchandise.viewing_image}`}
-                                alt="Merchandise Image"
-                                style={{ width: '300px', height: '300px', objectFit: 'contain' }} 
-                            />
-                        ) : (
-                            <p>Loading Image ... </p>
-                        )}
-                        <p className="attraction-description">${Merchandise.merchandise_price} USD</p>
-                        <div className="attraction-details">
-                            <span className="attraction-detail">
-                                
-                                <><strong>Stock Amount:</strong> {Merchandise.stock_amount}</>
-                                
-                            </span>
-                            <span className="attraction-detail">
-                             {/*}   {Merchandise.in_shopping_cart > 0 && (
-                                    <><strong>Amount In Shopping Cart:</strong> {Merchandise.in_shopping_cart}</>
-                                )}*/}
-                            </span>
+    return (
+        <div className="profile-container">
+          <h2>Attractions</h2>
+          <p>View and update the attraction information here.</p>
+          {step === 1 && (
+          <div className="attractions-grid">
+                {attractions.map((Attraction) => (
+                    <div className="attraction-card" key={Attraction.attraction_id}>
+                        <div className="attraction-image-container">
+                           {/*} <div className="attraction-image" style={{ backgroundImage: `url(${Merchandise.image})` }}></div> */}
                         </div>
-
-                        <div className="attraction-footer">
-                            {!isEditing && (
-                            <button className="attraction-button" onClick={() => EditMerchandiseStock(Merchandise.merchandise_id)}>
-                                Update Stock Amount
-                            </button>
-                            )}
-                            {Merchandise.is_editing_stock && (
-                                <>
-                                <label className="label-header"> Set Stock Amount </label>
-                                <input
-                                type="text"
-                                value={newStockAmount}
-                                onChange={(e) => {
-                                    let value = e.target.value.replace(/\D/g, ""); 
-                                    setNewStockAmount(value);
-                                    //setCardHolder(onlyLetters);
-                                    //checkError();
-                                }}   
-                                placeholder="Stock Amount"
-                                maxLength="3"
-                                minLength="3"
-                                required
+                        <div className="attraction-content">
+                            <h2 className="attraction-name">{Attraction.attraction_name}</h2>
+                            {Attraction.viewing_image && Attraction.mimeType ? (
+                                <img 
+                                    src={`data:${Attraction.mimeType};base64,${Attraction.viewing_image}`}
+                                    alt="Attraction Image"
+                                    style={{ width: '300px', height: '300px', objectFit: 'contain' }} 
                                 />
-                                {newStockAmount.length > 0 && (
-                                    <button className="attraction-button" onClick={() => submitEditMerchandiseStock(Merchandise.merchandise_id)}>
-                                        Confirm Changes
-                                    </button>
-                                )}
-                                <button className="attraction-button" onClick={() => cancelEditMerchandiseStock(Merchandise.merchandise_id) }>
-                                    Cancel Changes
-                                </button>
-                                </>
+                            ) : (
+                                <p>Loading Image ... </p>
                             )}
-                        
-
-                        
+                            <p className="attraction-description">
+                                {Attraction.description}
+                            </p>
                             {!isEditing && (
-                            <button className="attraction-button" onClick={() => EditMerchandisePrice(Merchandise.merchandise_id)}>
-                                Update Price
-                            </button>
-                            )}
-                            {Merchandise.is_editing_price && (
-                                <>
-                                <label className="label-header"> Set Price </label>
-                                <input
-                                type="text"
-                                value={newPrice}
-                                onChange={(e) => {
-                                    let value = e.target.value.replace(/\D/g, ""); 
-                                    setNewPrice(value);
-                                    //setCardHolder(onlyLetters);
-                                    //checkError();
-                                }}   
-                                placeholder="Price"
-                                maxLength="3"
-                                minLength="3"
-                                required
-                                />
-                                {newPrice.length > 0 && (
-                                    <button className="attraction-button" onClick={() => submitEditMerchandisePrice(Merchandise.merchandise_id)}>
-                                        Confirm Changes
-                                    </button>
-                                )}
-                                <button className="attraction-button" onClick={() => cancelEditMerchandisePrice(Merchandise.merchandise_id) }>
-                                    Cancel Changes
+                                <button className="attraction-button" onClick={() => EditAttractionDescription(Attraction.attraction_id)}>
+                                    Update Description
                                 </button>
-                                </>
                             )}
+                            <div className="attraction-footer">
+                                <p className="attraction-description"><strong>Status:</strong> {Attraction.attraction_status}</p>
+                                {!isEditing && (
+                                <button className="attraction-button" onClick={() => EditAttractionStatus(Attraction.attraction_id)}>
+                                    Update Status
+                                </button>
+                                )}
+                            </div>
+                            <div className="attraction-footer">
+                                <div className="attraction-details">
+                                    <span className="attraction-detail">
+                                        
+                                        <><strong>Capacity:</strong> {Attraction.attraction_capacity}</>
+                                        
+                                    </span>
+                                </div>
+                                {!isEditing && (
+                                <button className="attraction-button" onClick={() => EditAttractionCapacity(Attraction.attraction_id)}>
+                                    Update Capacity
+                                </button>
+                                )}
+                            </div>
+                            <div className="attraction-footer">
+                                <p className="attraction-description"><strong>Duration:</strong> {Attraction.attraction_duration}</p>
+                                {!isEditing && (
+                                <button className="attraction-button" onClick={() => EditAttractionDuration(Attraction.attraction_id)}>
+                                    Update Duration
+                                </button>
+                                )}
+                            </div>
+    
+    
+                            {Attraction.is_editing_status && (<label className="label-header"> Set Status </label>)}
+                            {Attraction.is_editing_capacity && ( <label className="label-header"> Set Capacity </label> )}
+                            {Attraction.is_editing_duration && ( <label className="label-header"> Set Duration </label> )}
+                            {Attraction.is_editing_description && ( <label className="label-header"> Set Description </label> )}
+                            <div className="attraction-footer">
+                                
+                                {Attraction.is_editing_capacity && (
+                                    <>
+                                    {/*<label className="label-header"> Set Stock Amount </label>*/}
+                                    <input
+                                    type="text"
+                                    value={newCapacity}
+                                    onChange={(e) => {
+                                        let value = e.target.value.replace(/\D/g, ""); 
+                                        setNewCapacity(value);
+                                        //setCardHolder(onlyLetters);
+                                        //checkError();
+                                    }}   
+                                    placeholder="Capacity"
+                                    maxLength="4"
+                                    minLength="1"
+                                    required
+                                    />
+                                    {newCapacity.length > 0 && (
+                                        <button className="attraction-button" onClick={() => submitEditAttractionCapacity(Attraction.attraction_id)}>
+                                            Confirm Changes
+                                        </button>
+                                    )}
+                                    <button className="attraction-button" onClick={() => cancelEditAttractionCapacity(Attraction.attraction_id) }>
+                                        Cancel Changes
+                                    </button>
+                                    </>
+                                )}
+                            </div>
+
+                            <div /*nothing*/>
+
+                                {Attraction.is_editing_description && (
+                                    <>
+                                    {/*<label className="label-header"> Set Stock Amount </label>*/}
+                                    <textarea
+                                    className="description-box"
+                                    value={newDescription}
+                                    onChange={(e) => {
+                                        setNewDescription(e.target.value);
+                                    }}   
+                                    placeholder="Description"
+                                    maxLength="200"
+                                    minLength="1"
+                                    required
+                                    />
+                                    <div className="attraction-footer">
+                                    {newDescription.length > 0 && (
+                                        <button className="attraction-button" onClick={() => submitEditAttractionDescription(Attraction.attraction_id)}>
+                                            Confirm Changes
+                                        </button>
+                                    )}
+                                    <button className="attraction-button" onClick={() => cancelEditAttractionDescription(Attraction.attraction_id) }>
+                                        Cancel Changes
+                                    </button>
+                                    </div>
+                                    </>
+                                )}
+                            </div>
+
+                            <div className="attraction-footer">
+
+                            
+                                {Attraction.is_editing_duration && (
+                                    <>
+                                    {/*<label className="label-header"> Set Stock Amount </label>*/}
+                                    <input
+                                    type="text"
+                                    value={newDuration}
+                                    onChange={ (e) => {
+                                        let value = e.target.value.replace(/\D/g, ""); // Remove non-digits
+                                        value = value.match(/.{1,2}/g)?.join(":") || "";
+                                        value = value.slice(0, 8);
+                                        setNewDuration(value);
+                                        //setcard.expiration_date(value);
+                                        //checkError();
+                                    }}  
+                                    placeholder="Duration (00:00:00)"
+                                    maxLength="8"
+                                    minLength="1"
+                                    required
+                                    />
+                                    {newDuration.length === 8 && newDuration !== "00:00:00" && (
+                                        <button className="attraction-button" onClick={() => submitEditAttractionDuration(Attraction.attraction_id)}>
+                                            Confirm Changes
+                                        </button>
+                                    )}
+                                    <button className="attraction-button" onClick={() => cancelEditAttractionDuration(Attraction.attraction_id) }>
+                                        Cancel Changes
+                                    </button>
+                                    </>
+                                )}
+                            </div>
+                            <div className="attraction-footer">
+    
+                                {Attraction.is_editing_status && (
+                                    <>
+                                    {/*<label className="label-header"> Set Price </label>*/}
+                                    <select 
+                                    className="custom-select"
+                                    //className="form-input"
+                                    value={newStatus}
+                                    onChange={(e) => {
+                                        setNewStatus(e.target.value);
+                                    }}
+                                    required
+                                    >
+                                        <option value="">Select Status</option>
+                                        <option value="Open">Open</option>
+                                        <option value="Maintenance">Maintenance</option>
+                                        <option value="Closed">Closed</option>
+                                    </select>
+                                    {newStatus !== "" && (
+                                        <button className="attraction-button" onClick={() => submitEditAttractionStatus(Attraction.attraction_id)}>
+                                            Confirm Changes
+                                        </button>
+                                    )}
+                                    <button className="attraction-button" onClick={() => cancelEditAttractionStatus(Attraction.attraction_id) }>
+                                        Cancel Changes
+                                    </button>
+                                    </>
+                                )}
+                            </div>
                         </div>
+                        <button className="delete-button" onClick={() => startDeletion(Attraction.attraction_id)}>
+                            Delete Attraction
+                        </button>
                     </div>
-                    <button className="delete-button" onClick={() => startDeletion(Merchandise.merchandise_id)}>
-                        Delete Merchandise
-                    </button>
-                </div>
-            ))}
-        </div>
-        )}
-
-        {step === 2 && (
-            <div /*center this */>
-            {deleteMerch === null ? (
-                <>
-                <p className="attraction-name">Error Gathering Merchandise Information</p>
-                <button className="delete-button" onClick={() => setStep(1)}>Go back</button>
-                </>
-            ): (
-                <>
-                <div>
-                    <h2>Are you sure you want to DELETE <span /*make this text colored red*/>{deleteMerch.merchandise_name}</span></h2>
-                    <div /*make these buttons side by side*/>
-                        <button className="attraction-button" onClick={() => confirmDeletion()}>Confirm Deletion</button>
-                        <button className="delete-button" onClick={() => cancelDeletion()}>Cancel Deletion</button>
-                    </div>
-                </div>
-                </>
-            )}
+                ))}
             </div>
-        )}
-      {/*<button onClick={() => setActiveTab('dashboard')}>Back to Dashboard</button>*/}
-    </div>
-  );
+            )}
+    
+            {step === 2 && (
+                <div /*center this */>
+                {deleteAttraction === null ? (
+                    <>
+                    <p className="attraction-name">Error Gathering Attraction Information</p>
+                    <button className="delete-button" onClick={() => setStep(1)}>Go back</button>
+                    </>
+                ): (
+                    <>
+                    <div>
+                        <h2>Are you sure you want to DELETE <span /*make this text colored red*/>{deleteAttraction.attraction_name}</span></h2>
+                        <div /*make these buttons side by side*/>
+                            <button className="attraction-button" onClick={() => confirmDeletion()}>Confirm Deletion</button>
+                            <button className="delete-button" onClick={() => cancelDeletion()}>Cancel Deletion</button>
+                        </div>
+                    </div>
+                    </>
+                )}
+                </div>
+            )}
+          {/*<button onClick={() => setActiveTab('dashboard')}>Back to Dashboard</button>*/}
+        </div>
+      );
 };
 
 export default HandleAttraction;
