@@ -21,7 +21,7 @@ function EmployeeLogin() {
     const dataToSend = { username: email, password };
 
     try {
-      const response = await fetch('http://localhost:4000/employeeLogin', {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/employeeLogin`, {
         method: 'POST',
         mode: 'cors',
         headers: { 'Content-Type': 'application/json' },

@@ -43,7 +43,7 @@ function MyOrders() {
                     return;
                 }
 
-                const response = await fetch('http://localhost:4000/getTicketOrders', {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getTicketOrders`, {
                     method: 'POST',
                     mode: 'cors',
                     headers: {

@@ -10,7 +10,7 @@ const EmployeeForm = ({ formData, handleInputChange, handleSubmit, editMode, set
     const fetchAttractions = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:4000/getAttractionName');
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getAttractionName`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);

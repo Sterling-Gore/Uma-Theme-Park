@@ -20,7 +20,7 @@ const CreateMerchandise = ({ setActiveTab }) => {
     useEffect(() => {
         const fetchMerchandise = async () => {
             try {
-            const response = await fetch('http://localhost:4000/getMerchandise', {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getMerchandise`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
@@ -98,7 +98,7 @@ const CreateMerchandise = ({ setActiveTab }) => {
                     image : base64String
                 }
 
-                const response = await fetch('http://localhost:4000/createMerchandise', {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/createMerchandise`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {

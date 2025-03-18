@@ -45,7 +45,7 @@ function EmployeePortal() {
 
   const handleLogout = () => {
     logout();
-    fetch('http://localhost:4000/logout', {
+    fetch(`${process.env.REACT_APP_BACKEND_API}/logout`, {
       method: 'GET',
       credentials: 'include',
     }).finally(() => {

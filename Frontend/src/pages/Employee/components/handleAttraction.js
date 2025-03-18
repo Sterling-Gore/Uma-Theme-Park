@@ -21,7 +21,7 @@ const HandleAttraction = ({ setActiveTab }) => {
     useEffect(() => {
         const fetchAttractions = async () => {
             try {
-                const response = await fetch('http://localhost:4000/getAttractions', {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getAttractions`, {
                     method: 'GET',
                     credentials: 'include',
                     headers: {
@@ -89,7 +89,7 @@ const HandleAttraction = ({ setActiveTab }) => {
                 id : attraction_id,
                 newCapacity : Number(newCapacity)
             }
-            const response = await fetch('http://localhost:4000/updateAttractionCapacity', {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/updateAttractionCapacity`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -145,7 +145,7 @@ const HandleAttraction = ({ setActiveTab }) => {
                 id : attraction_id,
                 newDuration : newDuration
             }
-            const response = await fetch('http://localhost:4000/updateAttractionDuration', {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/updateAttractionDuration`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -200,7 +200,7 @@ const HandleAttraction = ({ setActiveTab }) => {
                 id : attraction_id,
                 newStatus : newStatus
             }
-            const response = await fetch('http://localhost:4000/updateAttractionStatus', {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/updateAttractionStatus`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -257,7 +257,7 @@ const HandleAttraction = ({ setActiveTab }) => {
                 id : attraction_id,
                 newDescription : newDescription
             }
-            const response = await fetch('http://localhost:4000/updateAttractionDescription', {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/updateAttractionDescription`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -300,7 +300,7 @@ const HandleAttraction = ({ setActiveTab }) => {
             const dataToSend = {
                 id : deleteAttraction.attraction_id,
             }
-            const response = await fetch('http://localhost:4000/deleteAttraction', {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/deleteAttraction`, {
             method: 'POST',
             credentials: 'include',
             headers: {

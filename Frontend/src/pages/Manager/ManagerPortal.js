@@ -32,7 +32,7 @@ function ManagerPortal() {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await fetch('http://localhost:4000/viewEmployees', {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/viewEmployees`, {
           method: 'GET',
           credentials: 'include',
           headers: {
@@ -116,7 +116,7 @@ function ManagerPortal() {
 
         console.log("Sending update data:", updateData); // Debug log
 
-        const response = await fetch('http://localhost:4000/updateEmployee', {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/updateEmployee`, {
           method: 'PUT',
           credentials: 'include',
           headers: {
@@ -156,7 +156,7 @@ function ManagerPortal() {
 
         console.log("Sending create data:", createData); // Debug log
 
-        const response = await fetch('http://localhost:4000/createEmployee', {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/createEmployee`, {
           method: 'POST',
           credentials: 'include',
           headers: {
@@ -194,7 +194,7 @@ function ManagerPortal() {
   const handleDelete = async (email) => {
     if (window.confirm(`Are you sure you want to delete this employee (${email})?`)) {
       try {
-        const response = await fetch('http://localhost:4000/deleteEmployee', {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/deleteEmployee`, {
           method: 'DELETE',
           credentials: 'include',
           headers: {
@@ -225,7 +225,7 @@ function ManagerPortal() {
     // Clear localStorage first
     logout();
     // Call API
-    fetch('http://localhost:4000/logout', {
+    fetch(`${process.env.REACT_APP_BACKEND_API}/logout`, {
       method: 'GET',
       credentials: 'include'
     }).finally(() => {
