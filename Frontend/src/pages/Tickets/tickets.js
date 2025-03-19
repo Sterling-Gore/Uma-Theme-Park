@@ -9,7 +9,7 @@ function Tickets() {
     const navigate = useNavigate();
     const { isLoggedIn, userType, isLoading } = useContext(AuthContext);
     const alertShown = useRef(false);
-    const [error, setError] = useState("");
+    //const [error, setError] = useState("");
     const [step, setStep] = useState(1);
     const [numOfDays, setNumOfDays] = useState(0);
     const [numOfTickets, setNumOfTickets] = useState(0);
@@ -17,10 +17,11 @@ function Tickets() {
     const [numOfStandardTickets, setNumOfStandardTickets] = useState(0);
     const [numOfSeniorTickets, setNumOfSeniorTickets] = useState(0);
 
-    const [selectedDate, setSelectedDate] = useState(null);
+    //const [selectedDate, setSelectedDate] = useState(null);
     const [selectedDates, setSelectedDates] = useState([]);
     const [selectedDatesForFoodPass, setSelectedDatesForFoodPass] = useState([]);
     const [price, setPrice] = useState(0);
+    const [attractions, setAttractions] = useState([]);
 
     const today = new Date();
     today.setHours(0,0,0,0);
@@ -47,10 +48,47 @@ function Tickets() {
         }
     }, [isLoggedIn, navigate, isLoading]);
 
+
+    useEffect(() => {
+        const fetchAttractions = async () => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getAttractions`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                    });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch attractions');
+                }
+                const result = await response.json();
+                const attractionsData = result.data.map((attraction) => {
+                    return{
+                        ...attraction,
+                        isInterested : false
+                    };
+                }) 
+
+                if (result.success) {
+                    setAttractions(attractionsData);
+                } else {
+                    throw new Error(result.message || 'Failed to fetch attractions');
+                }
+            } catch (error) {
+                console.error('Error fetching attractions:', error);
+                
+            } 
+        };
+
+        fetchAttractions();
+    }, []);
+
     // Only render content after loading and redirects are done
     if (isLoading || userType === "employee" || userType === "manager") {
         return null;
     }
+    
 
 
     const handleDays = (e) => {
@@ -153,7 +191,7 @@ function Tickets() {
     const isSelectedForFoodPass = (date) => selectedDatesForFoodPass.includes(date.toDateString());
 
 
-    const handleAddToCart = () => {
+    const handleAddToCart = async () => {
         const ticketData = {
             numOfStandardTickets,
             numOfChildrenTickets,
@@ -172,8 +210,22 @@ function Tickets() {
     
         // Save updated cart back to local storage
         localStorage.setItem("cart-tickets", JSON.stringify(updatedCart));
+
+
     
         navigate("/shopping-cart");
+    }
+
+
+    const updateAttractionInterest = (attraction_id) => {
+        const updatedAttraction = attractions.map((attraction) => {
+            if(attraction_id === attraction.attraction_id)
+            {
+                attraction.isInterested = !attraction.isInterested;
+            }
+            return attraction;
+        })
+        setAttractions(updatedAttraction);
     }
 
 
@@ -295,15 +347,36 @@ function Tickets() {
                             ))}
                         </ul>
                     </div>
-                    <button onClick={() => (setStep(4),setPrice((selectedDatesForFoodPass.length * (numOfStandardTickets*3 + numOfSeniorTickets*2 + numOfChildrenTickets) ) + numOfDays * (4*numOfSeniorTickets + 6*numOfChildrenTickets + 10*numOfStandardTickets)))}>
+                    <button onClick={() => (setStep(4))}>
                         Continue
-                        </button>
+                    </button>
                 </>
             )}
 
             {step === 4 && (
                 <>
-                    <button onClick={() => setStep(3)}>Go back</button>
+                <button onClick={() => setStep(3)}>Go back</button>
+                <h1>What attractions are you interested in going to?</h1>
+                <div >
+                {attractions.map((attraction) => (
+                    <>
+                    <div >
+                        <button className={attraction.isInterested ? "App-link" : ""} onClick={() => updateAttractionInterest(attraction.attraction_id) }>Select</button>
+                        <h3 > {attraction.attraction_name}</h3>
+                        
+                    </div>
+                    </>
+                ))}
+                </div>
+                <button onClick={() => (setStep(5),setPrice((selectedDatesForFoodPass.length * (numOfStandardTickets*3 + numOfSeniorTickets*2 + numOfChildrenTickets) ) + numOfDays * (4*numOfSeniorTickets + 6*numOfChildrenTickets + 10*numOfStandardTickets)))}>
+                    Continue
+                </button>
+                </>
+            )}
+
+            {step === 5 && (
+                <>
+                    <button onClick={() => setStep(4)}>Go back</button>
                     <h2>Review Your Tickets and Food Passes!</h2>
                     <p>{numOfDays}-Day Ticket</p>
                     <ul>
