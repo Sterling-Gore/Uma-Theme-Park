@@ -17,6 +17,7 @@ const { deleteMerchandise } = require('./employeePortal/deleteMerchandise');
 const { createMerchandise } = require('./employeePortal/createMerchandise');
 const { updateMerchandiseStock } = require('./employeePortal/updateMerchandiseStock');
 const { updateMerchandisePrice } = require('./employeePortal/updateMerchandisePrice');
+const { updateMerchandiseImage } = require('./employeePortal/updateMerchandiseImage');
 const { createAttraction } = require('./employeePortal/createAttraction');
 const { updateAttractionStatus } = require('./employeePortal/updateAttractionStatus');
 const { updateAttractionDescription } = require('./employeePortal/updateAttractionDescription');
@@ -105,6 +106,9 @@ const server = http.createServer(async (req, res) => {
     }
     else if(req.url === '/updateMerchandisePrice' && req.method === 'POST'){
         updateMerchandisePrice(req, res)
+    }
+    else if(req.url === '/updateMerchandiseImage' && req.method === 'POST'){
+        updateMerchandiseImage(req, res)
     }
     else if(req.url === '/createAttraction' && req.method === 'POST'){
         createAttraction(req, res)
