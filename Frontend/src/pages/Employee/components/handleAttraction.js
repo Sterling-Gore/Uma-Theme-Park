@@ -16,6 +16,9 @@ const HandleAttraction = ({ setActiveTab }) => {
     const [newDescription, setNewDescription] = useState("");
     const [deleteAttraction, setDeleteAttraction] = useState(null);
 
+    const [newImage, setNewImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+
 
     
     useEffect(() => {
@@ -57,6 +60,90 @@ const HandleAttraction = ({ setActiveTab }) => {
     }, [refreshAttractions]);
 
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0]; // Get selected file
+        setNewImage( file );
+        if (file) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file); // Convert file to Base64
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+        }
+    };
+
+    const EditAttractionImage = (attraction_id) => {
+        setIsEditing(true);
+        setNewImage(null);
+        setImagePreview(null);
+        const newAttractions = attractions.map(item => {
+            if (item.attraction_id === attraction_id)
+            {
+                item.is_editing_image = true;
+            }
+            return item;
+        });
+        setAttractions(newAttractions);
+    };
+
+    const cancelEditAttractionImage = (attraction_id) => {
+        setIsEditing(false);
+        setNewImage(null);
+        setImagePreview(null);
+        const newAttraction = attractions.map(item => {
+            if (item.attraction_id === attraction_id)
+            {
+                item.is_editing_image = false;
+            }
+            return item;
+        });
+        setAttractions(newAttraction);
+    };
+
+    const submitEditAttractionImage = async (attraction_id) => {
+        const submitImage = async (base64String) => {
+            try {
+                if (!base64String) {
+                    throw new Error('No Image');
+                }
+                const dataToSend = {
+                    id : attraction_id,
+                    newImage : base64String
+                }
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/updateAttractionImage`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataToSend),
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to update attraction');
+            }
+            
+            setIsEditing(false);
+            setNewImage(null);
+            setImagePreview(null);
+            setRefreshAttractions(!refreshAttractions);
+
+            } catch (error) {
+                console.error('Error fetching attraction:', error);
+                alertShown.current = true;
+                alert("Error updating attraction");
+            }
+        }
+
+        const reader = new FileReader();
+        reader.readAsDataURL(newImage);
+        reader.onload = () => {
+            const base64String = reader.result.split(',')[1]; // Remove metadata prefix
+            submitImage(base64String);
+        };
+        
+
+    }
 
     const EditAttractionCapacity = (attraction_id) => {
         setIsEditing(true);
@@ -353,6 +440,11 @@ const HandleAttraction = ({ setActiveTab }) => {
                             ) : (
                                 <p>Loading Image ... </p>
                             )}
+                            {!isEditing && (
+                            <button className="attraction-button" onClick={() => EditAttractionImage(Attraction.attraction_id)}>
+                                Update Image
+                            </button>
+                            )}
                             <p className="attraction-description">
                                 {Attraction.description}
                             </p>
@@ -397,6 +489,8 @@ const HandleAttraction = ({ setActiveTab }) => {
                             {Attraction.is_editing_capacity && ( <label className="label-header"> Set Capacity </label> )}
                             {Attraction.is_editing_duration && ( <label className="label-header"> Set Duration </label> )}
                             {Attraction.is_editing_description && ( <label className="label-header"> Set Description </label> )}
+                            {Attraction.is_editing_description && ( <label className="label-header"> Set Description </label> )}
+                            {Attraction.is_editing_image && ( <label className="label-header"> Set Image </label> )}
                             <div className="attraction-footer">
                                 
                                 {Attraction.is_editing_capacity && (
@@ -422,6 +516,43 @@ const HandleAttraction = ({ setActiveTab }) => {
                                         </button>
                                     )}
                                     <button className="attraction-button" onClick={() => cancelEditAttractionCapacity(Attraction.attraction_id) }>
+                                        Cancel Changes
+                                    </button>
+                                    </>
+                                )}
+                            </div>
+
+                            <div className="attraction-footer">
+                            {Attraction.is_editing_image && (
+                                <>
+                                    {imagePreview && (
+                                        <img 
+                                            src={imagePreview}
+                                            alt="Preview"
+                                            style={{ width: "200px", height: "200px", objectFit: "contain", marginTop: "10px" }}
+                                        />
+                                    )
+                                    }
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        id="attraction_image"
+                                        name="attraction_image"
+                                        //value={formData.merchandise_stock}
+                                        onChange= {handleImageChange}
+                                        //placeholder="Amount In Stock For Merchandise"
+                                        //maxLength="3"
+                                        //minLength="1"
+                                        //required
+                                    />
+                                    
+
+                                    {newImage !== null && (
+                                        <button className="attraction-button" onClick={() => submitEditAttractionImage(Attraction.attraction_id)}>
+                                            Confirm Changes
+                                        </button>
+                                    )}
+                                    <button className="attraction-button" onClick={() => cancelEditAttractionImage(Attraction.attraction_id) }>
                                         Cancel Changes
                                     </button>
                                     </>

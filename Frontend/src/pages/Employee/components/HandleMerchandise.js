@@ -12,6 +12,9 @@ const HandleMerchandise = ({ setActiveTab }) => {
     const [newPrice, setNewPrice] = useState("");
     const [deleteMerch, setDeleteMerch] = useState(null);
 
+    const [newImage, setNewImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+
 
     
 
@@ -38,6 +41,7 @@ const HandleMerchandise = ({ setActiveTab }) => {
                         ...item,
                         is_editing_stock : false,
                         is_editing_price : false,
+                        is_editing_image : false
                     };
                 });
 
@@ -55,6 +59,101 @@ const HandleMerchandise = ({ setActiveTab }) => {
         fetchMerchandise();
         
     }, [refreshMerchandise]);
+
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0]; // Get selected file
+        setNewImage( file );
+        if (file) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file); // Convert file to Base64
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+        }
+    };
+
+    const EditMerchandiseImage = (merchandise_id) => {
+        setIsEditing(true);
+        setNewImage(null);
+        setImagePreview(null);
+        const newMerchandise = merchandises.map(item => {
+            if (item.merchandise_id === merchandise_id)
+            {
+                item.is_editing_image = true;
+            }
+            return item;
+        });
+        setMerchandises(newMerchandise);
+    };
+
+    const cancelEditMerchandiseImage = (merchandise_id) => {
+        setIsEditing(false);
+        setNewImage(null);
+        setImagePreview(null);
+        const newMerchandise = merchandises.map(item => {
+            if (item.merchandise_id === merchandise_id)
+            {
+                item.is_editing_image = false;
+            }
+            return item;
+        });
+        setMerchandises(newMerchandise);
+    };
+
+    const submitEditMerchandiseImage = async (merchandise_id) => {
+        const submitImage = async (base64String) => {
+            try {
+                if (!base64String) {
+                    throw new Error('No Image');
+                }
+                const dataToSend = {
+                    id : merchandise_id,
+                    newImage : base64String
+                }
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/updateMerchandiseImage`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataToSend),
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to update merchandise');
+            }
+            
+            setIsEditing(false);
+            setNewImage(null);
+            setImagePreview(null);
+            /*
+            const newMerchandise = merchandises.map(item => {
+                if (item.merchandise_id === merchandise_id)
+                {
+                    item.is_editing_stock = false;
+                }
+                return item;
+            });
+            setMerchandises(newMerchandise);*/
+            setRefreshMerchandise(!refreshMerchandise);
+
+            } catch (error) {
+                console.error('Error fetching merchandise:', error);
+                alertShown.current = true;
+                alert("Error updating merchandise");
+            }
+        }
+
+        const reader = new FileReader();
+        reader.readAsDataURL(newImage);
+        reader.onload = () => {
+            const base64String = reader.result.split(',')[1]; // Remove metadata prefix
+            submitImage(base64String);
+        };
+        
+
+    }
 
     const EditMerchandiseStock = (merchandise_id) => {
         setIsEditing(true);
@@ -258,6 +357,11 @@ const HandleMerchandise = ({ setActiveTab }) => {
                         ) : (
                             <p>Loading Image ... </p>
                         )}
+                        {!isEditing && (
+                            <button className="attraction-button" onClick={() => EditMerchandiseImage(Merchandise.merchandise_id)}>
+                                Update Image
+                            </button>
+                            )}
                         <div className="attraction-footer">
                             <p className="attraction-description"> <strong>Price:</strong> ${Merchandise.merchandise_price} USD</p>
                             {!isEditing && (
@@ -289,8 +393,42 @@ const HandleMerchandise = ({ setActiveTab }) => {
 
                         {Merchandise.is_editing_price && (<label className="label-header"> Set Price </label>)}
                         {Merchandise.is_editing_stock && ( <label className="label-header"> Set Stock Amount </label> )}
+                        {Merchandise.is_editing_stock && ( <label className="label-header"> Set Image </label> )}
                         <div className="attraction-footer">
-                            
+                            {Merchandise.is_editing_image && (
+                                <>
+                                {imagePreview && (
+                                    <img 
+                                        src={imagePreview}
+                                        alt="Preview"
+                                        style={{ width: "200px", height: "200px", objectFit: "contain", marginTop: "10px" }}
+                                    />
+                                )
+                                }
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    id="merchandise_image"
+                                    name="merchandise_image"
+                                    //value={formData.merchandise_stock}
+                                    onChange= {handleImageChange}
+                                    //placeholder="Amount In Stock For Merchandise"
+                                    //maxLength="3"
+                                    //minLength="1"
+                                    //required
+                                />
+                                
+
+                                {newImage !== null && (
+                                    <button className="attraction-button" onClick={() => submitEditMerchandiseImage(Merchandise.merchandise_id)}>
+                                        Confirm Changes
+                                    </button>
+                                )}
+                                <button className="attraction-button" onClick={() => cancelEditMerchandiseImage(Merchandise.merchandise_id) }>
+                                    Cancel Changes
+                                </button>
+                                </>
+                            )}
                             {Merchandise.is_editing_stock && (
                                 <>
                                 {/*<label className="label-header"> Set Stock Amount </label>*/}
