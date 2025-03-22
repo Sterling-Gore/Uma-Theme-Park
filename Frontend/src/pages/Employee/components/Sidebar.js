@@ -63,6 +63,13 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           <span className="icon">📊</span>
           Reports
         </button>
+        <button 
+          className={activeTab === 'showFeedback' ? 'active' : ''} 
+          onClick={() => setActiveTab('showFeedback')}
+        >
+          <span className="icon">📊</span>
+          Feedback
+        </button>
       </nav>
     </div>
   );
