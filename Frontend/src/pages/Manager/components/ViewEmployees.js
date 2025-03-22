@@ -75,8 +75,7 @@ const ViewEmployees = ({ setActiveTab }) => {
 
     return fullName.includes(searchLower) ||
       (employee.attraction_name?.toLowerCase() || '').includes(searchLower) ||
-      (employee.email?.toLowerCase() || '').includes(searchLower) ||
-      (employee.supervisor_email?.toLowerCase() || '').includes(searchLower);
+      (employee.email?.toLowerCase() || '').includes(searchLower);
   });
 
   return (
@@ -101,7 +100,6 @@ const ViewEmployees = ({ setActiveTab }) => {
             <th>Role</th>
             <th>Email</th>
             <th>Phone</th>
-            <th>Supervisor Email</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -114,7 +112,6 @@ const ViewEmployees = ({ setActiveTab }) => {
                 <td>{employee.role}</td>
                 <td>{employee.email}</td>
                 <td>{employee.phone_number}</td>
-                <td>{employee.supervisor_email || 'None'}</td>
                 <td className="action-buttons">
                   <button className="edit-btn" onClick={() => handleEdit(employee)}>Edit</button>
                   <button className="delete-btn" onClick={() => handleDelete(employee.email)}>Delete</button>
@@ -123,7 +120,7 @@ const ViewEmployees = ({ setActiveTab }) => {
             ))
           ) : (
             <tr>
-              <td colSpan="7" className="no-results">No employees found</td>
+              <td colSpan="6" className="no-results">No employees found</td>
             </tr>
           )}
         </tbody>

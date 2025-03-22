@@ -19,7 +19,6 @@ async function updateEmployee(req, res) {
                     attraction, // Changed from attraction_pos to attraction
                     phone_number, 
                     password, 
-                    supervisor_email 
                 } = JSON.parse(body);
                 
                 // Validate required fields - email must be provided
@@ -39,24 +38,6 @@ async function updateEmployee(req, res) {
                     return res.end(JSON.stringify({ message: "Employee not found" }));
                 }
 
-                // Get supervisor ID if supervisor email is provided
-                let supervisorId = null;
-                if (supervisor_email) {
-                    const [supervisors] = await pool.execute(
-                        "SELECT employee_id FROM theme_park.employee WHERE email = ?",
-                        [supervisor_email]
-                    );
-                    
-                    if (supervisors.length > 0) {
-                        supervisorId = supervisors[0].employee_id;
-                    } else {
-                        // Handle case when supervisor email doesn't match any employee
-                        res.writeHead(400, { 'Content-Type': 'application/json' });
-                        return res.end(JSON.stringify({ 
-                            message: "Supervisor email not found in the system" 
-                        }));
-                    }
-                }
 
                 // Validate attraction exists if provided
                 if (attraction) {
@@ -109,12 +90,6 @@ async function updateEmployee(req, res) {
                     const newPassword = await bcrypt.hash(password, 10);
                     updates.push("password = ?");
                     updateParams.push(newPassword);
-                }
-
-                // Handle supervisor_ID (based on supervisor_email)
-                if (supervisor_email !== undefined) {
-                    updates.push("supervisors_id = ?");
-                    updateParams.push(supervisorId);
                 }
 
                 // If no updates provided

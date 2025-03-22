@@ -8,8 +8,7 @@ const EmployeeForm = ({ editMode, setActiveTab }) => {
     attraction: '',
     email: '',
     phone_number: '',
-    password: '',
-    supervisor_email: ''
+    password: ''
   });
 
   const [attractions, setAttractions] = useState([]);
@@ -28,8 +27,7 @@ const EmployeeForm = ({ editMode, setActiveTab }) => {
         attraction: storedEmployee.attraction || '',
         email: storedEmployee.email || '',
         phone_number: storedEmployee.phone_number || '',
-        password: '',
-        supervisor_email: storedEmployee.supervisor_email || ''
+        password: ''
       });
     }
   }, [editMode]);
@@ -319,17 +317,6 @@ const EmployeeForm = ({ editMode, setActiveTab }) => {
             </small>
           </div>
         )}
-
-        <div className="form-group">
-          <label htmlFor="supervisor_email">Supervisor Email (Optional)</label>
-          <input
-            type="text"
-            id="supervisor_email"
-            name="supervisor_email"
-            value={formData.supervisor_email || ""}
-            onChange={handleInputChange}
-          />
-        </div>
 
         <div className="form-actions">
           <button type="submit" className="submit-btn">

@@ -12,26 +12,9 @@ async function registerEmployee(req, res) {
 
         req.on('end', async () => {
             try {
-                let { first_name, last_name, role, attraction, phone_number, email, password, supervisor_ID = null, supervisor_email = null } = JSON.parse(body);
+                let { first_name, last_name, role, attraction, phone_number, email, password} = JSON.parse(body);
                 const employee_id = uuidv4();
                 const newPassword = await bcrypt.hash(password, 10);
-
-
-                if (supervisor_email && !supervisor_ID) {
-                    try {
-                        const [supervisors] = await pool.execute(
-                            "SELECT employee_id FROM theme_park.employee WHERE email = ?",
-                            [supervisor_email]
-                        );
-
-                        if (supervisors.length > 0) {
-                            supervisor_ID = supervisors[0].employee_id;
-                        }
-                    } catch (err) {
-                        console.error("Error finding supervisor:", err);
-    
-                    }
-                }
 
 
                 if (attraction) {
@@ -52,8 +35,8 @@ async function registerEmployee(req, res) {
                 console.log("Attraction:", attraction);
 
                 const [result] = await pool.execute(
-                    "INSERT INTO theme_park.employee (employee_id, first_name, last_name, role, attraction, phone_number, email, password, supervisors_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    [employee_id, first_name, last_name, role, attraction, phone_number, email, newPassword, supervisor_ID]
+                    "INSERT INTO theme_park.employee (employee_id, first_name, last_name, role, attraction, phone_number, email, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    [employee_id, first_name, last_name, role, attraction, phone_number, email, newPassword]
                 );
 
                 console.log(result);
