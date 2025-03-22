@@ -1,143 +1,69 @@
-.App {
+/* Footer styles */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1 0 auto;
+}
+
+.footer {
+  flex-shrink: 0;
+  background-color: #282c34;
+  color: white;
+  padding: 20px;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-
-
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
-.App-link {
+.footer-section {
+  flex: 1;
+  min-width: 200px;
+  margin: 10px;
+}
+
+.footer-section h3 {
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section li {
+  margin-bottom: 8px;
+}
+
+.footer-section a {
   color: #61dafb;
+  text-decoration: none;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.footer-section a:hover {
+  text-decoration: underline;
 }
 
-
-
-
-
-
-
-.calendar-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.react-calendar {
-  width: 350px;
-  max-width: 100%;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  padding: 10px;
-  font-family: Arial, sans-serif;
-}
-
-
-.selected-date {
-  background: #007bff !important; 
-  color: white !important;
-  border-radius: 5px;
-}
-
-
-.delete-button {
-  background-color: #b82929;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 0.9rem;
-  border-radius: 6px;
-  cursor: pointer;
-  text-transform: uppercase;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  transition: background-color 0.3s;
-}
-
-.delete-button:hover {
-  background-color: #dd4444;
-}
-
-.description-box {
+.footer-bottom {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #444;
   width: 100%;
-  max-width: 600px; /* Adjust as needed */
-  height: 200px; /* Adjust for preferred height */
-  padding: 12px;
-  font-size: 16px;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  outline: none;
-  resize: vertical; /* Allows vertical resizing */
-  background-color: #f9f9f9;
-  transition: border-color 0.3s ease, background-color 0.3s ease;
-}
-
-.description-box:focus {
-  border-color: #007bff; /* Highlight color on focus */
-  background-color: #ffffff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-
-
-.custom-select {
-  width: 100%;
-  max-width: 300px; /* Adjust width as needed */
-  padding: 10px;
-  font-size: 16px;
-  color: #333;
-  background-color: #f9f9f9;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  outline: none;
-  cursor: pointer;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Hover effect */
-.custom-select:hover {
-  border-color: #007bff;
-}
-
-/* Focus effect */
-.custom-select:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-/* Disabled state */
-.custom-select:disabled {
-  background-color: #e9ecef;
-  cursor: not-allowed;
-  opacity: 0.6;
+  text-align: center;
 }
