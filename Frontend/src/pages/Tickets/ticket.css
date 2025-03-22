@@ -1,0 +1,420 @@
+/* Main Container Styles */
+.ticket-page-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+    font-family: Arial, sans-serif;
+  }
+  
+  .ticket-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Typography */
+  .page-title, .section-title, .summary-title {
+    color: #3366cc;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+  }
+  
+  .section-subtitle {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 1rem;
+  }
+  
+  .instruction-text {
+    text-align: center;
+    color: #777;
+    margin: 1.5rem 0;
+    font-style: italic;
+  }
+  
+  /* Selection Section Styles */
+  .selection-section {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 2rem;
+  }
+  
+  .selection-content {
+    padding: 0.5rem;
+  }
+  
+  /* Day Selection */
+  .day-selection-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  
+  .day-button {
+    padding: 10px 15px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+  }
+  
+  .day-button:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .day-button-selected {
+    background-color: #3366cc;
+    color: white;
+    border-color: #2255aa;
+  }
+  
+  /* Ticket Counter */
+  .ticket-total {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .total-count {
+    font-size: 2.5rem;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .ticket-type-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .ticket-type {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    border: 1px solid #eaeaea;
+  }
+  
+  .ticket-type-name {
+    font-weight: 600;
+    color: #444;
+    font-size: 1.1rem;
+  }
+  
+  .ticket-counter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .ticket-age-range {
+    color: #777;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+  
+  .counter-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .counter-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+  .counter-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    min-width: 20px;
+    text-align: center;
+  }
+  
+  /* Calendar Section */
+  .calendar-section {
+    margin: 2rem 0;
+  }
+  
+  /* Enhanced Calendar Styling */
+  .calendar-component {
+    margin: 1.5rem auto;
+    width: 100%;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 1.1rem;
+  }
+  
+  /* Make the calendar bigger */
+  .react-calendar {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 10px;
+    background-color: #fff;
+    line-height: 1.5;
+  }
+  
+  /* Increase the size of day buttons */
+  .react-calendar button {
+    padding: 12px 0 !important;
+    font-size: 1rem !important;
+  }
+  
+  /* Enhance the calendar navigation */
+  .react-calendar__navigation {
+    height: 50px !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .react-calendar__navigation button {
+    font-size: 1.2rem !important;
+    min-width: 44px;
+    background: none;
+  }
+  
+  /* Style month and year display */
+  .react-calendar__navigation__label {
+    font-weight: bold !important;
+    color: #3366cc !important;
+    font-size: 1.2rem !important;
+  }
+  
+  /* Style the weekday labels */
+  .react-calendar__month-view__weekdays {
+    font-weight: bold !important;
+    font-size: 0.9rem !important;
+    padding: 0.5rem 0 !important;
+    text-transform: uppercase !important;
+    color: #555 !important;
+  }
+  
+  /* Style today's date */
+  .react-calendar__tile--now {
+    background: #f8f8ff !important;
+    font-weight: bold !important;
+  }
+  
+  /* Style selected date */
+  .selected-date {
+    background-color: #3366cc !important;
+    color: white !important;
+    border-radius: 0 !important;
+    font-weight: bold !important;
+  }
+  
+  /* Style hover effect on dates */
+  .react-calendar__tile:hover {
+    background-color: #e6e6e6 !important;
+  }
+  
+  .react-calendar__tile:disabled {
+    background-color: #f0f0f0 !important;
+    color: #bbb !important;
+  }
+  
+  .date-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+  }
+  
+  .date-item {
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: #f0f7ff;
+    border-radius: 4px;
+    border-left: 3px solid #3366cc;
+  }
+  
+  /* Attractions Grid */
+  .attractions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  
+  .attraction-item {
+    padding: 1rem;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+
+  .attraction-unselected {
+    background-color: #f0f0f0;
+    color: #555;
+    border: 1px solid #ddd;
+  }
+  
+  .attraction-unselected:hover {
+    background-color: #e5e5e5;
+    border-color: #ccc;
+  }
+  
+  /* You can also update your attraction-selected class to ensure better contrast */
+  .attraction-selected {
+    background-color: #3366cc;
+    color: white;
+    border: 1px solid #2255aa;
+    font-weight: 500;
+  }
+  
+  .attraction-selected:hover {
+    background-color: #2a58b5;
+  }
+  
+  /* And update the base attraction-button styling */
+  .attraction-button {
+    padding: 10px 15px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+
+  }
+  
+  .attraction-name {
+    margin: 0.5rem 0 0 0;
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  /* Summary Section */
+  .summary-list {
+    margin-bottom: 2rem;
+  }
+  
+  .summary-container {
+    margin: 1.5rem 0;
+    border-top: 1px solid #eee;
+    padding-top: 1rem;
+  }
+  
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .summary-label, .summary-value {
+    margin: 0;
+  }
+  
+  .summary-label {
+    color: #555;
+  }
+  
+  .summary-value {
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .total-row {
+    border-top: 2px solid #eee;
+    border-bottom: none;
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+  }
+  
+  .total-label, .total-value {
+    font-weight: 700;
+    color: #333;
+    font-size: 1.1rem;
+  }
+  
+  /* Buttons */
+  .primary-button {
+    background-color: #3366cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 1.5rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+  }
+  
+  .primary-button:hover {
+    background-color: #2a55a9;
+  }
+  
+  .back-button {
+    background: none;
+    border: none;
+    color: #3366cc;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .continue-button {
+    margin-top: 2rem;
+  }
+  
+  .cart-button {
+    background-color: #2ca02c;
+  }
+  
+  .cart-button:hover {
+    background-color: #249424;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .ticket-container {
+      padding: 1.5rem;
+      margin: 1rem;
+      width: calc(100% - 2rem);
+    }
+    
+    .ticket-counter {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    
+    .counter-controls {
+      align-self: flex-end;
+    }
+    
+    /* Make calendar slightly smaller on mobile but still readable */
+    .react-calendar button {
+      padding: 8px 0 !important;
+      font-size: 0.9rem !important;
+    }
+  }
