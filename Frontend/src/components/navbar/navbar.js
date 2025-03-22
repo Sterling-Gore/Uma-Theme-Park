@@ -2,6 +2,8 @@ import React, { useContext, memo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
 import './navbar.css'; 
+import shoppingCartIcon from '../../assets/shopping-cart.png'
+import profileIcon from '../../assets/Profile-Icon.png'
 
 // Using memo to prevent unnecessary re-renders
 const NavBar = memo(function NavBar() {
@@ -63,8 +65,7 @@ const NavBar = memo(function NavBar() {
             <>
               <Link to="/shop" className="NavLink1">Shop</Link>
               <Link to="/tickets" className="NavLink1">Tickets</Link>
-              <Link to="/problems" className="NavLink1">Problems</Link>
-              <Link to="/account" className="NavLink1">My Account</Link>
+              <Link to="/problems" className="NavLink1">Report a Problem</Link>
               <Link 
                 to="/" 
                 className="NavLink1" 
@@ -72,6 +73,8 @@ const NavBar = memo(function NavBar() {
               >
                 Logout
               </Link>
+              <Link to="/shopping-cart" className="NavLink1"> <img src={shoppingCartIcon} alt="shoppingCartIcon" className="shoppingCartIcon-white" /> </Link>
+              <Link to="/account" className="NavLink1"> <img src={profileIcon} alt="profileIcon" className="profileIcon-white" /> </Link>
             </>
           )
         )}

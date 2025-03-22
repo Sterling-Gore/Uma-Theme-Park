@@ -14,8 +14,10 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <NavBar />
-        <App />
+        <div id="app-wrapper" className="app-container">
+          <NavBar />
+          <App />
+        </div>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>

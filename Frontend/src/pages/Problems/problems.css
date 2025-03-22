@@ -1,3 +1,15 @@
+.page-container{
+    width: 100vw; /* Full width */
+    height: 100vh; /* Full height */
+    display: flex; /* Center content if needed */
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 
 .problems-container {
     max-width: 800px;

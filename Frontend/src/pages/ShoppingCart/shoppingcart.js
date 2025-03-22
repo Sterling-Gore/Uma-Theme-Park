@@ -1,7 +1,8 @@
 import React, { useEffect, useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
-import "../../App.css";
+// import "../../App.css";
+import "./shoppingcart.css"
 
 function Shoppingcart()
 {
@@ -405,145 +406,156 @@ function Shoppingcart()
         <div>
             {step === 1 && (
             <>
-            <h1>Your Shopping Cart</h1>
+            <h1 className="page-title">Your Shopping Cart</h1>
 
                 {cartItemsTickets.length > 0 || cartItemsMerchs.length > 0? (
                     <>
-                    {cartItemsTickets.length > 0 && <h1>Tickets</h1>}
-                    {cartItemsTickets.map((item, index) => (
-                        <div key={index}>
-                        <li >
-                            <button onClick={() => (DeleteTicket(item.id))}> Delete Ticket</button>
-                            <p >{item.numOfDays}-Day Ticket</p>
-                            <ul >
-                                {item.selectedDates.map((date, index2) => (
-                                    <li key={index2}>{date} {item.selectedDatesForFoodPass.includes(date) ? `(Includes $${item.numOfStandardTickets*3 + item.numOfSeniorTickets*2 + item.numOfChildrenTickets} Food Pass)` : ''}</li>
-                                ))}
-                            </ul>
-                            <div  className="ticket-summary">
-                                <p >{item.numOfStandardTickets > 0 ? `${item.numOfStandardTickets} Standard Ticket${item.numOfStandardTickets > 1 ? 's' : ''} ($${item.numOfDays * 10} Per Ticket)` : ""}</p>
-                                <p >{item.numOfStandardTickets > 0 ? `$${item.numOfDays * 10 * item.numOfStandardTickets}` : ""}</p>
+                    {cartItemsTickets.length > 0 && <h1 className="section-title">Tickets</h1>}
+                    <div className="cart-items-container">
+                        {cartItemsTickets.map((item, index) => (
+                            <div key={index} className="cart-item">
+                                <div className="cart-item-header">
+                                    <button className="delete-btn" onClick={() => (DeleteTicket(item.id))}>Delete Ticket</button>
+                                    <p className="ticket-type">{item.numOfDays}-Day Ticket</p>
+                                </div>
+                                <ul className="date-list">
+                                    {item.selectedDates.map((date, index2) => (
+                                        <li className="date-item" key={index2}>
+                                            <span className="date-text">{date}</span> 
+                                            {item.selectedDatesForFoodPass.includes(date) ? 
+                                                <span className="food-pass-indicator">(Includes ${item.numOfStandardTickets*3 + item.numOfSeniorTickets*2 + item.numOfChildrenTickets} Food Pass)</span> : ''}
+                                        </li>
+                                    ))}
+                                </ul>
+                                <div className="ticket-summary-container">
+                                    <div className="ticket-summary">
+                                        <p className="ticket-detail">{item.numOfStandardTickets > 0 ? `${item.numOfStandardTickets} Standard Ticket${item.numOfStandardTickets > 1 ? 's' : ''} ($${item.numOfDays * 10} Per Ticket)` : ""}</p>
+                                        <p className="ticket-price">{item.numOfStandardTickets > 0 ? `$${item.numOfDays * 10 * item.numOfStandardTickets}` : ""}</p>
+                                    </div>
+                                    <div className="ticket-summary">
+                                        <p className="ticket-detail">{item.numOfChildrenTickets > 0 ? `${item.numOfChildrenTickets} Child Ticket${item.numOfChildrenTickets > 1 ? 's' : ''} ($${item.numOfDays * 6} Per Ticket)` : ""}</p>
+                                        <p className="ticket-price">{item.numOfChildrenTickets > 0 ? `$${item.numOfDays * 6 * item.numOfChildrenTickets}` : ""}</p>
+                                    </div>
+                                    <div className="ticket-summary">
+                                        <p className="ticket-detail">{item.numOfSeniorTickets > 0 ? `${item.numOfSeniorTickets} Senior Ticket${item.numOfSeniorTickets > 1 ? 's' : ''} ($${item.numOfDays * 4} Per Ticket)` : ""}</p>
+                                        <p className="ticket-price">{item.numOfSeniorTickets > 0 ? `$${item.numOfDays * 4 * item.numOfSeniorTickets}` : ""}</p>
+                                    </div>
+                                    <div className="total-price">
+                                        <p className="price-text">${item.price} USD</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div  className="ticket-summary">
-                                <p >{item.numOfChildrenTickets > 0 ? `${item.numOfChildrenTickets} Child Ticket${item.numOfChildrenTickets > 1 ? 's' : ''} ($${item.numOfDays * 6} Per Ticket)` : ""}</p>
-                                <p >{item.numOfChildrenTickets > 0 ? `$${item.numOfDays * 6 * item.numOfChildrenTickets}` : ""}</p>
+                        ))}
+                    </div>
+
+                    {cartItemsMerchs.length > 0 && <h1 className="section-title">Merchandise</h1>}
+                    <div className="cart-items-container">
+                        {cartItemsMerchs.map((item, index) => (
+                            <div key={index} className="cart-item merch-item">
+                                <div className="cart-item-header">
+                                    <button className="delete-btn" onClick={() => (DeleteMerhandise(item.merchandise_id))}>Remove Merchandise</button>
+                                    <p className="merch-name">{item.in_shopping_cart}x {item.merchandise_name}{item.in_shopping_cart > 1 ? ('s') : ('')}</p>
+                                </div>
+                                <div className="merch-details">
+                                    {item.stock_amount < 6 && <p className="low-stock">{item.stock_amount} Remaining</p>}
+                                    <div className="quantity-controls">
+                                        <button className="quantity-btn" onClick={() => AddOneMerchandise(item.merchandise_id)}>+</button>
+                                        <button className="quantity-btn" onClick={() => RemoveOneMerchandise(item.merchandise_id)}>-</button>
+                                    </div>
+                                    <div className="total-price">
+                                        <p className="price-text">${item.merchandise_price * item.in_shopping_cart} USD <span className="unit-price">(${item.merchandise_price} per item)</span></p>
+                                    </div>
+                                </div>
                             </div>
-                            <div  className="ticket-summary">
-                                <p >{item.numOfSeniorTickets > 0 ? `${item.numOfSeniorTickets} Senior Ticket${item.numOfSeniorTickets > 1 ? 's' : ''} ($${item.numOfDays * 4} Per Ticket)` : ""}</p>
-                                <p >{item.numOfSeniorTickets > 0 ? `$${item.numOfDays * 4 * item.numOfSeniorTickets}` : ""}</p>
-                            </div>
-                            <div  /*price*/>
-                                <p >${item.price} USD</p>
-                            </div>
-                        </li>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
 
-
-
-
-                    {cartItemsMerchs.length > 0 && <h1>Merchandise</h1>}
-                    {cartItemsMerchs.map((item, index) => (
-                        <div key={index}>
-                        <li >
-                            <button onClick={() => (DeleteMerhandise(item.merchandise_id))}> Remove Merchandise</button>
-                            <p >{item.in_shopping_cart}x {item.merchandise_name}{item.in_shopping_cart > 1 ? ('s') : ('')}</p>
-                            {item.stock_amount < 6 && <p>{item.stock_amount} Remaining</p>}
-                            <button onClick={() => AddOneMerchandise(item.merchandise_id)}>+</button>
-                            <button onClick={() => RemoveOneMerchandise(item.merchandise_id)}>-</button>
-                            
-                            <div  /*price*/>
-                                <p >${item.merchandise_price * item.in_shopping_cart} USD (${item.merchandise_price} per item)</p>
-                            </div>
-                        </li>
-                        </div>
-                    ))}
-
-
-
-                    <p> ${totalPrice} USD</p>
-                    <button onClick={() => handleCheckout()}>Checkout</button>
+                    <div className="cart-summary">
+                        <p className="total-amount">${totalPrice} USD</p>
+                        <button className="checkout-btn" onClick={() => handleCheckout()}>Checkout</button>
+                    </div>
                     </>
                 ) : (
-                    <p>No items in cart.</p>
+                    <p className="empty-cart-message">No items in cart.</p>
                 )}
-
-        
-        </>
-        )}
+            </>
+            )}
 
 
-        {step === 2 && (
-            <>
-            <button onClick={() => setStep(1)}>Go Back</button>
-            <div  /*onSubmit={handlePlaceOrder}*/>
-                        <div>
-                            <label className="label-header"> CARD NUMBER </label>
+            {step === 2 && (
+                <div className="payment-container">
+                    <button className="back-btn" onClick={() => setStep(1)}>Go Back</button>
+                    <h1 className="page-title">Payment Information</h1>
+                    <div className="payment-form">
+                        <div className="form-group">
+                            <label className="label-header">CARD NUMBER</label>
                             <input
-                            type="text"
-                            value={card.number}
-                            onChange={ (e) => {
-                                let value = e.target.value.replace(/\D/g, ""); // Remove non-digits
-                                value = value.match(/.{1,4}/g)?.join(" ") || "";
-                                setCard({ ...card, number: value.slice(0, 19) });
-                                //setcard.number(value.slice(0, 19));
-                                //checkError();
-                            }}   
-                            placeholder="Card Number"
-                            maxLength="19"
-                            minLength="19"
+                                className="payment-input"
+                                type="text"
+                                value={card.number}
+                                onChange={ (e) => {
+                                    let value = e.target.value.replace(/\D/g, ""); // Remove non-digits
+                                    value = value.match(/.{1,4}/g)?.join(" ") || "";
+                                    setCard({ ...card, number: value.slice(0, 19) });
+                                }}   
+                                placeholder="Card Number"
+                                maxLength="19"
+                                minLength="19"
                             />
                         </div>
-                        <div>
-                            <label className="label-header"> CARD EXPIRATION DATE </label>
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label className="label-header">EXPIRATION DATE</label>
+                                <input
+                                    className="payment-input"
+                                    type="text"
+                                    value={card.expiration_date}
+                                    onChange={ (e) => {
+                                        let value = e.target.value.replace(/\D/g, ""); // Remove non-digits
+                                        value = value.match(/.{1,2}/g)?.join("/") || "";
+                                        value = value.slice(0, 5);
+                                        setCard({ ...card, expiration_date: value });
+                                    }}   
+                                    placeholder="MM/YY"
+                                    maxLength="5"
+                                    minLength="5"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="label-header">SECURITY CODE</label>
+                                <input
+                                    className="payment-input"
+                                    type="text"
+                                    value={card.security_code}
+                                    onChange={(e) => {
+                                        let value = e.target.value.replace(/\D/g, ""); 
+                                        setCard({ ...card, security_code: value });
+                                    }}   
+                                    placeholder="CVV"
+                                    maxLength="3"
+                                    minLength="3"
+                                />
+                            </div>
+                        </div>
+                        <div className="form-group">
+                            <label className="label-header">CARD HOLDER</label>
                             <input
-                            type="text"
-                            value={card.expiration_date}
-                            onChange={ (e) => {
-                                let value = e.target.value.replace(/\D/g, ""); // Remove non-digits
-                                value = value.match(/.{1,2}/g)?.join("/") || "";
-                                value = value.slice(0, 5);
-                                setCard({ ...card, expiration_date: value });
-                                //setcard.expiration_date(value);
-                                //checkError();
-                            }}   
-                            placeholder="Expiration Date (MM/YY)"
-                            maxLength="5"
-                            minLength="5"
+                                className="payment-input"
+                                type="text"
+                                value={card.holder_name}
+                                onChange={(e) => {
+                                    const onlyLettersAndSpaces = e.target.value.replace(/[^a-zA-Z\s]/g, ""); // Allow letters and spaces
+                                    setCard({ ...card, holder_name: onlyLettersAndSpaces });
+                                }}  
+                                placeholder="Full Name"
+                                maxLength="100"
+                                minLength="1"
                             />
                         </div>
-                        <div>
-                            <label className="label-header"> CARD HOLDER </label>
-                            <input
-                            type="text"
-                            value={card.holder_name}
-                            onChange={(e) => {
-                                const onlyLettersAndSpaces = e.target.value.replace(/[^a-zA-Z\s]/g, ""); // Allow letters and spaces
-                                setCard({ ...card, holder_name: onlyLettersAndSpaces });
-                            }}  
-                            placeholder="Card Holder Name"
-                            maxLength="100"
-                            minLength="1"
-                            />
-                        </div>
-                        <div>
-                            <label className="label-header"> SECURITY CODE </label>
-                            <input
-                            type="text"
-                            value={card.security_code}
-                            onChange={(e) => {
-                                let value = e.target.value.replace(/\D/g, ""); 
-                                setCard({ ...card, security_code: value });
-                                //setCardHolder(onlyLetters);
-                                //checkError();
-                            }}   
-                            placeholder="Security Code"
-                            maxLength="3"
-                            minLength="3"
-                            />
-                        </div>
-                        <div>
+                        <div className="form-group">
+                            <label className="label-header">CARD TYPE</label>
                             <select
+                                className="payment-select"
                                 value={card.type}
                                 onChange={(e) => setCard({ ...card, type: e.target.value})}
                             >
@@ -555,31 +567,27 @@ function Shoppingcart()
                         {error !== "" ? (
                             <p className="error-message">{error}</p>
                         ) : (
-                            
-                            <button
-                                
-                                className="register-button"
-                                onClick={() => handlePlaceOrder()}
-                            >
-                            Place Order
-                            </button>
+                            <div className="form-actions">
+                                <button
+                                    className="place-order-btn"
+                                    onClick={() => handlePlaceOrder()}
+                                >
+                                    Place Order
+                                </button>
+                            </div>
                         )}
-                        
-
                     </div>
-            
-            </>
-        )}
+                </div>
+            )}
 
-        {step === 3 && (
-            <>
-            <h1>Thank You For Your Purchase!</h1>
-
-            <a href='/'>
-                <button>Back Home</button>
-            </a>
-            </>
-        )}
+            {step === 3 && (
+                <div className="confirmation-container">
+                    <h1 className="thank-you-title">Thank You For Your Purchase!</h1>
+                    <a href='/' className="home-link">
+                        <button className="home-btn">Back Home</button>
+                    </a>
+                </div>
+            )}
         </div>
     );
 }
