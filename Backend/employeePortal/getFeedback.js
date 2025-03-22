@@ -4,7 +4,7 @@ async function getFeedback(req, res) {
     try {
 
         const [feedback] = await pool.execute(
-            "SELECT * FROM feedback"
+            "SELECT C.first_name, C.last_name, F.feedback_date, F.rating_comments, F.feedback_type FROM customers as C, feedback as F WHERE C.customer_id = F.customer_id"
         );
         
         res.writeHead(200, { 'Content-Type': 'application/json' });
