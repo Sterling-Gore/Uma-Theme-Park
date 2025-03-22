@@ -1,0 +1,303 @@
+/* Global styles */
+.page-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+}
+
+/* Page titles */
+.page-title {
+    color: #4169E1;
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+.section-title {
+    color: #333;
+    border-bottom: 2px solid #eaeaea;
+    padding-bottom: 10px;
+    margin: 30px 0 15px;
+    font-size: 1.5rem;
+}
+
+/* Cart items container */
+.cart-items-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+/* Cart item styling */
+.cart-item {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cart-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.ticket-type, .merch-name {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* Date list styling */
+.date-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 0 15px 0;
+    background-color: #f0f8ff;
+    border-radius: 5px;
+}
+
+.date-item {
+    padding: 10px 15px;
+    border-left: 4px solid #4169E1;
+    margin-bottom: 2px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.food-pass-indicator {
+    color: #4169E1;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+/* Ticket summary styling */
+.ticket-summary-container {
+    border-top: 1px solid #eaeaea;
+    padding-top: 15px;
+}
+
+.ticket-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.ticket-detail, .ticket-price {
+    margin: 0;
+}
+
+.ticket-price {
+    font-weight: bold;
+}
+
+/* Merchandise item specific */
+.merch-item {
+    background-color: #f0f7ff;
+}
+
+.merch-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.low-stock {
+    color: #d9534f;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.quantity-controls {
+    display: flex;
+    gap: 10px;
+}
+
+/* Button styling */
+.delete-btn, .quantity-btn {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.delete-btn:hover, .quantity-btn:hover {
+    background-color: #e9ecef;
+}
+
+.checkout-btn, .place-order-btn, .home-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 12px 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+    font-weight: bold;
+}
+
+.back-btn {
+    background-color: #f1f1f1;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 15px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.checkout-btn:hover, .place-order-btn:hover {
+    background-color: #3e8e41;
+}
+
+/* Price styling */
+.total-price {
+    text-align: right;
+    margin-top: 15px;
+}
+
+.price-text {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.unit-price {
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-weight: normal;
+}
+
+/* Cart summary */
+.cart-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.total-amount {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: right;
+    margin: 0;
+}
+
+/* Empty cart message */
+.empty-cart-message {
+    text-align: center;
+    padding: 30px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    color: #6c757d;
+}
+
+/* Payment form styling */
+.payment-container {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.payment-form {
+    background-color: #f9f9f9;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.form-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.label-header {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.payment-input, .payment-select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border 0.3s;
+}
+
+.payment-input:focus, .payment-select:focus {
+    border-color: #4169E1;
+    outline: none;
+}
+
+.error-message {
+    color: #d9534f;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f8d7da;
+    border-radius: 4px;
+    text-align: center;
+}
+
+/* Confirmation screen */
+.confirmation-container {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.thank-you-title {
+    color: #4CAF50;
+    margin-bottom: 30px;
+    font-size: 2rem;
+}
+
+.home-link {
+    text-decoration: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .cart-item-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .merch-details {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+}

@@ -36,6 +36,17 @@
     background-color: #007BFF;
   }
 
+  .shoppingCartIcon-white {
+    width: 35px;
+    height: 35px;
+    filter: brightness(0) invert(1); /* This makes many icons white */
+  }
+  .profileIcon-white  {
+    width: 35px;
+    height: 35px;
+    filter: brightness(0) invert(1); /* This makes many icons white */
+  }
+
 .NavLink1 {
     color: #f4f4f4;
     text-decoration: none;

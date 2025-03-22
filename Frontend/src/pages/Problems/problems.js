@@ -83,6 +83,7 @@ function Problems() {
     };
 
     return (
+        <div className="page-container">
         <div className="problems-container">
             <div className="problems-header">
                 <h1>Report a Problem</h1>
@@ -140,6 +141,7 @@ function Problems() {
                     {isSubmitting ? "Submitting..." : "Submit Problem Report"}
                 </button>
             </form>
+        </div>
         </div>
     );
 }
