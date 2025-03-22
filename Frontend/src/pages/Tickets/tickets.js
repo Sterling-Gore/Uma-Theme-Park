@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../App.css";
+//import "../../App.css";
 import AuthContext from "../../context/AuthContext";
 import Calendar from "react-calendar";
 import "./ticket.css"
@@ -218,6 +218,7 @@ function Tickets() {
 
 
     const updateAttractionInterest = (attraction_id) => {
+        console.log(attraction_id);
         const updatedAttraction = attractions.map((attraction) => {
             if(attraction_id === attraction.attraction_id)
             {
@@ -241,170 +242,180 @@ function Tickets() {
     //step 2:
     //select the days
     return (
-        <div className="ticket-page-container">
-        <div className="container">
-            {step === 1 && (
-                <>
-                    <div className="select-days">
-                        <h2>Select the Number of Days</h2>
-                        <div className="buttons-container">
-                            <div className="day-buttons">
-                                {[...Array(7)].map((_, index) => (
-                                    <button 
-                                        key={index + 1}
-                                        className={numOfDays === index + 1 ? "App-link" : ""}
-                                        onClick={() => handleDays(index + 1)}
-                                    >
-                                        {index + 1} day{index + 1 > 1 ? 's' : ''}
-                                    </button>
+        <div className="ticket-page-wrapper">
+            <div className="ticket-container">
+                {step === 1 && (
+                    <>
+                        <div className="selection-section">
+                            <h2 className="section-title">Select the Number of Days</h2>
+                            <div className="selection-content">
+                                <div className="day-selection-grid">
+                                    {[...Array(7)].map((_, index) => (
+                                        <button 
+                                            key={index + 1}
+                                            className={`day-button ${numOfDays === index + 1 ? "day-button-selected" : ""}`}
+                                            onClick={() => handleDays(index + 1)}
+                                        >
+                                            {index + 1} day{index + 1 > 1 ? 's' : ''}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div className="selection-section">
+                            <h2 className="section-title">Select the Number of Tickets</h2>
+                            <div className="selection-content">
+                                <div className="ticket-total">
+                                    <h1 className="total-count">{numOfTickets}</h1>
+                                </div>
+                                <div className="ticket-type-container">
+                                    <div className="ticket-type">
+                                        <div className="ticket-type-name">Standard Tickets</div>
+                                        <div className="ticket-counter">
+                                            <p className="ticket-age-range">Ages 13-59</p>
+                                            <div className="counter-controls">
+                                                <button className="counter-button" onClick={() => handleStandardTickets(-1)}> - </button>
+                                                <p className="counter-value">{numOfStandardTickets}</p>
+                                                <button className="counter-button" onClick={() => handleStandardTickets(1)}> + </button>
+                                            </div>
+                                        </div>
+                                    </div>
+    
+                                    <div className="ticket-type">
+                                        <div className="ticket-type-name">Child Tickets</div>
+                                        <div className="ticket-counter">
+                                            <p className="ticket-age-range">Ages 0-12</p>
+                                            <div className="counter-controls">
+                                                <button className="counter-button" onClick={() => handleChildrenTickets(-1)}> - </button>
+                                                <p className="counter-value">{numOfChildrenTickets}</p>
+                                                <button className="counter-button" onClick={() => handleChildrenTickets(1)}> + </button>
+                                            </div>
+                                        </div>
+                                    </div>
+    
+                                    <div className="ticket-type">
+                                        <div className="ticket-type-name">Senior Tickets</div>
+                                        <div className="ticket-counter">
+                                            <p className="ticket-age-range">Ages 60+</p>
+                                            <div className="counter-controls">
+                                                <button className="counter-button" onClick={() => handleSeniorTickets(-1)}> - </button>
+                                                <p className="counter-value">{numOfSeniorTickets}</p>
+                                                <button className="counter-button" onClick={() => handleSeniorTickets(1)}> + </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+    
+                        {(numOfSeniorTickets + numOfStandardTickets) === 0 || numOfDays === 0 ? 
+                        (<p className="instruction-text">Select Days and Tickets</p>) : 
+                        (<button className="primary-button continue-button" onClick={() => setStep(2)}>Continue</button>)}
+                    </>
+                )}
+    
+                {step === 2 && (
+                    <>
+                        <button className="back-button"onClick={() => setStep(1)}>Go back</button>
+                        <div className="calendar-section">
+                            <p className="section-subtitle">Select Days</p>
+                            <Calendar
+                                onClickDay={handleDateChange} 
+                                tileClassName={({ date }) => isSelected(date) ? "selected-date" : null}
+                                tileDisabled={tileDisabled} 
+                                minDate={today}
+                                maxDate={maxDate}
+                                className="calendar-component"
+                            />
+                            <ul className="date-list">
+                                {selectedDates.map((date, index) => (
+                                    <li className="date-item" key={index}>{date}</li>
                                 ))}
-                            </div>
+                            </ul>
                         </div>
-                    </div>
-
-                    <div className="select-tickets">
-                        <h2>Select the Number of Tickets</h2>
-                        <div className="tickets-container">
-                            <h1>{numOfTickets}</h1>
-                            <div className="ticket-group">
-                                <div>Standard Tickets</div>
-                                <div className="tickets-counter">
-                                    <p>Ages 13-59</p>
-                                    <button onClick={() => handleStandardTickets(-1)}> - </button>
-                                    <p>{numOfStandardTickets}</p>
-                                    <button onClick={() => handleStandardTickets(1)}> + </button>
-                                </div>
-                            </div>
-
-                            <div className="ticket-group">
-                                <div>Child Tickets</div>
-                                <div className="tickets-counter">
-                                    <p>Ages 0-12</p>
-                                    <button onClick={() => handleChildrenTickets(-1)}> - </button>
-                                    <p>{numOfChildrenTickets}</p>
-                                    <button onClick={() => handleChildrenTickets(1)}> + </button>
-                                </div>
-                            </div>
-
-                            <div className="ticket-group">
-                                <div>Senior Tickets</div>
-                                <div className="tickets-counter">
-                                    <p>Ages 60+</p>
-                                    <button onClick={() => handleSeniorTickets(-1)}> - </button>
-                                    <p>{numOfSeniorTickets}</p>
-                                    <button onClick={() => handleSeniorTickets(1)}> + </button>
-                                </div>
-                            </div>
+    
+                        {selectedDates.length !== numOfDays ? 
+                        (<p className="instruction-text">Select {numOfDays} day{numOfDays > 1 ? 's' : ''}</p>) : 
+                        (<button className="primary-button continue-button" onClick={() => (setStep(3))}> Continue </button>)}
+                    </>
+                )}
+    
+                {step === 3 && (
+                    <>
+                        <button className="back-button" onClick={() => setStep(2)}>Go back</button>
+                        <div className="calendar-section">
+                            <p className="section-subtitle">Add a Food Pass</p>
+                            <Calendar
+                                onClickDay={handleDateChangeForFoodPass} 
+                                tileClassName={({ date }) => isSelectedForFoodPass(date) ? "selected-date" : null}
+                                tileDisabled={({ date }) => !selectedDates.includes(date.toDateString())}
+                                minDate={today}
+                                maxDate={maxDate}
+                                className="calendar-component"
+                            />
+                            <ul className="date-list">
+                                {selectedDatesForFoodPass.map((date, index) => (
+                                    <li className="date-item" key={index}>{date}</li>
+                                ))}
+                            </ul>
                         </div>
+                        <button className="primary-button continue-button" onClick={() => (setStep(4))}>
+                            Continue
+                        </button>
+                    </>
+                )}
+    
+                {step === 4 && (
+                    <>
+                    <button className="back-button" onClick={() => setStep(3)}>Go back</button>
+                    <h1 className="page-title">What attractions are you interested in going to?</h1>
+                    <div className="attractions-grid">
+                    {attractions.map((attraction) => (
+                        <div className="attraction-item" key={attraction.attraction_id}>
+                            <h3 className="attraction-name">{attraction.attraction_name}</h3>
+                            <button key={attraction.attraction_id} className={`day-button ${attraction.isInterested ? "attraction-selected" : "attraction-unselected"}`} onClick={() => updateAttractionInterest(attraction.attraction_id) }>Select</button>
+                        </div>
+                    ))}
                     </div>
-
-                    {(numOfSeniorTickets + numOfStandardTickets) === 0 || numOfDays === 0 ? 
-                    (<p className="step-indicator">Select Days and Tickets</p>) : 
-                    (<button onClick={() => setStep(2)}>Continue</button>)}
-                </>
-            )}
-
-            {step === 2 && (
-                <>
-                    <button onClick={() => setStep(1)}>Go back</button>
-                    <div className="calendar-container">
-                        <p>Select Days</p>
-                        <Calendar
-                            onClickDay={handleDateChange} 
-                            tileClassName={({ date }) => isSelected(date) ? "selected-date" : null}
-                            tileDisabled={tileDisabled} 
-                            minDate={today}
-                            maxDate={maxDate}
-                        />
-                        <ul>
-                            {selectedDates.map((date, index) => (
-                                <li key={index}>{date}</li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {selectedDates.length !== numOfDays ? 
-                    (<p className="step-indicator">Select {numOfDays} day{numOfDays > 1 ? 's' : ''}</p>) : 
-                    (<button onClick={() => (setStep(3))}> Continue </button>)}
-                </>
-            )}
-
-            {step === 3 && (
-                <>
-                    <button onClick={() => setStep(2)}>Go back</button>
-                    <div className="calendar-container">
-                        <p>Add a Food Pass</p>
-                        <Calendar
-                            onClickDay={handleDateChangeForFoodPass} 
-                            tileClassName={({ date }) => isSelectedForFoodPass(date) ? "selected-date" : null}
-                            tileDisabled={({ date }) => !selectedDates.includes(date.toDateString())}
-                            minDate={today}
-                            maxDate={maxDate}
-                        />
-                        <ul>
-                            {selectedDatesForFoodPass.map((date, index) => (
-                                <li key={index}>{date}</li>
-                            ))}
-                        </ul>
-                    </div>
-                    <button onClick={() => (setStep(4))}>
+                    <button className="primary-button continue-button" onClick={() => (setStep(5),setPrice((selectedDatesForFoodPass.length * (numOfStandardTickets*3 + numOfSeniorTickets*2 + numOfChildrenTickets) ) + numOfDays * (4*numOfSeniorTickets + 6*numOfChildrenTickets + 10*numOfStandardTickets)))}>
                         Continue
                     </button>
-                </>
-            )}
-
-            {step === 4 && (
-                <>
-                <button onClick={() => setStep(3)}>Go back</button>
-                <h1>What attractions are you interested in going to?</h1>
-                <div >
-                {attractions.map((attraction) => (
-                    <>
-                    <div >
-                        <button className={attraction.isInterested ? "App-link" : ""} onClick={() => updateAttractionInterest(attraction.attraction_id) }>Select</button>
-                        <h3 > {attraction.attraction_name}</h3>
-                        
-                    </div>
                     </>
-                ))}
-                </div>
-                <button onClick={() => (setStep(5),setPrice((selectedDatesForFoodPass.length * (numOfStandardTickets*3 + numOfSeniorTickets*2 + numOfChildrenTickets) ) + numOfDays * (4*numOfSeniorTickets + 6*numOfChildrenTickets + 10*numOfStandardTickets)))}>
-                    Continue
-                </button>
-                </>
-            )}
-
-            {step === 5 && (
-                <>
-                    <button onClick={() => setStep(4)}>Go back</button>
-                    <h2>Review Your Tickets and Food Passes!</h2>
-                    <p>{numOfDays}-Day Ticket</p>
-                    <ul>
-                        {selectedDates.map((date, index) => (
-                            <li key={index}>{date} {selectedDatesForFoodPass.includes(date) ? `(Includes $${numOfStandardTickets*3 + numOfSeniorTickets*2 + numOfChildrenTickets} Food Pass)` : ''}</li>
-                        ))}
-                    </ul>
-                    <div className="ticket-summary">
-                        <p>{numOfStandardTickets > 0 ? `${numOfStandardTickets} Standard Ticket${numOfStandardTickets > 1 ? 's' : ''} ($${numOfDays * 10} Per Ticket)` : ""}</p>
-                        <p>{numOfStandardTickets > 0 ? `$${numOfDays * 10 * numOfStandardTickets}` : ""}</p>
-                    </div>
-                    <div className="ticket-summary">
-                        <p>{numOfChildrenTickets > 0 ? `${numOfChildrenTickets} Child Ticket${numOfChildrenTickets > 1 ? 's' : ''} ($${numOfDays * 6} Per Ticket)` : ""}</p>
-                        <p>{numOfChildrenTickets > 0 ? `$${numOfDays * 6 * numOfChildrenTickets}` : ""}</p>
-                    </div>
-                    <div className="ticket-summary">
-                        <p>{numOfSeniorTickets > 0 ? `${numOfSeniorTickets} Senior Ticket${numOfSeniorTickets > 1 ? 's' : ''} ($${numOfDays * 4} Per Ticket)` : ""}</p>
-                        <p>{numOfSeniorTickets > 0 ? `$${numOfDays * 4 * numOfSeniorTickets}` : ""}</p>
-                    </div>
-                    <div /*price*/>
-                        <p>Subtotal</p>
-                        <p>${(selectedDatesForFoodPass.length * (numOfStandardTickets*3 + numOfSeniorTickets*2 + numOfChildrenTickets) ) + numOfDays * (4*numOfSeniorTickets + 6*numOfChildrenTickets + 10*numOfStandardTickets)} USD</p>
-                    </div>
-                    <button onClick={handleAddToCart}>Add to Cart</button>
-                </>
-            )}
-        </div>
-
+                )}
+    
+                {step === 5 && (
+                    <>
+                        <button className="back-button" onClick={() => setStep(4)}>Go back</button>
+                        <h2 className="summary-title">Review Your Tickets and Food Passes!</h2>
+                        <p className="ticket-duration">{numOfDays}-Day Ticket</p>
+                        <ul className="date-list summary-list">
+                            {selectedDates.map((date, index) => (
+                                <li className="date-item summary-item" key={index}>{date} {selectedDatesForFoodPass.includes(date) ? `(Includes $${numOfStandardTickets*3 + numOfSeniorTickets*2 + numOfChildrenTickets} Food Pass)` : ''}</li>
+                            ))}
+                        </ul>
+                        <div className="summary-container">
+                            <div className="summary-row">
+                                <p className="summary-label">{numOfStandardTickets > 0 ? `${numOfStandardTickets} Standard Ticket${numOfStandardTickets > 1 ? 's' : ''} ($${numOfDays * 10} Per Ticket)` : ""}</p>
+                                <p className="summary-value">{numOfStandardTickets > 0 ? `$${numOfDays * 10 * numOfStandardTickets}` : ""}</p>
+                            </div>
+                            <div className="summary-row">
+                                <p className="summary-label">{numOfChildrenTickets > 0 ? `${numOfChildrenTickets} Child Ticket${numOfChildrenTickets > 1 ? 's' : ''} ($${numOfDays * 6} Per Ticket)` : ""}</p>
+                                <p className="summary-value">{numOfChildrenTickets > 0 ? `$${numOfDays * 6 * numOfChildrenTickets}` : ""}</p>
+                            </div>
+                            <div className="summary-row">
+                                <p className="summary-label">{numOfSeniorTickets > 0 ? `${numOfSeniorTickets} Senior Ticket${numOfSeniorTickets > 1 ? 's' : ''} ($${numOfDays * 4} Per Ticket)` : ""}</p>
+                                <p className="summary-value">{numOfSeniorTickets > 0 ? `$${numOfDays * 4 * numOfSeniorTickets}` : ""}</p>
+                            </div>
+                            <div className="summary-row total-row">
+                                <p className="summary-label total-label">Subtotal</p>
+                                <p className="summary-value total-value">${(selectedDatesForFoodPass.length * (numOfStandardTickets*3 + numOfSeniorTickets*2 + numOfChildrenTickets) ) + numOfDays * (4*numOfSeniorTickets + 6*numOfChildrenTickets + 10*numOfStandardTickets)} USD</p>
+                            </div>
+                        </div>
+                        <button className="primary-button cart-button" onClick={handleAddToCart}>Add to Cart</button>
+                    </>
+                )}
+            </div>
         </div>
     );
 }
