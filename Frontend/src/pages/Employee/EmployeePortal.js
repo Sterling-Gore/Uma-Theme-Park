@@ -11,6 +11,7 @@ import CreateAttraction from './components/createAttraction';
 import Reports from './components/reports';
 import './EmployeePortal.css';
 import AuthContext from '../../context/AuthContext';
+import ShowFeedback from "./components/showFeedback";
 
 function EmployeePortal() {
   const navigate = useNavigate();
@@ -74,6 +75,8 @@ function EmployeePortal() {
           {activeTab === 'handleAttractions' && <HandleAttraction setActiveTab={setActiveTab}/>}
           {activeTab === 'createAttraction' && <CreateAttraction setActiveTab={setActiveTab}/>}
           {activeTab === 'reports' && <Reports setActiveTab={setActiveTab} />}
+          {activeTab === 'showFeedback' && <ShowFeedback setActiveTab={setActiveTab} />}
+
         </div>
       </div>
     </div>
