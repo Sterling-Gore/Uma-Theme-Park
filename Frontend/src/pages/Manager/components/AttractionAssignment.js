@@ -56,7 +56,7 @@ const AttractionAssignment = ({ setActiveTab }) => {
         e.preventDefault();
 
         try {
-            // Only sending email and attraction - nothing else can be changed
+        
             const updateData = {
                 email: employeeInfo.email,
                 attraction: newAttraction
@@ -69,7 +69,7 @@ const AttractionAssignment = ({ setActiveTab }) => {
 
             console.log("Sending attraction update data:", updateData);
 
-            // Using the dedicated endpoint for attraction updates only
+           
             const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/updateEmployeeAttraction`, {
                 method: 'PUT',
                 credentials: 'include',
@@ -89,7 +89,6 @@ const AttractionAssignment = ({ setActiveTab }) => {
             console.log("Update response data:", data);
 
             if (data.success || data.message === "Success") {
-                alert('Attraction assignment updated successfully!');
                 setActiveTab('view');
                 localStorage.removeItem('editEmployee');
             } else {

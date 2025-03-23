@@ -74,7 +74,6 @@ const CreateEmployee = ({ setActiveTab }) => {
             console.log("Create response data:", data);
 
             if (data.message === "Success") {
-                alert('Employee created successfully!');
                 setActiveTab('view');
                 // Reset form data after successful creation
                 setFormData({
