@@ -1,17 +1,27 @@
 // Frontend/src/components/employeeAuth/EmployeeLogin.js
 
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import './EmployeeLogin.css';
 import AuthContext from "../../context/AuthContext";
 import { useNavigate } from 'react-router-dom';
 
 function EmployeeLogin() {
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
+  const { login, userType, isLoading } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!isLoading) {
+        if (userType === "employee") {
+            navigate('/EmployeePortal');
+        } else if (userType === "manager") {
+            navigate('/ManagerPortal');
+        }
+    }
+}, [userType, navigate, isLoading]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
