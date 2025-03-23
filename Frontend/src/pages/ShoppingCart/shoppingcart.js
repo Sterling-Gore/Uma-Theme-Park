@@ -143,10 +143,13 @@ function Shoppingcart()
     const initializeCart = async () => {
         const storedCartTickets = JSON.parse(localStorage.getItem("cart-tickets")) || [];
         //this is used to add an id to each ticket in the shopping cart
-        const storedCartTicketsWithID = storedCartTickets.map((item, index) => ({
+        const storedCartTicketsWithID = storedCartTickets.map((item, index) => {
+            return{
             ...item,
-            id:  `${index}`,
-        }));
+            id:  `${index}`
+            };
+        });
+        console.log(storedCartTicketsWithID);
 
         //const storedCartMerchs = JSON.parse(localStorage.getItem("cart-merchandise")) || [];
         

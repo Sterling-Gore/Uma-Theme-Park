@@ -192,9 +192,14 @@ function Shop()
                                         </button>
                                     )}
                                     
-                                    <button className="attraction-button" onClick={() => removeFromCart(Merchandise.merchandise_id)}>
-                                        Remove One From Cart
-                                    </button>
+                                    {Merchandise.in_shopping_cart > 0 && (
+                                        <>
+                                        <button className="attraction-button" onClick={() => removeFromCart(Merchandise.merchandise_id)}>
+                                            Remove One From Cart
+                                        </button>
+                                        </>
+                                    )}
+                                    
                                 </div>
                             </div>
                         </div>
