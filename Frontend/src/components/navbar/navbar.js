@@ -57,7 +57,6 @@ const NavBar = memo(function NavBar() {
           <>
             <Link to="/login" className="NavLink1">Login</Link>
             <Link to="/register" className="NavLink1">Register</Link>
-            <Link to="/EmployeeLogin" className="NavLink1">Employee Login</Link>
           </>
         ) : (
           // Links for logged-in customers

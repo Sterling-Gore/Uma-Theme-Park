@@ -1,5 +1,3 @@
-// Frontend/src/App.js
-
 import React, { useContext } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home/Home.js";
@@ -31,6 +29,9 @@ function App() {
   if (isLoading) {
     return <div className="loading">Loading...</div>;
   }
+
+  // Determine if footer should be displayed
+  const shouldShowFooter = !(isLoggedIn && (userType === 'employee' || userType === 'manager'));
 
   return (
     <>
@@ -77,7 +78,7 @@ function App() {
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </div>
-      <Footer />
+      {shouldShowFooter && <Footer />}
     </>
   );
 }

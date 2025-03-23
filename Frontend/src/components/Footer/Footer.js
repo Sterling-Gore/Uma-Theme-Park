@@ -1,46 +1,21 @@
 // Frontend/src/components/Footer/Footer.js
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
+//import GitHubIcon from '@mui/icons-material/GitHub';
+import './Footer.css';
 
 const Footer = () => {
   return (
     <footer className="footer">
-      <div className="footer-content">
-        <div className="footer-section">
-          <h3>Navigation</h3>
-          <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/activities">Activities</Link></li>
-            <li><Link to="/dining">Dining</Link></li>
-            <li><Link to="/shop">Shop</Link></li>
-            <li><Link to="/tickets">Tickets</Link></li>
-          </ul>
-        </div>
-        
-        <div className="footer-section">
-          <h3>Customer Support</h3>
-          <ul>
-            <li><Link to="/problems">Report a Problem</Link></li>
-            <li><Link to="/account">My Account</Link></li>
-            <li><Link to="/myorders">Order History</Link></li>
-            <li><a href="mailto:support@example.com">Contact Us</a></li>
-          </ul>
-        </div>
-        
-        <div className="footer-section">
-          <h3>About Us</h3>
-          <ul>
-            <li><a href="#">Our Story</a></li>
-            <li><a href="#">Park Information</a></li>
-            <li><a href="#">Special Events</a></li>
-            <li><a href="#">Careers</a></li>
-          </ul>
-        </div>
+      <div className="left-container">
+        <span>© {new Date().getFullYear()} Blue Horizon Adventure</span>
       </div>
       
-      <div className="footer-bottom">
-        <p>&copy; {new Date().getFullYear()} Theme Park. All rights reserved.</p>
+      <div className="right-container">
+        <NavLink className="links-footer" to="/EmployeeLogin">Employee Login</NavLink>
+        <NavLink className="links-footer" to="https://github.com/Sterling-Gore/Uma-Theme-Park">
+        </NavLink>
       </div>
     </footer>
   );

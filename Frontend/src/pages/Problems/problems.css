@@ -1,28 +1,29 @@
 .page-container{
-    width: 100vw; /* Full width */
-    height: 100vh; /* Full height */
-    display: flex; /* Center content if needed */
+    width: 100vw; 
+    height: auto; 
+    display: flex; 
     justify-content: center;
-    align-items: center;
-    padding: 2rem;
+    align-items: flex-start; 
+    padding: 0; /* Removed padding */
+    margin: 0; /* Added to remove any margin */
     background-color: #fff;
-    border-radius: 8px;
+    border-radius: 0; /* Removed border radius at top */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-
 .problems-container {
     max-width: 800px;
-    margin: 2rem auto;
-    padding: 2rem;
+    margin: 100px; /* Removed top margin */
+    padding-top: 10px; /* Removed top padding */
+    padding: 1.5rem;
     background-color: #fff;
-    border-radius: 8px;
+    border-radius: 0; /* Removed border radius at top */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .problems-header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem; /* Reduced from 2rem */
 }
 
 .problems-header h1 {
@@ -39,13 +40,13 @@
 .feedback-form {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1rem; /* Reduced from 1.5rem */
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.3rem; /* Reduced from 0.5rem */
     position: relative;
 }
 
@@ -81,13 +82,13 @@
     background-color: #2b55cc;
     color: white;
     border: none;
-    padding: 1rem;
+    padding: 0.8rem; /* Reduced from 1rem */
     font-size: 1.1rem;
     font-weight: 600;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 1rem;
+    margin-top: 0.8rem; /* Reduced from 1rem */
 }
 
 .submit-btn:hover {
@@ -101,7 +102,7 @@
 
 .submit-message {
     padding: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem; /* Reduced from 1.5rem */
     border-radius: 4px;
     font-weight: 500;
     text-align: center;
@@ -122,8 +123,8 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .problems-container {
-        margin: 1rem;
-        padding: 1.5rem;
+        margin: 0; /* Removed all margin */
+        padding: 1rem; /* Further reduced from 1.5rem */
     }
     
     .problems-header h1 {
