@@ -192,6 +192,12 @@ function Tickets() {
 
 
     const handleAddToCart = async () => {
+        const interestedAttractions = attractions.map((item) => {
+            if(item.isInterested)
+            {
+                return item.attraction_name;
+            }
+        });
         const ticketData = {
             numOfStandardTickets,
             numOfChildrenTickets,
@@ -200,6 +206,7 @@ function Tickets() {
             selectedDates,
             selectedDatesForFoodPass,
             price,
+            interestedAttractions
         };
     
         // Retrieve existing cart from local storage (if any)

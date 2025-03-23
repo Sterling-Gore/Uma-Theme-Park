@@ -23,6 +23,7 @@ async function insertTicketAndMerchQuery(data)
 
         const ticketReceiptInsertQuery = "INSERT INTO theme_park.ticket_receipt (ticket_receipt_id, customer_id, number_of_days, number_of_standards, number_of_children, number_of_seniors, total_cost, purchase_date) VALUES (?,?,?,?,?,?,?, ?);";
         const ticketDateInsertQuery = "INSERT INTO theme_park.ticket_dates (ticket_date_id, ticket_receipt_id, ticket_date, includes_food_pass) VALUES (?,?,?,?);";
+        const attractionInterestInsertQuery = "INSERT INTO theme_park.attraction_interests (attraction_interest_id, ticket_receipt_id, attraction_name) VALUES (?,?,?);";
         for (const ticket of Tickets){
             const ticket_receipt_id = uuidv4(); 
             const [ticketReceiptInsertResult] = await connection.execute(ticketReceiptInsertQuery, [ticket_receipt_id, userID, Number(ticket.numOfDays), ticket.numOfStandardTickets, ticket.numOfChildrenTickets, ticket.numOfSeniorTickets, ticket.price, today]);
@@ -32,6 +33,16 @@ async function insertTicketAndMerchQuery(data)
                 const ticket_date_id = uuidv4(); 
                 const includesFoodPass = ticket.selectedDatesForFoodPass.includes(date);
                 const [ticketDateInsertResult] = await connection.execute(ticketDateInsertQuery, [ticket_date_id, ticket_receipt_id, ticketDate, includesFoodPass]);
+            }
+
+            for (const interested_attraction_name of ticket.interestedAttractions)
+            {
+                if(interested_attraction_name !== null)
+                {
+                    console.log(interested_attraction_name);
+                    const attraction_interest_id = uuidv4(); 
+                    const [attractionInterestInsertResult] = await connection.execute(attractionInterestInsertQuery, [attraction_interest_id, ticket_receipt_id, interested_attraction_name]);
+                }
             }
         }
 
