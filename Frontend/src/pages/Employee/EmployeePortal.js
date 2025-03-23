@@ -18,28 +18,35 @@ function EmployeePortal() {
   const { isLoggedIn, userType, isLoading } = useContext(AuthContext);
   const alertShown = useRef(false);
   const { logout } = useContext(AuthContext);
-  const [activeTab, setActiveTab] = useState('dashboard'); // ✅ Manage activeTab state here
+  const [activeTab, setActiveTab] = useState('dashboard'); 
+
+
+  const isManager = localStorage.getItem('userType') === "manager";
+
+  const handleManagerPortalRedirect = () => {
+    navigate('/ManagerPortal');
+  };
 
   // Redirect customers to their portals
   useEffect(() => {
-      if (!isLoading) {
-          if (userType === "Customer") {
-              navigate('/');
-          }  
+    if (!isLoading) {
+      if (userType === "Customer") {
+        navigate('/');
       }
+    }
   }, [userType, navigate, isLoading]);
 
   // Verify auth status for ticket purchase
   useEffect(() => {
-      if (!isLoading && !isLoggedIn && !alertShown.current) {
-          alertShown.current = true;
-          alert("Please login to access employee page!");
-          navigate("/login");
-      }
+    if (!isLoading && !isLoggedIn && !alertShown.current) {
+      alertShown.current = true;
+      alert("Please login to access employee page!");
+      navigate("/login");
+    }
   }, [isLoggedIn, navigate, isLoading]);
 
   // Only render content after loading and redirects are done
-  if (isLoading || userType === "Customer" ) {
+  if (isLoading || userType === "Customer") {
     return null;
   }
 
@@ -56,9 +63,14 @@ function EmployeePortal() {
 
   return (
     <div className="employee-portal">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} /> {/* ✅ Pass setActiveTab to Sidebar */}
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} /> 
       <div className="content-area">
         <div className="top-bar">
+          {isManager && (
+            <button className="manager-portal-btn" onClick={handleManagerPortalRedirect}>
+              <span className="manager-icon">🔙</span> Back to Manager Portal
+            </button>
+          )}
           <div className="user-info">
             <span>Logged in as: {localStorage.getItem('fullName')}</span>
           </div>
@@ -70,10 +82,10 @@ function EmployeePortal() {
           {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
           {activeTab === 'profile' && <Profile setActiveTab={setActiveTab} />}
           {activeTab === 'tasks' && <Tasks setActiveTab={setActiveTab} />}
-          {activeTab === 'handleMerchandise' && <HandleMerchandise setActiveTab={setActiveTab}/>}
-          {activeTab === 'createMerchandise' && <CreateMerchandise setActiveTab={setActiveTab}/>}
-          {activeTab === 'handleAttractions' && <HandleAttraction setActiveTab={setActiveTab}/>}
-          {activeTab === 'createAttraction' && <CreateAttraction setActiveTab={setActiveTab}/>}
+          {activeTab === 'handleMerchandise' && <HandleMerchandise setActiveTab={setActiveTab} />}
+          {activeTab === 'createMerchandise' && <CreateMerchandise setActiveTab={setActiveTab} />}
+          {activeTab === 'handleAttractions' && <HandleAttraction setActiveTab={setActiveTab} />}
+          {activeTab === 'createAttraction' && <CreateAttraction setActiveTab={setActiveTab} />}
           {activeTab === 'reports' && <Reports setActiveTab={setActiveTab} />}
           {activeTab === 'showFeedback' && <ShowFeedback setActiveTab={setActiveTab} />}
 
@@ -84,4 +96,3 @@ function EmployeePortal() {
 }
 
 export default EmployeePortal;
- 
