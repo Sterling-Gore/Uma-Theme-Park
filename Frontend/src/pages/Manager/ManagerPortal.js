@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import ViewEmployees from './components/ViewEmployees';
 import AttractionAssignment from './components/AttractionAssignment';
 import Reports from './components/Reports';
+import CreateEmployee from './components/CreateEmployee';
 import './ManagerPortal.css';
 import AuthContext from '../../context/AuthContext';
 
@@ -42,6 +43,7 @@ function ManagerPortal() {
         </div>
         <div className="main-content">
           {activeTab === 'view' && <ViewEmployees setActiveTab={setActiveTab} />}
+          {activeTab === 'create' && <CreateEmployee setActiveTab={setActiveTab} />}
           {activeTab === 'assign' && <AttractionAssignment setActiveTab={setActiveTab} />}
           {activeTab === 'reports' && <Reports setActiveTab={setActiveTab} />}
         </div>
