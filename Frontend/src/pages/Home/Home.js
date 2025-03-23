@@ -23,8 +23,7 @@ const Home = () => {
   return (
     <div className="home-container">
       <div className="home-text">
-        <h1>Park Name</h1>
-        <span><i>some text</i></span>
+        <h1>Blue Horizon Adventure</h1>
         <button className="buy-tickets-button" onClick={() => navigate('/tickets')}>
           Buy Tickets
         </button>

@@ -1,68 +1,167 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* Font imports */
 @font-face {
-    font-family: Fantaisie;
-    src: url(../../fonts/FantaisieArtistique.ttf)
-}
-@font-face {
-    font-family: Neverland;
-    src: url(../../fonts/Magical\ Neverland.ttf)
-}
-@font-face {
-    font-family: MagicOne;
-    src: url(../../fonts/MagicSchoolOne.ttf)
-}
-@font-face {
-    font-family: MagicTwo;
-    src: url(../../fonts/MagicSchoolTwo.ttf)
-}
-@font-face {
-    font-family: Britney;
-    src: url(../../fonts/Britney-Variable.ttf)
-}
-@font-face {
-    font-family: Dancing;
-    src: url(../../fonts/DancingScript-Variable.ttf)
+    font-family: 'Britney';
+    src: url(../../fonts/Britney-Variable.ttf);
+    font-display: swap;
 }
 
-
+:root {
+    --primary: #14508f;
+    --secondary: #f8d70b;
+}
 
 .Navbar {
+    position: sticky;
     top: 0;
-    width: auto;
-    height: 50px;
+    background-color: var(--primary);
+    box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.112);
+    height: 90px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
-    background-color: #007BFF;
-  }
-
-  .shoppingCartIcon-white {
-    width: 35px;
-    height: 35px;
-    filter: brightness(0) invert(1); /* This makes many icons white */
-  }
-  .profileIcon-white  {
-    width: 35px;
-    height: 35px;
-    filter: brightness(0) invert(1); /* This makes many icons white */
-  }
-
-.NavLink1 {
-    color: #f4f4f4;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 20px;
-  }
-.NavLogo {
-    color: #f4f4f4;
-    font-family: Britney;
-    font-weight: bold;
-    font-size: 50px;
+    width: 100%;
+    z-index: 1000;
+    padding: 0 20px;
 }
 
-.NavLinks {
+/* Logo styling */
+.NavLogo {
+    height: 100%;
     display: flex;
     align-items: center;
-    gap: 2vw;
-  }
-  
+}
+
+.NavLogo a {
+    font-family: 'Britney', sans-serif;
+    font-weight: bold;
+    font-size: 1.6rem;
+    text-decoration: none;
+    color: #ffffff;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+}
+
+/* Navigation links container */
+.NavLinks {
+    font-family: 'Roboto', sans-serif;
+    letter-spacing: 1px;
+    font-weight: 500;
+    font-style: normal;
+    display: flex;
+    height: 100%;
+    align-items: center;
+    padding-right: 15px; /* Add padding on the right side */
+}
+
+/* Individual navigation links */
+.NavLink1 {
+    margin-inline: 10px;
+    padding-block: 10px;
+    padding-inline: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    overflow: hidden;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.NavLink1:hover {
+    color: var(--secondary);
+}
+
+.NavLink1:not(:has(img))::after {
+    position: absolute;
+    content: '';
+    bottom: 7px;
+    left: 0;
+    width: 100%;
+    height: 0.15em;
+    background-color: var(--primary);
+    opacity: 1;
+    transform: translate3d(-100%, 0, 0);
+    transition: opacity 300ms, transform 300ms;
+}
+
+.NavLink1:not(:has(img)):hover::after {
+    transform: translate3d(0, 0, 0);
+    background-color: var(--secondary);
+}
+
+/* Icon styling */
+.shoppingCartIcon-white,
+.profileIcon-white {
+    width: 24px;
+    height: 24px;
+    filter: brightness(0) invert(1);
+    transition: transform 0.2s ease;
+}
+
+.NavLink1:has(img):hover img {
+    transform: scale(1.15);
+    filter: brightness(0) invert(0.9) sepia(1) saturate(5) hue-rotate(40deg);
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 992px) {
+    .NavLinks {
+        gap: 5px;
+    }
+    
+    .NavLink1 {
+        margin-inline: 7px;
+        padding-inline: 3px;
+    }
+}
+
+/* Tablet view */
+@media (max-width: 768px) {
+    .Navbar {
+        padding: 0 10px;
+    }
+    
+    .NavLink1 {
+        margin-inline: 5px;
+        font-size: 0.9rem;
+    }
+    
+    .NavLogo a {
+        font-size: 1.4rem;
+    }
+    
+    .shoppingCartIcon-white,
+    .profileIcon-white {
+        width: 22px;
+        height: 22px;
+    }
+}
+
+/* Mobile view */
+@media (max-width: 600px) {
+    .Navbar {
+        height: auto;
+        padding: 10px;
+        flex-direction: column;
+    }
+    
+    .NavLogo {
+        margin-bottom: 10px;
+    }
+    
+    .NavLinks {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .NavLink1 {
+        font-size: 0.85rem;
+        margin-inline: 4px;
+        padding-block: 8px;
+        padding-inline: 3px;
+    }
+}

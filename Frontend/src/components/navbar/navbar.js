@@ -45,7 +45,7 @@ const NavBar = memo(function NavBar() {
   return (
     <nav className="Navbar">
       <div className="NavLogo">
-        <Link to="/">ParkName</Link>
+        <Link to="/">Blue Horizon Adventure</Link>
       </div>
 
       <div className="NavLinks">
