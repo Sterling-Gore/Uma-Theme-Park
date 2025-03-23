@@ -1,6 +1,6 @@
 const pool = require("../database");
 
-const updateNotificationStatus = async (req, res) => {
+const updateTaskStatus = async (req, res) => {
     try {
         let data = '';
         req.on('data', (chunk) => {
@@ -13,17 +13,20 @@ const updateNotificationStatus = async (req, res) => {
                 try {
                     requestBody = JSON.parse(data);
                 } catch (parseError) {
-                    return res.status(400).json({ error: "Invalid JSON format" });
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    return res.end(JSON.stringify({ error: "Invalid JSON format" }));
                 }
 
                 const { notificationId, isCompleted } = requestBody;
 
                 if (!notificationId) {
-                    return res.status(400).json({ error: "Notification ID is required" });
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    return res.end(JSON.stringify({ error: "Notification ID is required" }));
                 }
 
                 if (isCompleted === undefined || isCompleted === null) {
-                    return res.status(400).json({ error: "Completion status is required" });
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    return res.end(JSON.stringify({ error: "Completion status is required" }));
                 }
 
                 const status = isCompleted === true || isCompleted === "true" || isCompleted === 1 ? true : false;
@@ -34,23 +37,29 @@ const updateNotificationStatus = async (req, res) => {
                 );
 
                 if (result.affectedRows === 0) {
-                    return res.status(404).json({ error: "Notification not found" });
+                    res.writeHead(404, { 'Content-Type': 'application/json' });
+                    return res.end(JSON.stringify({ error: "Notification not found" }));
                 }
 
-                return res.status(200).json({
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({
                     message: "Notification status updated successfully",
                     notificationId,
                     isCompleted: status
-                });
+                }));
             } catch (error) {
                 console.error("Error updating notification status:", error);
-                return res.status(500).json({ error: "Internal server error" });
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ error: "Internal server error" }));
             }
         });
     } catch (error) {
         console.error("Error handling request:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        return res.end(JSON.stringify({ error: "Internal server error" }));
     }
 };
 
-module.exports = updateNotificationStatus;
+module.exports = {
+    updateTaskStatus
+};

@@ -1,0 +1,148 @@
+/* Task specific styles to add to your App.css or a separate CSS file */
+
+.task-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .filter-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .filter-buttons button {
+    padding: 8px 16px;
+    background-color: var(--background-color);
+    border: 1px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .filter-buttons button.active-filter {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  .tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .task-card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    padding: 15px;
+    box-shadow: var(--box-shadow);
+    border-left: 4px solid transparent;
+  }
+  
+  .pending-task {
+    border-left-color: var(--primary-color);
+  }
+  
+  .completed-task {
+    border-left-color: var(--success-color);
+    opacity: 0.8;
+  }
+  
+  .task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 10px;
+  }
+  
+  .task-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-size: 1.2rem;
+  }
+  
+  .task-status {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: normal;
+  }
+  
+  .status-pending {
+    background-color: rgba(58, 134, 255, 0.2);
+    color: var(--primary-color);
+  }
+  
+  .status-completed {
+    background-color: rgba(56, 176, 0, 0.2);
+    color: var(--success-color);
+  }
+  
+  .task-date {
+    color: var(--light-text);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+  
+  .task-details {
+    margin-bottom: 15px;
+  }
+  
+  .task-details p {
+    margin: 5px 0;
+  }
+  
+  .complete-task-btn {
+    background-color: var(--success-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .complete-task-btn:hover {
+    background-color: #2c9000;
+  }
+  
+  .back-button {
+    margin-top: 20px;
+    background-color: var(--background-color);
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .back-button:hover {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  .error-message {
+    color: var(--error-color);
+    padding: 10px;
+    border-radius: var(--border-radius);
+    background-color: rgba(255, 82, 82, 0.1);
+    margin: 15px 0;
+  }
+  
+  @media (max-width: 768px) {
+    .task-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .task-header h3 {
+      margin-bottom: 5px;
+    }
+  }
