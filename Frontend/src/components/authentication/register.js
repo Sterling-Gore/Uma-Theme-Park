@@ -154,7 +154,7 @@ function Register() {
     const handleSubmit = async (event) => {
         event.preventDefault(); 
         try {
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/createCustomer`, {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/customer/createCustomer`, {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
