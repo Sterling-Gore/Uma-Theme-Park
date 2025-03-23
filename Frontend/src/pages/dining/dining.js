@@ -1,31 +1,44 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "../../App.css";
 import "./dining.css";
+
+import heroImage from "../../assets/dining_page_image.jpg";
+import sweetsImage from "../../assets/dining_page_sweets.jpg";
+import grillImage from "../../assets/dining_page_grill.jpg";
+import mexicanImage from "../../assets/dining_page_mexican.jpg";
+import ticketImage from "../../assets/dining_page_food_pass.jpg";
 
 function Dining() {
   const foodStands = [
     {
       name: "Wonderland Treats",
       description: "Indulge in sweet delights with our specialty cotton candy, caramel apples, funnel cakes, and hand-dipped ice cream. Perfect for satisfying your sweet tooth while exploring the park!",
-      image: "../../assets/sweet-treats.jpg" 
+      image: sweetsImage
     },
     {
       name: "Adventure Grill",
       description: "Enjoy hearty classics like juicy burgers, loaded hot dogs, fresh fries, and crispy chicken tenders. Our flame-grilled specialties will fuel your exciting day of attractions!",
-      image: "../../assets/burger-stand.jpg"
+      image: grillImage
     },
     {
       name: "World Flavors Pavilion",
       description: "Experience global cuisine with our rotating menu featuring Mexican street tacos, Italian pizza, Asian stir-fry, and more. A culinary journey that brings international flavors to your park experience!",
-      image: "../../assets/world-food.jpg"
+      image: mexicanImage
     }
   ];
 
   return (
     <div className="dining-container">
-      <div className="dining-hero">
-        <h1>Park Dining</h1>
-        <p className="dining-subtitle">Delicious food to fuel your adventure</p>
+      <div
+        className="dining-hero"
+        style={{
+          backgroundImage: `url(${heroImage})`
+        }}
+      >
+        <div className="hero-content">
+          <h1>Park Dining</h1>
+          <p className="dining-subtitle">Delicious food to fuel your adventure</p>
+        </div>
       </div>
 
       <section className="food-stands-section">
@@ -33,8 +46,15 @@ function Dining() {
         <div className="food-stands-container">
           {foodStands.map((stand, index) => (
             <div className="food-stand-card" key={index}>
-              <div className="food-stand-image-placeholder">
-                <div className="image-text">{stand.name}</div>
+              <div
+                className="food-stand-image"
+                style={{
+                  backgroundImage: `url(${stand.image})`
+                }}
+              >
+                <div className="image-overlay">
+                  <div className="image-text">{stand.name}</div>
+                </div>
               </div>
               <div className="food-stand-info">
                 <h3>{stand.name}</h3>
@@ -58,8 +78,15 @@ function Dining() {
             </p>
             <a href="/tickets" className="buy-tickets-button">Buy Tickets</a>
           </div>
-          <div className="food-pass-image-placeholder">
-            <div className="image-text">Food Pass</div>
+          <div
+            className="food-pass-image"
+            style={{
+              backgroundImage: `url(${ticketImage})`
+            }}
+          >
+            <div className="image-overlay">
+              
+            </div>
           </div>
         </div>
       </section>

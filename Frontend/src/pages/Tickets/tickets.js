@@ -43,7 +43,6 @@ function Tickets() {
     useEffect(() => {
         if (!isLoading && !isLoggedIn && !alertShown.current) {
             alertShown.current = true;
-            alert("Please login to purchase tickets!");
             navigate("/login");
         }
     }, [isLoggedIn, navigate, isLoading]);

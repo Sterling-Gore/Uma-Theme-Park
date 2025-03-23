@@ -25,8 +25,7 @@ export const handleLogout = async (navigate, logout) => {
        
             logout();
             navigate('/');
-            
-            alert(`Error: ${data.message || 'Failed to logout'}`);
+        
         }
     } catch (error) {
         console.error('Logout error:', error);

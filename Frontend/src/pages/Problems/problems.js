@@ -19,7 +19,6 @@ function Problems() {
     useEffect(() => {
         if (!isLoading && !isLoggedIn && !alertShown.current) {
             alertShown.current = true;
-            alert("Please login to report a problem!");
             navigate("/login");
         }
     }, [isLoggedIn, navigate, isLoading]);

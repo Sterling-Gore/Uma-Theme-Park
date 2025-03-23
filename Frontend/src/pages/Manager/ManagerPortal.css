@@ -543,3 +543,25 @@
     justify-content: space-between;
   }
 }
+
+.manager-portal .employee-table {
+  border-collapse: collapse !important;
+  border-spacing: 0;
+}
+
+.manager-portal .employee-table tr {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.manager-portal .employee-table td,
+.manager-portal .employee-table th {
+  border-bottom: none;
+}
+
+.manager-portal .employee-table tr:last-child {
+  border-bottom: none;
+}
+
+.manager-portal .action-buttons {
+  white-space: nowrap;
+}

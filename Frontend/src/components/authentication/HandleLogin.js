@@ -38,14 +38,12 @@ function HandleLogin() {
             if (response.ok) {
                 console.log('Login Successful: ', data.message);
                 
-                // Use the login function from AuthContext - it will handle localStorage
                 if (data.user) {
                     login(data.user, data.id, data.fullName);
                 } else {
-                    login('Customer'); // Default to customer if type not specified
+                    login('Customer'); 
                 }
                 
-                alert('Login Successful');
                 navigate('/');
             } else {
                 console.error('Error logging in: ', data.message);
