@@ -29,7 +29,7 @@ const { getMerchandiseStockQuantity } = require('./shoppingCart/getMerchandiseSt
 const { purchaseTicketsAndMerch } = require('./shoppingCart/purchaseTicketsAndMerch');
 const { viewEmployees } = require('./managerPortal/viewEmployees');
 const { deleteEmployee } = require('./managerPortal/deleteEmployee');
-const { updateEmployee } = require('./managerPortal/updateEmployee');
+const { updateEmployeeAttraction } = require('./managerPortal/updateEmployeeAttraction');
 const { submitFeedback } = require('./feedback/submitFeedback');
 const { getAccountInfo } = require('./accountHandler/getAccountInfo');
 const { UpdatePassword } = require('./accountHandler/updatePassword');
@@ -92,8 +92,8 @@ const server = http.createServer(async (req, res) => {
     else if(req.url === '/deleteEmployee' && req.method === 'DELETE'){
         deleteEmployee(req, res)
     }
-    else if(req.url === '/updateEmployee' && req.method === 'PUT'){
-        updateEmployee(req, res)
+    else if(req.url === '/updateEmployeeAttraction' && req.method === 'PUT'){
+        updateEmployeeAttraction(req, res)
     }
     else if(req.url === '/getMerchandise' && req.method === 'GET'){
         getMerchandise(req, res)
