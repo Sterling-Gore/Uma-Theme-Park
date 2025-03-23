@@ -39,6 +39,8 @@ const { getMerchandiseOrders } = require('./myorders/getMerchandiseOrders');
 const { getAttractions } = require('./attractions/getAttractions');
 const { getAttractionName } = require('./attractions/getAttractionName');
 const { getFeedback } = require('./employeePortal/getFeedback');
+const { getTasks } = require('./employeePortal/getTasks')
+const { updateTaskStatus } = require('./employeePortal/updateTaskStatus')
 
 const PORT = process.env.PORT || 7000;
 
@@ -165,7 +167,12 @@ const server = http.createServer(async (req, res) => {
     else if(req.url === '/getAttractionName' && req.method === 'GET'){
         getAttractionName(req, res)
     }
-    
+    else if(req.url === '/getTasks' && req.method === 'GET'){
+        getTasks(req, res)
+    }
+    else if(req.url === '/updateTaskStatus' && req.method === 'PUT'){
+        updateTaskStatus(req, res)
+    }
     else if( req.url === '/testDatabaseConnection' && req.method === 'GET'){
         pool.getConnection((err, connection) => {
             if (err) {
