@@ -1,0 +1,37 @@
+.footer {
+    background-color: #00205B; 
+    padding: 30px 24px; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    font-size: 14px;
+    font-family: Montserrat, sans-serif;
+    font-weight: 400;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.left-container {
+    display: flex;
+    align-items: center;
+}
+
+.right-container {
+    display: flex;
+    align-items: center;
+    padding-right: 15px; 
+}
+
+.links-footer {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+    margin-left: 20px;
+    font-size: 14px;
+    transition: color 0.2s ease;
+}
+
+.links-footer:hover {
+    color: #FFD700; 
+}

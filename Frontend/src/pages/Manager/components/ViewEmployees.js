@@ -33,10 +33,10 @@ const ViewEmployees = ({ setActiveTab }) => {
     fetchEmployees();
   }, [refreshEmployees]);
 
-  const handleEdit = (employee) => {
-    // Store the employee data in localStorage for the edit component to access
+  const handleAssignAttraction = (employee) => {
+    // Store the employee data in localStorage for the attraction assignment component to access
     localStorage.setItem('editEmployee', JSON.stringify(employee));
-    setActiveTab('edit');
+    setActiveTab('assign');
   };
 
   const handleDelete = async (email) => {
@@ -96,7 +96,7 @@ const ViewEmployees = ({ setActiveTab }) => {
         <thead>
           <tr>
             <th>Name</th>
-            <th>Position</th>
+            <th>Current Attraction</th>
             <th>Role</th>
             <th>Email</th>
             <th>Phone</th>
@@ -108,13 +108,17 @@ const ViewEmployees = ({ setActiveTab }) => {
             filteredEmployees.map((employee) => (
               <tr key={employee.employee_id || employee.email}>
                 <td>{`${employee.first_name} ${employee.last_name}`}</td>
-                <td>{employee.attraction_name || 'N/A'}</td>
+                <td>{employee.attraction_name || 'Not Assigned'}</td>
                 <td>{employee.role}</td>
                 <td>{employee.email}</td>
                 <td>{employee.phone_number}</td>
                 <td className="action-buttons">
-                  <button className="edit-btn" onClick={() => handleEdit(employee)}>Edit</button>
-                  <button className="delete-btn" onClick={() => handleDelete(employee.email)}>Delete</button>
+                  <button className="edit-btn" onClick={() => handleAssignAttraction(employee)}>
+                    Assign Attraction
+                  </button>
+                  <button className="delete-btn" onClick={() => handleDelete(employee.email)}>
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))

@@ -543,3 +543,122 @@
     justify-content: space-between;
   }
 }
+
+.manager-portal .employee-table {
+  border-collapse: collapse !important;
+  border-spacing: 0;
+}
+
+.manager-portal .employee-table tr {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.manager-portal .employee-table td,
+.manager-portal .employee-table th {
+  border-bottom: none;
+}
+
+.manager-portal .employee-table tr:last-child {
+  border-bottom: none;
+}
+
+.manager-portal .action-buttons {
+  white-space: nowrap;
+}
+
+
+.manager-portal .assignment-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.manager-portal .employee-card {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: var(--box-shadow);
+  border-left: 4px solid var(--primary-color);
+}
+
+.manager-portal .employee-info h3 {
+  color: var(--primary-color);
+  margin-bottom: 10px;
+  font-size: 1.4rem;
+}
+
+.manager-portal .employee-info p {
+  margin: 5px 0;
+  font-size: 1.1rem;
+}
+
+.manager-portal .assignment-form {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 25px;
+  box-shadow: var(--box-shadow);
+}
+
+.manager-portal .assignment-form .form-group {
+  margin-bottom: 20px;
+}
+
+.manager-portal .assignment-form label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 500;
+  color: var(--text-color);
+  font-size: 1.1rem;
+}
+
+.manager-portal .attraction-select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  transition: var(--transition);
+  background-color: white;
+}
+
+.manager-portal .attraction-select:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+}
+
+.manager-portal .form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.manager-portal .form-actions button {
+  padding: 12px 25px;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.manager-portal .submit-btn {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.manager-portal .submit-btn:hover {
+  background-color: #25ada0;
+}
+
+.manager-portal .cancel-btn {
+  background-color: #f8f9fa;
+  color: var(--text-color);
+  border: 1px solid #e5e5e5;
+}
+
+.manager-portal .cancel-btn:hover {
+  background-color: #e9ecef;
+}
