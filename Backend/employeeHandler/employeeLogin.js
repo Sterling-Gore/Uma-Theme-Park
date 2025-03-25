@@ -52,8 +52,8 @@ async function employeeLogin(req, res) {
                 'Content-Type': 'application/json',
                 'Set-Cookie': cookie.serialize('token', token, {
                     httpOnly: true,
-                    secure: false, 
-                    sameSite: 'Strict',
+                    secure: true, 
+                    sameSite: 'None',
                     maxAge: 3600, 
                     path: '/'
                 })
