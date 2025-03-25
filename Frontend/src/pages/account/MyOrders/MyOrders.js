@@ -27,7 +27,7 @@ function MyOrders() {
     useEffect(() => {
         if (!isLoading && !isLoggedIn && !alertShown.current) {
             alertShown.current = true;
-            alert("Please login to purchase tickets!");
+            alert("Please login to view orders!");
             navigate("/login");
         }
     }, [isLoggedIn, navigate, isLoading]);

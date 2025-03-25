@@ -36,11 +36,10 @@ export const AuthProvider = ({ children }) => {
           try {
             const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/protected`, {
               method: "GET",
-              mode: 'cors',
+              credentials: "include", 
               headers: {
                 'Content-Type': 'application/json',
               },
-              credentials: "include", 
             });
             
             if (!response.ok) {

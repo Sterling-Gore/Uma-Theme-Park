@@ -31,7 +31,7 @@ function MerchandiseOrders() {
         if (!isLoading && !isLoggedIn && !alertShown.current) {
             setLoading(false);
             alertShown.current = true;
-            alert("Please login to purchase tickets!");
+            alert("Please login to view orders!");
             navigate("/login");
         }
     }, [isLoggedIn, navigate, isLoading]);
