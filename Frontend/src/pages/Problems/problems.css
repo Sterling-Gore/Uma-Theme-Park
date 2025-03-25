@@ -1,0 +1,133 @@
+.page-container{
+    width: 100vw; 
+    height: auto; 
+    display: flex; 
+    justify-content: center;
+    align-items: flex-start; 
+    padding: 0; /* Removed padding */
+    margin: 0; /* Added to remove any margin */
+    background-color: #fff;
+    border-radius: 0; /* Removed border radius at top */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.problems-container {
+    max-width: 800px;
+    margin: 100px; /* Removed top margin */
+    padding-top: 10px; /* Removed top padding */
+    padding: 1.5rem;
+    background-color: #fff;
+    border-radius: 0; /* Removed border radius at top */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.problems-header {
+    text-align: center;
+    margin-bottom: 1rem; /* Reduced from 2rem */
+}
+
+.problems-header h1 {
+    color: #2b55cc;
+    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+}
+
+.problems-header p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.feedback-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Reduced from 1.5rem */
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem; /* Reduced from 0.5rem */
+    position: relative;
+}
+
+.character-count {
+    font-size: 0.85rem;
+    color: #666;
+    text-align: right;
+    margin-top: 0.3rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.form-group select,
+.form-group textarea {
+    padding: 0.8rem;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #2b55cc;
+    outline: none;
+}
+
+.submit-btn {
+    background-color: #2b55cc;
+    color: white;
+    border: none;
+    padding: 0.8rem; /* Reduced from 1rem */
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 0.8rem; /* Reduced from 1rem */
+}
+
+.submit-btn:hover {
+    background-color: #1a44b7;
+}
+
+.submit-btn:disabled {
+    background-color: #94a3d8;
+    cursor: not-allowed;
+}
+
+.submit-message {
+    padding: 1rem;
+    margin-bottom: 1rem; /* Reduced from 1.5rem */
+    border-radius: 4px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.submit-message.success {
+    background-color: #e0f7ea;
+    color: #0c6e3d;
+    border: 1px solid #b4e3c9;
+}
+
+.submit-message.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .problems-container {
+        margin: 0; /* Removed all margin */
+        padding: 1rem; /* Further reduced from 1.5rem */
+    }
+    
+    .problems-header h1 {
+        font-size: 2rem;
+    }
+}

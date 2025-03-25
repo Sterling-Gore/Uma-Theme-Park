@@ -1,0 +1,87 @@
+/* EmployeeLogin.css */
+
+body {
+  background-color: #f0f8ff;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+.login-container {
+  width: 350px;
+  margin: 100px auto;
+  padding: 30px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+}
+
+h2 {
+  margin-bottom: 30px;
+  color: #333;
+  font-size: 24px;
+  text-align: center;
+}
+
+.input-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #555;
+  font-size: 14px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
+.login-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+}
+
+.login-button:hover {
+  background-color: #0062cc;
+}
+
+.login-button:disabled {
+  background-color: #80b5e6;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #d9534f;
+  margin-bottom: 20px;
+  text-align: center;
+  padding: 8px;
+  background-color: #f8d7da;
+  border-radius: 4px;
+  font-size: 14px;
+}

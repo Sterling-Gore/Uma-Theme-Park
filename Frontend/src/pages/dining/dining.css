@@ -1,0 +1,237 @@
+/* dining.css */
+
+.dining-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.dining-hero {
+  position: relative;
+  height: 300px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+  margin-bottom: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.dining-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  filter: blur(2px);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: white;
+}
+
+.dining-hero h1 {
+  font-size: 3.5rem;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.dining-subtitle {
+  font-size: 1.5rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Food Stands Section */
+.food-stands-section {
+  margin-bottom: 60px;
+}
+
+.food-stands-section h2 {
+  text-align: center;
+  color: #1976d2;
+  font-size: 2.2rem;
+  margin-bottom: 30px;
+}
+
+.food-stands-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+.food-stand-card {
+  flex: 1 1 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.food-stand-card:hover {
+  transform: translateY(-5px);
+}
+
+.food-stand-image {
+  position: relative;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+
+.food-stand-image::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  filter: blur(2px);
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.image-text {
+  color: white;
+  font-weight: bold;
+  font-size: 1.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.food-stand-info {
+  padding: 20px;
+}
+
+.food-stand-info h3 {
+  color: #1976d2;
+  margin-bottom: 10px;
+  font-size: 1.4rem;
+}
+
+.food-stand-info p {
+  color: #555;
+  line-height: 1.6;
+}
+
+/* Food Pass Section */
+.food-pass-section {
+  background-color: #f8f8f8;
+  padding: 40px;
+  border-radius: 12px;
+}
+
+.food-pass-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 30px;
+}
+
+.food-pass-info {
+  flex: 1 1 500px;
+}
+
+.food-pass-image {
+  position: relative;
+  flex: 1 1 300px;
+  height: 250px;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+
+.food-pass-image::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  filter: blur(2px);
+}
+
+.food-pass-info h2 {
+  color: #1976d2;
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+
+.food-pass-price {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #e91e63;
+  margin-bottom: 20px;
+}
+
+.food-pass-description {
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.food-pass-note {
+  background-color: #fff3e0;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #ff9800;
+  margin-bottom: 25px;
+}
+
+.buy-tickets-button {
+  display: inline-block;
+  background-color: #e91e63;
+  color: white;
+  padding: 12px 30px;
+  font-size: 1.1rem;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.buy-tickets-button:hover {
+  background-color: #c2185b;
+  transform: scale(1.05);
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .dining-hero h1 {
+    font-size: 2.5rem;
+  }
+  
+  .food-stands-container {
+    flex-direction: column;
+  }
+  
+  .food-pass-container {
+    flex-direction: column-reverse;
+  }
+  
+  .food-pass-image {
+    width: 100%;
+  }
+}

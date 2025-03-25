@@ -1,0 +1,187 @@
+/* Activities Page Styling */
+
+/* Background styling to match theme */
+.activities-background {
+    background-color: #f0f8ff;
+    min-height: 100vh;
+    padding: 30px 0;
+    background-size: cover;
+    background-position: center;
+}
+
+/* Main container for the activities page */
+.activities-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Title styling */
+.activities-title {
+    color: #2962b3;
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Intro text styling */
+.activities-intro {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 30px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Grid layout for attractions */
+.attractions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    gap: 30px;
+}
+
+/* Attraction card styling */
+.attraction-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.attraction-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Attraction content area */
+.attraction-content {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Attraction name styling */
+.attraction-name {
+    color: #2962b3;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+/* Attraction description styling */
+.attraction-description {
+    color: #444;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    flex-grow: 1;
+}
+
+/* Attraction details styling */
+.attraction-details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.attraction-detail {
+    font-size: 0.9rem;
+    color: #555;
+    margin-right: 10px;
+}
+
+/* Attraction footer */
+.attraction-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: auto;
+}
+
+/* Button styling */
+.attraction-button {
+    background-color: #2962b3;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    transition: background-color 0.3s;
+}
+
+.attraction-button:hover {
+    background-color: #1e4b8f;
+}
+
+/* Attraction status styling */
+.attraction-status {
+    font-size: 0.9rem;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+    background-color: #4caf50;
+    /* Green for open (default) */
+    color: white;
+}
+
+/* Status classes for different states */
+.status-closed {
+    background-color: #f44336;
+    /* Red for closed */
+}
+
+.status-maintenance {
+    background-color: #ff9800;
+    /* Yellow/Orange for maintenance */
+}
+
+.status-limited {
+    background-color: #2196f3;
+    /* Blue for limited capacity */
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .attractions-grid {
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .attractions-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .activities-title {
+        font-size: 2rem;
+    }
+
+    .activities-intro {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .activities-container {
+        padding: 15px;
+    }
+
+    .attraction-name {
+        font-size: 1.3rem;
+    }
+}

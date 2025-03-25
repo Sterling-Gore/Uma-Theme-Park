@@ -1,38 +1,44 @@
-.App {
-  text-align: center;
+/* Footer styles - simplified version */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+#root {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  min-height: 100vh;
+  max-width: 100vw; /* Ensure root doesn't exceed viewport width */
+  overflow-x: hidden; /* Prevent horizontal scrolling at root level */
 }
 
-.App-link {
-  color: #61dafb;
+.main-content {
+  flex: 1 0 auto;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden; /* Prevent content overflow */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Add box-sizing to all elements */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Ensure images don't overflow */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Ensure all container elements stay within bounds */
+.container, 
+section, 
+header, 
+footer, 
+.row {
+  width: 100%;
+  max-width: 100%;
 }

@@ -1,0 +1,154 @@
+.my-orders-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.my-orders-container h1 {
+    color: #333;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.loading-container,
+.error-container,
+.empty-orders {
+    text-align: center;
+    padding: 40px;
+    font-size: 18px;
+    color: #666;
+}
+
+.error-container {
+    color: #d9534f;
+}
+
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.order-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.order-card:hover {
+    transform: translateY(-3px);
+}
+
+.order-header {
+    background-color: #f8f9fa;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.order-header h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+    font-weight: 600;
+}
+
+.order-cost {
+    font-size: 20px;
+    font-weight: bold;
+    color: #28a745;
+}
+
+.order-details {
+    padding: 20px;
+}
+
+.order-details p {
+    margin: 10px 0;
+    line-height: 1.4;
+}
+
+.ticket-counts {
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 6px;
+}
+
+.ticket-counts h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.ticket-counts ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ticket-counts li {
+    padding: 5px 0;
+    border-bottom: 1px dashed #eee;
+}
+
+.ticket-counts li:last-child {
+    border-bottom: none;
+    font-weight: bold;
+    color: #28a745;
+}
+
+.dates-section {
+    margin-top: 20px;
+}
+
+.dates-section h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.dates-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.dates-table th,
+.dates-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.dates-table th {
+    background-color: #f4f4f4;
+    font-weight: 600;
+}
+
+.dates-table tr:last-child td {
+    border-bottom: none;
+}
+
+@media (max-width: 768px) {
+    .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .order-cost {
+        align-self: flex-end;
+    }
+
+    .dates-table th,
+    .dates-table td {
+        padding: 8px;
+        font-size: 14px;
+    }
+}
