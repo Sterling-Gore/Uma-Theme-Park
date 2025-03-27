@@ -41,6 +41,15 @@ const CreateEmployee = ({ setActiveTab }) => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+        // Validate first and last name (allow only letters and spaces)
+    if ((name === 'first_name' || name === 'last_name') && !/^[A-Za-z\s]*$/.test(value)) {
+        return;
+    }
+
+    // Validate phone number (allow only numbers)
+    if (name === 'phone_number' && !/^\d*$/.test(value)) {
+        return;
+    }
         setFormData({
             ...formData,
             [name]: value
@@ -49,7 +58,11 @@ const CreateEmployee = ({ setActiveTab }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        if(formData.password.length < 8)
+        {
+            alert("The password length must be atleast 8 characters long");
+            return;
+        }
         try {
             const createData = { ...formData };
 
@@ -201,6 +214,7 @@ const CreateEmployee = ({ setActiveTab }) => {
                         value={formData.password}
                         onChange={handleInputChange}
                         required
+                        minLength={8}
                     />
                 </div>
 
