@@ -61,6 +61,7 @@
   .day-button {
     padding: 10px 15px;
     background-color: #f0f0f0;
+    color: #555;
     border: 1px solid #ddd;
     border-radius: 4px;
     cursor: pointer;
@@ -69,7 +70,8 @@
   }
   
   .day-button:hover {
-    background-color: #e0e0e0;
+    background-color: #f8d70b;
+    
   }
   
   .day-button-selected {
@@ -135,6 +137,7 @@
     height: 30px;
     border-radius: 50%;
     border: 1px solid #ccc;
+    color: #555;
     background-color: white;
     display: flex;
     justify-content: center;
@@ -143,6 +146,10 @@
     font-size: 1.2rem;
     font-weight: bold;
   }
+  .counter-button:hover {
+    background-color: #f8d70b;
+  }
+  
   
   .counter-value {
     font-size: 1.1rem;
@@ -180,12 +187,21 @@
   .react-calendar button {
     padding: 12px 0 !important;
     font-size: 1rem !important;
+    border: 1px solid #ccc;
+    color: #555;
+    background-color: white;
   }
+
+  .react-calendar button:hover {
+    background-color: #ccc;
+  }
+  
   
   /* Enhance the calendar navigation */
   .react-calendar__navigation {
-    height: 50px !important;
+    height: 100px !important;
     margin-bottom: 1rem !important;
+    display: flex;
   }
   
   .react-calendar__navigation button {
@@ -226,7 +242,7 @@
   
   /* Style hover effect on dates */
   .react-calendar__tile:hover {
-    background-color: #e6e6e6 !important;
+    background-color: #f8d70b !important;
   }
   
   .react-calendar__tile:disabled {
@@ -274,7 +290,7 @@
   }
   
   .attraction-unselected:hover {
-    background-color: #e5e5e5;
+    background-color: #f8d70b;
     border-color: #ccc;
   }
   
