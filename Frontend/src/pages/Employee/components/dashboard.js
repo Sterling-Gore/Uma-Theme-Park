@@ -1,9 +1,324 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from "react";
+
 const Dashboard = ({ setActiveTab }) => {
+    const alertShown = useRef(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [employeeAttraction, setEmployeeAttraction] = useState(null);
+    const [step, setStep] = useState(1);
+    const [refreshPage, setRefreshPage] = useState(false);
+    const [activeMaintenanceLog, setActiveMaintenanceLog] = useState(null);
+
+    const[ formData, setFormData] = useState({
+      maintenanceLogName : "",
+      maintenanceLogDescription: "",
+      maintenanceLogEstimatedPrice: "",
+      maintenanceLogExpectedCompletionDate : ""
+    })
+
+    function isDateValid(date) {
+      const today = new Date();
+      const minDate = new Date().toISOString().split('T')[0];  // Today's date as the min
+      const maxDate = new Date(new Date().setFullYear(today.getFullYear() + 1)).toISOString().split('T')[0]; // 1 year from today
+  
+      // Check if the date is within the min and max range
+      return date >= minDate && date <= maxDate;
+    }
+  
+    function checkError()
+    {
+        if ( formData.maintenanceLogName === "")
+        {
+            setError("Give the maintenance log a name");
+            return true;
+        }
+        if ( formData.maintenanceLogDescription === "")
+        {
+            setError("Give the maintenance log a description");
+            return true;
+        }
+        if ( formData.maintenanceLogEstimatedPrice === "")
+        {
+            setError("Give the estimated cost for the maintenance log");
+            return true;
+        }
+        if ( formData.birthday === "")
+        {
+            setError("Give the expected maintenance completion date");
+            return true;
+        }
+        if (!isDateValid(formData.maintenanceLogExpectedCompletionDate))
+        {
+            setError("Give a valid maintenance completion date within this year")
+            return true;
+        }          
+        
+        setError("");
+        return false;
+    }
+
+    useEffect(() => {
+        checkError();
+    }, [formData])
+
+
+
+    const  submitMaintenanceLog = async () => {
+      try {
+        const dataToSend = {
+          name : formData.maintenanceLogName,
+          description : formData.maintenanceLogDescription,
+          cost : Number(formData.maintenanceLogEstimatedPrice),
+          expectedDate : formData.maintenanceLogExpectedCompletionDate,
+          attractionID : employeeAttraction.attraction_id
+        }
+        console.log(dataToSend);
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/createMaintenanceLog`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataToSend),
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to create maintenance log');
+          }
+          const data = await response.json();
+          if (data.success) {
+              goBack();
+          }
+      } catch (error) {
+        console.log(`Error creating maintenance log: ${error}`)
+        console.error('Error creating maintenance log:', error);
+        alertShown.current = true;
+        alert("Error creating maintenance log ");
+    }
+    }
+    
+    useEffect(() => {
+        const fetchAttraction = async () => {
+            try {
+              const userID = localStorage.getItem('userID');
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getEmployeeAssignedAttraction`, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userID: userID })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch attractions');
+                }
+                const result = await response.json();
+
+                if (result.success) {
+                  setEmployeeAttraction(result.data);
+                } else {
+                    throw new Error(result.message || 'Failed to fetch attractions');
+                }
+            } catch (error) {
+                console.error('Error fetching attractions:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAttraction();
+    }, [refreshPage]);
+
+      
+    useEffect(() => {
+      const fetchActiveMaintenanceLog = async () => {
+          try {
+            const userID = localStorage.getItem('userID');
+              const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getActiveMaintenanceLog`, {
+                  method: 'POST',
+                  mode: 'cors',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ userID: userID })
+              });
+              
+              if (!response.ok) {
+                  throw new Error('Failed to fetch active maintenance log');
+              }
+              const result = await response.json();
+
+              if (result.success) {
+                setActiveMaintenanceLog(result.data);
+              } else {
+                  throw new Error(result.message || 'Failed to fetch active maintenance log');
+              }
+          } catch (error) {
+              console.error('Error fetching active maintenance log:', error);
+          } finally {
+              setLoading(false);
+          }
+      };
+
+      fetchActiveMaintenanceLog();
+  }, [refreshPage]); 
+
+
+    function goBack()
+    {
+      setRefreshPage(!refreshPage);
+      setStep(1);
+      setFormData({
+        maintenanceLogName : "",
+        maintenanceLogDescription : "",
+        maintenanceLogEstimatedPrice : "",
+        maintenanceLogExpectedCompletionDate : ""
+      });
+    }
+    
+
+
+
+
+
+
+
+
+    
     return (
       <div className="dashboard-container">
-        <h2>Dashboard</h2>
-        <p>Welcome to the Employee Portal dashboard!</p>
+        <div className="content-header">
+            <h2>Your Dashboard</h2>
+        </div>
+        {loading ? (
+          <p className="activities-intro">Loading your page...</p>
+        ):
+          <>
+          {employeeAttraction === null ? (
+            <p className="activities-intro">You have not been assigned an attraction, notify your manager.</p>
+          ) : (
+            <>
+            {activeMaintenanceLog !== null ? (
+              <>
+                <p>under maintenance</p>
+              </>
+            ) : 
+            (<>
+            { step === 1 && (
+              <div className="attraction-content">
+                  <h2 className="attraction-name">Assigned Attraction: {employeeAttraction.attraction_name}</h2>
+                  {employeeAttraction.viewing_image && employeeAttraction.mimeType ? (
+                    <div className="center-image">
+                  <img 
+                      src={`data:${employeeAttraction.mimeType};base64,${employeeAttraction.viewing_image}`}
+                      alt="Attraction Image"
+                      style={{ width: '300px', height: '300px', objectFit: 'contain' }} 
+                  />
+                  </div>
+              ) : (
+                  <p>Loading Image ... </p>
+              )}
+                  <div className="attraction-details">
+                    
+                  </div>
+                  <div className="attraction-footer">
+                      <button className="attraction-button" onClick={() => setStep(2)}>
+                          Start Maintenance
+                      </button>
+                      
+                  </div>
+              </div> )}
+            {step === 2 && (
+              <div className="attraction-content">
+                  <h2 className="attraction-name">Maintenance for {employeeAttraction.attraction_name}</h2>
+
+                  <div className="form-group">
+                  <label >Maintenance Log Name</label>
+                  <input
+                      type="text"
+                      value={formData.maintenanceLogName || ''}
+                      onChange={(e) => {
+                          //const onlyLettersAndSpaces = e.target.value.replace(/[^a-zA-Z\s]/g, ""); // Allow letters and spaces
+                          setFormData({ ...formData, maintenanceLogName: e.target.value });
+                      }} 
+                      placeholder="Name for Maintenance Log"
+                      maxLength="200"
+                      minLength="1"
+                      required
+                  />
+                  </div>
+
+                  <div className="form-group">
+                  <label >Maintenance Log Description</label>
+                  <textarea
+                      className="description-box"
+                      value={formData.maintenanceLogDescription || ''}
+                      onChange={(e) => {
+                          setFormData({ ...formData, maintenanceLogDescription: e.target.value });
+                      }}   
+                      placeholder="Description fir Maintenance Log"
+                      maxLength="400"
+                      minLength="1"
+                      required
+                  />
+                  </div>
+
+                  <div className="form-group">
+                  <label >Estimated Maintenance Cost</label>
+                  <input
+                      type="text"
+                      value={formData.maintenanceLogEstimatedPrice || ''}
+                      onChange={(e) => {
+                          let digitsOnly = e.target.value.replace(/\D/g, ""); 
+                          setFormData({ ...formData, maintenanceLogEstimatedPrice: digitsOnly });
+                      }} 
+                      placeholder="Cost of Maintenance Log"
+                      maxLength="9"
+                      minLength="1"
+                      required
+                  />
+                  </div>
+
+                  <div className="form-group">
+                  <label >Expected Maintenance Completion Date</label>
+                  <input 
+                      type="date"
+                      //className="form-input"
+                      placeholder="Completion Date"
+                      value={formData.maintenanceLogExpectedCompletionDate}
+                      onChange={(e) => {
+                          setFormData({ ...formData, maintenanceLogExpectedCompletionDate: e.target.value});
+                          //checkError();
+                      }}
+                      required
+                      min={new Date().toISOString().split('T')[0]}
+                      max={new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0]}
+                  />
+                  </div>
+
+                  {error !== "" && (<p className="error-message">{error}</p>)}
+                  <div className="attraction-footer">
+                      <button className="attraction-button" onClick={() => goBack()}>
+                          Cancel Maintenance
+                      </button>
+                      {error === "" && (
+                      <button className="attraction-button" onClick={() => submitMaintenanceLog()}>
+                          Submit Maintenance
+                      </button>
+                      )}
+                      
+                  </div>
+              </div>
+              
+            )}
+            </>)}
+            </>
+          
+          )}
+          </>
+        }
+
       </div>
     );
   };
