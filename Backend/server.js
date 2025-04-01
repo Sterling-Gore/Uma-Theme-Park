@@ -24,6 +24,9 @@ const { updateAttractionStatus } = require('./employeePortal/updateAttractionSta
 const { updateAttractionDescription } = require('./employeePortal/updateAttractionDescription');
 const { updateAttractionCapacity } = require('./employeePortal/updateAttractionCapacity');
 const { updateAttractionDuration } = require('./employeePortal/updateAttractionDuration');
+const { getEmployeeAssignedAttraction } = require('./employeePortal/getEmployeeAssignedAttraction');
+const { getActiveMaintenanceLog } = require('./employeePortal/getActiveMaintenanceLog');
+const { createMaintenanceLog } = require('./employeePortal/createMaintenanceLog');
 const { deleteAttraction } = require('./employeePortal/deleteAttraction');
 const { getMerchandiseStockQuantity } = require('./shoppingCart/getMerchandiseStockQuantity');
 const { purchaseTicketsAndMerch } = require('./shoppingCart/purchaseTicketsAndMerch');
@@ -135,6 +138,16 @@ const server = http.createServer(async (req, res) => {
     else if(req.url === '/updateAttractionDuration' && req.method === 'POST'){
         updateAttractionDuration(req, res)
     }
+    else if(req.url === '/getEmployeeAssignedAttraction' && req.method === 'POST'){
+        getEmployeeAssignedAttraction(req, res)
+    }
+    else if(req.url === '/getActiveMaintenanceLog' && req.method === 'POST'){
+        getActiveMaintenanceLog(req, res)
+    }
+    else if(req.url === '/createMaintenanceLog' && req.method === 'POST'){
+        createMaintenanceLog(req, res)
+    }
+
     else if(req.url === '/updateAttractionCapacity' && req.method === 'POST'){
         updateAttractionCapacity(req, res)
     }

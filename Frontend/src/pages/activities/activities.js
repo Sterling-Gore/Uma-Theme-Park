@@ -43,11 +43,11 @@ function Activities() {
 
     const getStatusClass = (status) => {
         switch (status) {
-            case 'closed':
+            case 'Closed':
                 return 'status-closed';
-            case 'maintenance':
+            case 'Maintenance':
                 return 'status-maintenance';
-            case 'open':
+            case 'Open':
                 return ''; //default green
             default:
                 return '';
