@@ -25,6 +25,8 @@ async function getActiveMaintenanceLog(req, res) {
         }
         else{
             returnedActiveMaintenanceLog = activeMaintenanceLog[0];
+            returnedActiveMaintenanceLog.maintenance_date = new Date(returnedActiveMaintenanceLog.maintenance_date).toISOString().split('T')[0];
+            returnedActiveMaintenanceLog.expected_completion_date = new Date(returnedActiveMaintenanceLog.expected_completion_date).toISOString().split('T')[0];
         }
 
 
