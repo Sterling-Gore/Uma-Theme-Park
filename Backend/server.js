@@ -27,6 +27,8 @@ const { updateAttractionDuration } = require('./employeePortal/updateAttractionD
 const { getEmployeeAssignedAttraction } = require('./employeePortal/getEmployeeAssignedAttraction');
 const { getActiveMaintenanceLog } = require('./employeePortal/getActiveMaintenanceLog');
 const { createMaintenanceLog } = require('./employeePortal/createMaintenanceLog');
+const { closeMaintenanceLog } = require('./employeePortal/closeMaintenanceLog');
+const { editMaintenanceLog } = require('./employeePortal/editMaintenanceLog');
 const { deleteAttraction } = require('./employeePortal/deleteAttraction');
 const { getMerchandiseStockQuantity } = require('./shoppingCart/getMerchandiseStockQuantity');
 const { purchaseTicketsAndMerch } = require('./shoppingCart/purchaseTicketsAndMerch');
@@ -148,7 +150,12 @@ const server = http.createServer(async (req, res) => {
     else if(req.url === '/createMaintenanceLog' && req.method === 'POST'){
         createMaintenanceLog(req, res)
     }
-
+    else if(req.url === '/closeMaintenanceLog' && req.method === 'POST'){
+        closeMaintenanceLog(req, res)
+    }
+    else if(req.url === '/editMaintenanceLog' && req.method === 'POST'){
+        editMaintenanceLog(req, res)
+    }
     else if(req.url === '/updateAttractionCapacity' && req.method === 'POST'){
         updateAttractionCapacity(req, res)
     }

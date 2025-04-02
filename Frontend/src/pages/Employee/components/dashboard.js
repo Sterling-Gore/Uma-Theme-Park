@@ -8,6 +8,7 @@ const Dashboard = ({ setActiveTab }) => {
     const [step, setStep] = useState(1);
     const [refreshPage, setRefreshPage] = useState(false);
     const [activeMaintenanceLog, setActiveMaintenanceLog] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
 
     const[ formData, setFormData] = useState({
       maintenanceLogName : "",
@@ -96,6 +97,74 @@ const Dashboard = ({ setActiveTab }) => {
         alert("Error creating maintenance log ");
     }
     }
+
+    const closeMaintenance = async () => {
+      try {
+        const dataToSend = {
+          log_id : activeMaintenanceLog.log_id
+        }
+        console.log(dataToSend);
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/closeMaintenanceLog`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataToSend),
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to close maintenance log');
+          }
+          const data = await response.json();
+          if (data.success) {
+            console.log("SUCESSSSSSSS");
+              setActiveMaintenanceLog(null);
+              //window.location.reload();
+          }
+      } catch (error) {
+        console.log(`Error close maintenance log: ${error}`)
+        console.error('Error close maintenance log:', error);
+        alertShown.current = true;
+        alert("Error close maintenance log ");
+      }
+    }
+
+    const saveEdit = async () => {
+      try {
+        const dataToSend = {
+          log_id : activeMaintenanceLog.log_id,
+          name : activeMaintenanceLog.maintenance_name,
+          description : activeMaintenanceLog.maintenance_description,
+          cost : activeMaintenanceLog.maintenance_cost,
+          expected_completion_date : activeMaintenanceLog.expected_completion_date
+        }
+        console.log(dataToSend);
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/editMaintenanceLog`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataToSend),
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to edit maintenance log');
+          }
+          const data = await response.json();
+          if (data.success) {
+            console.log("SUCESSSSSSSS");
+              setIsEditing(false);
+              //window.location.reload();
+          }
+      } catch (error) {
+        console.log(`Error edit maintenance log: ${error}`)
+        console.error('Error edit maintenance log:', error);
+        alertShown.current = true;
+        alert("Error edit maintenance log ");
+      }
+    }
     
     useEffect(() => {
         const fetchAttraction = async () => {
@@ -164,6 +233,12 @@ const Dashboard = ({ setActiveTab }) => {
       fetchActiveMaintenanceLog();
   }, [refreshPage]); 
 
+    function cancelEdit()
+    {
+      setRefreshPage(!refreshPage);
+      setIsEditing(false);
+    }
+
 
     function goBack()
     {
@@ -183,7 +258,7 @@ const Dashboard = ({ setActiveTab }) => {
 
 
 
-
+    console.log(activeMaintenanceLog);
 
     
     return (
@@ -201,7 +276,123 @@ const Dashboard = ({ setActiveTab }) => {
             <>
             {activeMaintenanceLog !== null ? (
               <>
-                <p>under maintenance</p>
+                <h2 className="attraction-name">Assigned Attraction: {employeeAttraction.attraction_name}</h2> 
+                {employeeAttraction.viewing_image && employeeAttraction.mimeType ? (
+                    <div className="center-image">
+                  <img 
+                      src={`data:${employeeAttraction.mimeType};base64,${employeeAttraction.viewing_image}`}
+                      alt="Attraction Image"
+                      style={{ width: '300px', height: '300px', objectFit: 'contain' }} 
+                  />
+                  </div>
+                  ) : (
+                      <p>Loading Image ... </p>
+                  )}
+                  <h2 className="attraction-name">Under Maintenance</h2> 
+
+                  <div className="form-group">
+                  <label >Maintenance Log Name</label>
+                  <input
+                      type="text"
+                      value={activeMaintenanceLog.maintenance_name || ''}
+                      onChange={(e) => {
+                          //const onlyLettersAndSpaces = e.target.value.replace(/[^a-zA-Z\s]/g, ""); // Allow letters and spaces
+                          setActiveMaintenanceLog({ ...activeMaintenanceLog, maintenance_name: e.target.value });
+                      }} 
+                      disabled = {!isEditing}
+                      placeholder="Name for Maintenance Log"
+                      maxLength="200"
+                      minLength="1"
+                      required
+                  />
+                  </div>
+
+                  <div className="form-group">
+                  <label >Maintenance Log Description</label>
+                  <textarea
+                      className="description-box"
+                      value={activeMaintenanceLog.maintenance_description || ''}
+                      onChange={(e) => {
+                        setActiveMaintenanceLog({ ...activeMaintenanceLog, maintenance_description: e.target.value });
+                      }}   
+                      disabled = {!isEditing}
+                      placeholder="Description for Maintenance Log"
+                      maxLength="400"
+                      minLength="1"
+                      required
+                  />
+                  </div>
+
+                  <div className="form-group">
+                  <label >Estimated Maintenance Cost</label>
+                  <input
+                      type="text"
+                      value={`$${activeMaintenanceLog.maintenance_cost}` || ''}
+                      onChange={(e) => {
+                          let digitsOnly = e.target.value.replace(/\D/g, ""); 
+                          setActiveMaintenanceLog({ ...activeMaintenanceLog, maintenance_cost: digitsOnly });
+                      }} 
+                      disabled = {!isEditing}
+                      placeholder="Cost of Maintenance Log"
+                      maxLength="9"
+                      minLength="1"
+                      required
+                  />
+                  </div>
+
+                  <div className="form-row">
+                  <div className="form-group">
+                    <label >Original maintenance date</label>
+                    <input 
+                        type="date"
+                        //className="form-input"
+                        placeholder="Original Maintenance Date"
+                        value={activeMaintenanceLog.maintenance_date}
+                        onChange={(e) => {}}
+                        disabled = {true}
+                        required
+                        min={new Date().toISOString().split('T')[0]}
+                        max={new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0]}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label >Expected Maintenance Completion Date</label>
+                    <input 
+                        type="date"
+                        //className="form-input"
+                        placeholder="Completion Date"
+                        value={activeMaintenanceLog.expected_completion_date}
+                        onChange={(e) => {
+                          setActiveMaintenanceLog({ ...activeMaintenanceLog, expected_completion_date: e.target.value});
+                            //checkError();
+                        }}
+                        disabled = {!isEditing}
+                        required
+                        min={new Date().toISOString().split('T')[0]}
+                        max={new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0]}
+                    />
+                  </div>
+                  </div>
+
+                  {!isEditing ? (
+                  <div className="attraction-footer">
+                      <button className="attraction-button" onClick={() => setIsEditing(true)}>
+                          Edit Maintenance
+                      </button>
+                      <button className="attraction-button" onClick={() => closeMaintenance()}>
+                          Close Maintenance on Attraction
+                      </button>   
+                  </div>
+                  ) : (
+                    <div className="attraction-footer">
+                      <button className="attraction-button" onClick={() => cancelEdit()}>
+                          Cancel Edit
+                      </button>
+                      <button className="attraction-button" onClick={() => saveEdit()}>
+                          Save Edit
+                      </button>   
+                    </div>
+                  )}
               </>
             ) : 
             (<>
@@ -216,9 +407,9 @@ const Dashboard = ({ setActiveTab }) => {
                       style={{ width: '300px', height: '300px', objectFit: 'contain' }} 
                   />
                   </div>
-              ) : (
-                  <p>Loading Image ... </p>
-              )}
+                  ) : (
+                      <p>Loading Image ... </p>
+                  )}
                   <div className="attraction-details">
                     
                   </div>
@@ -257,7 +448,7 @@ const Dashboard = ({ setActiveTab }) => {
                       onChange={(e) => {
                           setFormData({ ...formData, maintenanceLogDescription: e.target.value });
                       }}   
-                      placeholder="Description fir Maintenance Log"
+                      placeholder="Description for Maintenance Log"
                       maxLength="400"
                       minLength="1"
                       required
@@ -268,7 +459,7 @@ const Dashboard = ({ setActiveTab }) => {
                   <label >Estimated Maintenance Cost</label>
                   <input
                       type="text"
-                      value={formData.maintenanceLogEstimatedPrice || ''}
+                      value={`$${formData.maintenanceLogEstimatedPrice}` || ''}
                       onChange={(e) => {
                           let digitsOnly = e.target.value.replace(/\D/g, ""); 
                           setFormData({ ...formData, maintenanceLogEstimatedPrice: digitsOnly });
