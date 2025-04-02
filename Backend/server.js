@@ -44,6 +44,7 @@ const { getAttractionName } = require('./attractions/getAttractionName');
 const { getFeedback } = require('./employeePortal/getFeedback');
 const { getTasks } = require('./employeePortal/getTasks')
 const { updateTaskStatus } = require('./employeePortal/updateTaskStatus')
+const { updateEmployeeProfile} = require('./employeePortal/updateEmployeeProfile.js')
 
 const PORT = process.env.PORT || 7000;
 
@@ -183,6 +184,10 @@ const server = http.createServer(async (req, res) => {
     }
     else if(req.url === '/getFeedback' && req.method === 'GET'){
         getFeedback(req, res)
+    }
+    else if(req.url === '/updateEmployeeProfile' && req.method === 'PUT')
+    {
+        updateEmployeeProfile(req,res)
     }
     else if(req.url === '/getAttractionName' && req.method === 'GET'){
         getAttractionName(req, res)
