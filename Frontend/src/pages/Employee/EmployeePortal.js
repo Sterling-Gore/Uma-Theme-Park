@@ -66,17 +66,23 @@ function EmployeePortal() {
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} /> 
       <div className="content-area">
         <div className="top-bar">
+        <div className="top-bar-inner-content">
           {isManager && (
             <button className="manager-portal-btn" onClick={handleManagerPortalRedirect}>
               <span className="manager-icon">🔙</span> Back to Manager Portal
             </button>
           )}
+          </div>
+          <div className="top-bar-inner-content-end">
           <div className="user-info">
             <span>Logged in as: {localStorage.getItem('fullName')}</span>
           </div>
-          <button className="logout-btn" onClick={handleLogout}>
-            <span className="logout-icon">🚪</span> Logout
-          </button>
+          <div className="portal-actions">
+            <button className="logout-btn" onClick={handleLogout}>
+              <span className="logout-icon">🚪</span> Logout
+            </button>
+          </div>
+          </div>
         </div>
         <div className="main-content">
           {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
