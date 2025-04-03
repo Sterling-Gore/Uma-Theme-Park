@@ -46,7 +46,6 @@ function ManagerPortal() {
           {activeTab === 'view' && <ViewEmployees setActiveTab={setActiveTab} />}
           {activeTab === 'create' && <CreateEmployee setActiveTab={setActiveTab} />}
           {activeTab === 'assign' && <AttractionAssignment setActiveTab={setActiveTab} />}
-          {activeTab === 'reports' && <Reports setActiveTab={setActiveTab} />}
           {activeTab === 'financeReport' && <FinanceReport setActiveTab={setActiveTab} />}
         </div>
       </div>

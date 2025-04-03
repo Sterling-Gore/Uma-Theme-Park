@@ -20,12 +20,6 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           Create Employee
         </button>
         <button 
-          className={activeTab === 'reports' ? 'active' : ''} 
-          onClick={() => setActiveTab('reports')}
-        >
-          Reports
-        </button>
-        <button 
           className={activeTab === 'financeReport' ? 'active' : ''} 
           onClick={() => setActiveTab('financeReport')}
         >
