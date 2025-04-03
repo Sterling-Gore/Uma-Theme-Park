@@ -36,6 +36,7 @@ const { createMaintenanceLog } = require('./employeePortal/createMaintenanceLog'
 const { closeMaintenanceLog } = require('./employeePortal/closeMaintenanceLog');
 const { editMaintenanceLog } = require('./employeePortal/editMaintenanceLog');
 const { deleteAttraction } = require('./employeePortal/deleteAttraction');
+const { deleteDining } = require('./employeePortal/deleteDining');
 const { getMerchandiseStockQuantity } = require('./shoppingCart/getMerchandiseStockQuantity');
 const { purchaseTicketsAndMerch } = require('./shoppingCart/purchaseTicketsAndMerch');
 const { viewEmployees } = require('./managerPortal/viewEmployees');
@@ -184,6 +185,9 @@ const server = http.createServer(async (req, res) => {
     }
     else if(req.url === '/deleteAttraction' && req.method === 'POST'){
         deleteAttraction(req, res)
+    }
+    else if(req.url === '/deleteDining' && req.method === 'POST'){
+        deleteDining(req, res)
     }
     else if(req.url === '/getMerchandiseStockQuantity' && req.method === 'POST'){
         getMerchandiseStockQuantity(req, res)
