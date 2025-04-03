@@ -9,8 +9,10 @@ const AttractionAssignment = ({ setActiveTab }) => {
         current_attraction_name: ''
     });
 
-    const [newAttraction, setNewAttraction] = useState('');
+    const [newAttractionOrDining, setNewAttractionOrDining] = useState('');
+    const [isAttraction, setIsAttraction] = useState(null);
     const [attractions, setAttractions] = useState([]);
+    const [dining, setDining] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -25,7 +27,7 @@ const AttractionAssignment = ({ setActiveTab }) => {
         });
 
         // Set the initial value for the dropdown
-        setNewAttraction(storedEmployee.attraction || '');
+        setNewAttractionOrDining(storedEmployee.attraction || '');
     }, []);
 
     useEffect(() => {
@@ -52,6 +54,30 @@ const AttractionAssignment = ({ setActiveTab }) => {
         fetchAttractions();
     }, []);
 
+    useEffect(() => {
+        const fetchDining = async () => {
+            try {
+                setLoading(true);
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getDiningName`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                setDining(data);
+                setError(null);
+            } catch (err) {
+                console.error('Error fetching dining:', err);
+                setError('Failed to load dining. Please try again later.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDining();
+    }, []);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -59,7 +85,8 @@ const AttractionAssignment = ({ setActiveTab }) => {
         
             const updateData = {
                 email: employeeInfo.email,
-                attraction: newAttraction
+                attraction_or_dining: newAttractionOrDining,
+                is_attraction : isAttraction
             };
 
             if (!updateData.email) {
@@ -67,7 +94,7 @@ const AttractionAssignment = ({ setActiveTab }) => {
                 return;
             }
 
-            console.log("Sending attraction update data:", updateData);
+            console.log("Sending attraction/dining update data:", updateData);
 
            
             const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/updateEmployeeAttraction`, {
@@ -82,7 +109,7 @@ const AttractionAssignment = ({ setActiveTab }) => {
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error("Update error response:", errorText);
-                throw new Error(`Failed to update attraction assignment: ${response.status} ${errorText}`);
+                throw new Error(`Failed to update attraction/dining assignment: ${response.status} ${errorText}`);
             }
 
             const data = await response.json();
@@ -92,53 +119,70 @@ const AttractionAssignment = ({ setActiveTab }) => {
                 setActiveTab('view');
                 localStorage.removeItem('editEmployee');
             } else {
-                alert('Error updating attraction assignment: ' + data.message);
+                alert('Error updating attraction/dining assignment: ' + data.message);
             }
         } catch (error) {
-            console.error('Error updating attraction assignment:', error);
-            alert('Error updating attraction assignment: ' + error.message);
+            console.error('Error updating attraction/dining assignment:', error);
+            alert('Error updating attraction/dining assignment: ' + error.message);
         }
     };
+
+    const handleAttractionOrDiningChange = (e) => {
+        const selectedValue = e.target.value;
+        setNewAttractionOrDining(selectedValue);
+        setIsAttraction(attractions.some(attraction => attraction.attraction_id === selectedValue));
+        
+    }
 
     return (
         <div className="assignment-container">
             <div className="content-header">
-                <h2>Modify Employee Attraction Assignment</h2>
+                <h2>Modify Employee Attraction or Dining Assignment</h2>
             </div>
 
             <div className="employee-card">
                 <div className="employee-info">
                     <h3>{employeeInfo.first_name} {employeeInfo.last_name}</h3>
-                    <p><strong>Current Attraction:</strong> {employeeInfo.current_attraction_name}</p>
+                    <p><strong>Current Attraction or Dining:</strong> {employeeInfo.current_attraction_name}</p>
                 </div>
             </div>
 
             <form onSubmit={handleSubmit} className="assignment-form">
                 <div className="form-group">
-                    <label htmlFor="attraction">New Attraction Assignment</label>
+                    <label htmlFor="attraction">New Attraction or Dining Assignment</label>
                     <select
                         id="attraction"
                         name="attraction"
-                        value={newAttraction}
-                        onChange={(e) => setNewAttraction(e.target.value)}
+                        value={newAttractionOrDining}
+                        onChange={handleAttractionOrDiningChange}
                         required
                         disabled={loading}
                         className="attraction-select"
                     >
-                        <option value="">Select Attraction</option>
+                        <option value="">Select Attraction or Dining</option>
                         {error ? (
                             <option value="" disabled>{error}</option>
                         ) : loading ? (
                             <option value="" disabled>Loading attractions...</option>
                         ) : (
-                            attractions.map(attraction => (
+                            <>
+                            {attractions.map(attraction => (
                                 <option
                                     key={attraction.attraction_id}
                                     value={attraction.attraction_id}
                                 >
-                                    {attraction.attraction_name}
+                                    {`[ATTRACTION]:  ${attraction.attraction_name}`}
                                 </option>
-                            ))
+                            ))}
+                            {dining.map(dining_item => (
+                                <option
+                                    key={dining_item.dining_id}
+                                    value={dining_item.dining_id}
+                                >
+                                    {`[DINING]:  ${dining_item.dining_name}`}
+                                </option>
+                            ))}
+                            </>
                         )}
                     </select>
                 </div>

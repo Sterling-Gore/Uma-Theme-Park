@@ -51,6 +51,7 @@ const { getMerchandiseOrders } = require('./myorders/getMerchandiseOrders');
 const { getAttractions } = require('./attractions/getAttractions');
 const { getDining } = require('./dining/getDining')
 const { getAttractionName } = require('./attractions/getAttractionName');
+const { getDiningName } = require('./dining/getDiningName');
 const { getFeedback } = require('./employeePortal/getFeedback');
 const { getTasks } = require('./employeePortal/getTasks')
 const { updateTaskStatus } = require('./employeePortal/updateTaskStatus')
@@ -228,6 +229,9 @@ const server = http.createServer(async (req, res) => {
     }
     else if(req.url === '/getAttractionName' && req.method === 'GET'){
         getAttractionName(req, res)
+    }
+    else if(req.url === '/getDiningName' && req.method === 'GET'){
+        getDiningName(req, res)
     }
     else if(req.url === '/getTasks' && req.method === 'GET'){
         getTasks(req, res)
