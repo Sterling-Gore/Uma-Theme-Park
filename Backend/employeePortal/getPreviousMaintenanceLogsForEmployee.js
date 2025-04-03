@@ -1,7 +1,26 @@
 const pool = require('../database')
 
 async function getData(userID) {
-    const getPreviousMaintenanceLogs = 'SELECT M.log_id, M.maintenance_name, M.maintenance_description, M.maintenance_cost, M.maintenance_date, M.expected_completion_date, M.finalized_date  FROM theme_park.maintenance_logs as M, theme_park.employee as E WHERE M.attraction_id = E.attraction AND M.currently_under_maintenance = false AND E.employee_id = ?;'
+    const getPreviousMaintenanceLogs = `
+        SELECT 
+            M.log_id, 
+            M.maintenance_name, 
+            M.maintenance_description, 
+            M.maintenance_cost, 
+            M.maintenance_date, 
+            M.expected_completion_date, 
+            M.finalized_date,
+            COALESCE(M.attraction_id, M.dining_id) AS assigned_id,
+            CASE 
+                WHEN M.attraction_id IS NOT NULL THEN TRUE 
+                ELSE FALSE 
+            END AS isAttraction
+        FROM theme_park.maintenance_logs AS M
+        JOIN theme_park.employee AS E 
+            ON (M.attraction_id = E.attraction OR M.dining_id = E.dining)
+        WHERE M.currently_under_maintenance = FALSE 
+        AND E.employee_id = ?;
+    `;
     const [row] = await pool.execute(getPreviousMaintenanceLogs, [userID]);
     return row;
 }

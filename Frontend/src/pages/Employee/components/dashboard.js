@@ -5,7 +5,7 @@ const Dashboard = ({ setActiveTab }) => {
     const [loading, setLoading] = useState(true);
     const [creationError, setCreationError] = useState('');
     const [updateError, setUpdateError] = useState('');
-    const [employeeAttraction, setEmployeeAttraction] = useState(null);
+    const [employeeAssignment, setEmployeeAssignment] = useState(null);
     const [step, setStep] = useState(1);
     const [refreshPage, setRefreshPage] = useState(false);
     const [activeMaintenanceLog, setActiveMaintenanceLog] = useState(null);
@@ -27,7 +27,7 @@ const Dashboard = ({ setActiveTab }) => {
       const fetchAttraction = async () => {
           try {
             const userID = localStorage.getItem('userID');
-              const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getEmployeeAssignedAttraction`, {
+              const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getEmployeeAssignment`, {
                   method: 'POST',
                   mode: 'cors',
                   headers: {
@@ -42,7 +42,7 @@ const Dashboard = ({ setActiveTab }) => {
               const result = await response.json();
 
               if (result.success) {
-                setEmployeeAttraction(result.data);
+                setEmployeeAssignment(result.data);
               } else {
                   throw new Error(result.message || 'Failed to fetch attractions');
               }
@@ -220,7 +220,8 @@ const Dashboard = ({ setActiveTab }) => {
           description : formData.maintenanceLogDescription,
           cost : Number(formData.maintenanceLogEstimatedPrice),
           expectedDate : formData.maintenanceLogExpectedCompletionDate,
-          attractionID : employeeAttraction.attraction_id
+          ID : employeeAssignment.id,
+          isAttraction : employeeAssignment.isAttraction
         }
         const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/createMaintenanceLog`, {
             method: 'POST',
@@ -378,17 +379,17 @@ const Dashboard = ({ setActiveTab }) => {
           <>
           {showActiveLog ? (<>
 
-          {employeeAttraction === null ? (
+          {employeeAssignment === null ? (
             <p className="activities-intro">You have not been assigned an attraction, notify your manager.</p>
           ) : (
             <>
             {activeMaintenanceLog !== null ? (
               <>
-                <h2 className="attraction-name">Assigned Attraction: {employeeAttraction.attraction_name}</h2> 
-                {employeeAttraction.viewing_image && employeeAttraction.mimeType ? (
+                <h2 className="attraction-name">Assigned Attraction: {employeeAssignment.name}</h2> 
+                {employeeAssignment.viewing_image && employeeAssignment.mimeType ? (
                     <div className="center-image">
                   <img 
-                      src={`data:${employeeAttraction.mimeType};base64,${employeeAttraction.viewing_image}`}
+                      src={`data:${employeeAssignment.mimeType};base64,${employeeAssignment.viewing_image}`}
                       alt="Attraction Image"
                       style={{ width: '300px', height: '300px', objectFit: 'contain' }} 
                   />
@@ -511,11 +512,11 @@ const Dashboard = ({ setActiveTab }) => {
             (<>
             { step === 1 && (
               <div className="attraction-content">
-                  <h2 className="attraction-name">Assigned Attraction: {employeeAttraction.attraction_name}</h2>
-                  {employeeAttraction.viewing_image && employeeAttraction.mimeType ? (
+                  <h2 className="attraction-name">Assigned Attraction/Dining: {employeeAssignment.name}</h2>
+                  {employeeAssignment.viewing_image && employeeAssignment.mimeType ? (
                     <div className="center-image">
                   <img 
-                      src={`data:${employeeAttraction.mimeType};base64,${employeeAttraction.viewing_image}`}
+                      src={`data:${employeeAssignment.mimeType};base64,${employeeAssignment.viewing_image}`}
                       alt="Attraction Image"
                       style={{ width: '300px', height: '300px', objectFit: 'contain' }} 
                   />
@@ -535,7 +536,7 @@ const Dashboard = ({ setActiveTab }) => {
               </div> )}
             {step === 2 && (
               <div className="attraction-content">
-                  <h2 className="attraction-name">Maintenance for {employeeAttraction.attraction_name}</h2>
+                  <h2 className="attraction-name">Maintenance for {employeeAssignment.name}</h2>
 
                   <div className="form-group">
                   <label >Maintenance Log Name</label>
