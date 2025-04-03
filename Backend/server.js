@@ -2,6 +2,7 @@
 require('dotenv').config();
 
 const http = require('http');
+const url = require('url')
 const { testing } = require('./testing');
 const { testingPost } = require('./testingPost');
 const { registerCustomer } = require('./registerUsers/registerCustomer');
@@ -47,7 +48,8 @@ const { getAttractionName } = require('./attractions/getAttractionName');
 const { getFeedback } = require('./employeePortal/getFeedback');
 const { getTasks } = require('./employeePortal/getTasks')
 const { updateTaskStatus } = require('./employeePortal/updateTaskStatus')
-const { updateEmployeeProfile} = require('./employeePortal/updateEmployeeProfile')
+const { updateEmployeeProfile} = require('./employeePortal/updateEmployeeProfile');
+const { generateFinanceReport } = require('./managerPortal/reports/financeReport');
 
 const PORT = process.env.PORT || 7000;
 
@@ -208,6 +210,9 @@ const server = http.createServer(async (req, res) => {
     }
     else if(req.url === '/updateTaskStatus' && req.method === 'PUT'){
         updateTaskStatus(req, res)
+    }
+    else if(url.parse(req.url).pathname === '/financeReport' && req.method === 'GET') {
+        generateFinanceReport(req, res)
     }
     else if( req.url === '/testDatabaseConnection' && req.method === 'GET'){
         pool.getConnection((err, connection) => {
