@@ -10,13 +10,13 @@ async function updateEmployeeAttraction(req, res) {
 
         req.on('end', async () => {
             try {
-                const { email, attraction } = JSON.parse(body);
+                const { email, attraction_or_dining, is_attraction } = JSON.parse(body);
                 
                 // Validate required fields
-                if (!email || !attraction) {
+                if (!email || !attraction_or_dining ) {
                     res.writeHead(400, { 'Content-Type': 'application/json' });
                     return res.end(JSON.stringify({ 
-                        message: "Both email and attraction are required" 
+                        message: "Both email and attraction/dining are required" 
                     }));
                 }
 
@@ -31,22 +31,57 @@ async function updateEmployeeAttraction(req, res) {
                     return res.end(JSON.stringify({ message: "Employee not found" }));
                 }
 
-                // Validate attraction exists
-                const [attractionExists] = await pool.execute(
-                    "SELECT attraction_id FROM theme_park.attractions WHERE attraction_id = ?",
-                    [attraction]
-                );
-                
-                if (attractionExists.length === 0) {
-                    res.writeHead(400, { 'Content-Type': 'application/json' });
-                    return res.end(JSON.stringify({ 
-                        message: "Specified attraction does not exist" 
-                    }));
+                if(is_attraction)
+                {
+                    // Validate attraction exists
+                    const [attractionExists] = await pool.execute(
+                        "SELECT attraction_id FROM theme_park.attractions WHERE attraction_id = ?",
+                        [attraction_or_dining]
+                    );
+                    
+                    if (attractionExists.length === 0) {
+                        res.writeHead(400, { 'Content-Type': 'application/json' });
+                        return res.end(JSON.stringify({ 
+                            message: "Specified attraction does not exist" 
+                        }));
+                    }
+                }
+                else
+                {
+                    // Validate dining exists
+                    const [diningExists] = await pool.execute(
+                        "SELECT dining_id FROM theme_park.dining WHERE dining_id = ?",
+                        [attraction_or_dining]
+                    );
+                    
+                    if (diningExists.length === 0) {
+                        res.writeHead(400, { 'Content-Type': 'application/json' });
+                        return res.end(JSON.stringify({ 
+                            message: "Specified dining does not exist" 
+                        }));
+                    }
                 }
 
                 // Update ONLY the attraction field
-                const updateQuery = "UPDATE theme_park.employee SET attraction = ? WHERE email = ?";
-                const [result] = await pool.execute(updateQuery, [attraction, email]);
+                const updateQuery = `
+                    UPDATE theme_park.employee 
+                    SET 
+                        attraction = CASE 
+                                        WHEN ? IN (SELECT attraction_id FROM theme_park.attractions) THEN ? 
+                                        ELSE NULL 
+                                    END, 
+                        dining = CASE 
+                                    WHEN ? IN (SELECT dining_id FROM theme_park.dining) THEN ? 
+                                    ELSE NULL 
+                                END
+                    WHERE email = ?;
+                `;
+
+                const [result] = await pool.execute(updateQuery, [
+                    attraction_or_dining, attraction_or_dining,  // For attraction check
+                    attraction_or_dining, attraction_or_dining,  // For dining check
+                    email
+                ]);
 
                 console.log("Update result:", result);
                 
