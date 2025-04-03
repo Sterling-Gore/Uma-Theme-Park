@@ -8,6 +8,16 @@ const generateFinanceReport = async (req, res) => {
     const groupBy = url.searchParams.get('groupBy') || 'none';
 
     try {
+        const [sqlModeResult] = await pool.query('SELECT @@SESSION.sql_mode');
+        const currentSqlMode = sqlModeResult[0]['@@SESSION.sql_mode'];
+
+        const newSqlMode = currentSqlMode
+            .split(',')
+            .filter(mode => mode !== 'ONLY_FULL_GROUP_BY')
+            .join(',');
+
+        await pool.query(`SET SESSION sql_mode = '${newSqlMode}'`);
+
         let data = [];
         let summary = {};
 
@@ -20,32 +30,36 @@ const generateFinanceReport = async (req, res) => {
             return;
         }
 
-        switch (reportType) {
-            case 'tickets':
-                data = await getTicketData(startDate, endDate, groupBy);
-                summary = await getTicketSummary(startDate, endDate);
-                break;
-            case 'merchandise':
-                data = await getMerchandiseData(startDate, endDate, groupBy);
-                summary = await getMerchandiseSummary(startDate, endDate);
-                break;
-            case 'maintenance':
-                data = await getMaintenanceData(startDate, endDate, groupBy);
-                summary = await getMaintenanceSummary(startDate, endDate);
-                break;
-            case 'all':
-            default:
-                data = await getCombinedReport(startDate, endDate, groupBy);
-                summary = await getCombinedSummary(startDate, endDate);
-                break;
-        }
+        try {
+            switch (reportType) {
+                case 'tickets':
+                    data = await getTicketData(startDate, endDate, groupBy);
+                    summary = await getTicketSummary(startDate, endDate);
+                    break;
+                case 'merchandise':
+                    data = await getMerchandiseData(startDate, endDate, groupBy);
+                    summary = await getMerchandiseSummary(startDate, endDate);
+                    break;
+                case 'maintenance':
+                    data = await getMaintenanceData(startDate, endDate, groupBy);
+                    summary = await getMaintenanceSummary(startDate, endDate);
+                    break;
+                case 'all':
+                default:
+                    data = await getCombinedReport(startDate, endDate, groupBy);
+                    summary = await getCombinedSummary(startDate, endDate);
+                    break;
+            }
 
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-            success: true,
-            data,
-            summary
-        }));
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                success: true,
+                data,
+                summary
+            }));
+        } finally {
+            await pool.query(`SET SESSION sql_mode = '${currentSqlMode}'`);
+        }
     } catch (error) {
         console.error('Error generating finance report:', error);
         res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -57,15 +71,49 @@ const generateFinanceReport = async (req, res) => {
     }
 };
 
+// This function will generate both SELECT and GROUP BY expressions correctly
+const getDateExpressions = (groupBy, dateField) => {
+    switch (groupBy) {
+        case 'daily':
+            return {
+                select: `DATE(${dateField}) as date`,
+                groupBy: `DATE(${dateField})`
+            };
+        case 'weekly':
+            return {
+                select: `DATE_ADD(DATE(${dateField}), INTERVAL - WEEKDAY(${dateField}) DAY) as date`,
+                groupBy: `YEARWEEK(${dateField}, 1)`
+            };
+        case 'monthly':
+            return {
+                select: `DATE_FORMAT(${dateField}, '%Y-%m-01') as date`,
+                groupBy: `DATE_FORMAT(${dateField}, '%Y-%m')`
+            };
+        case 'yearly':
+            return {
+                select: `DATE_FORMAT(${dateField}, '%Y-01-01') as date`,
+                groupBy: `YEAR(${dateField})`
+            };
+        case 'none':
+        default:
+            return {
+                select: `DATE(${dateField}) as date`,
+                groupBy: `DATE(${dateField})`
+            };
+    }
+};
+
 const getTicketData = async (startDate, endDate, groupBy) => {
+    const dateExpr = getDateExpressions(groupBy, 'purchase_date');
+
     let query = `
-  SELECT 
-    DATE(purchase_date) as date, 
-    SUM(total_cost) as ticket_sales,
-    SUM(number_of_standards + number_of_children + number_of_seniors) as number_of_tickets
-  FROM ticket_receipt
-  WHERE 1=1
-`;
+    SELECT 
+      ${dateExpr.select}, 
+      SUM(total_cost) as ticket_sales,
+      SUM(number_of_standards + number_of_children + number_of_seniors) as number_of_tickets
+    FROM ticket_receipt
+    WHERE 1=1
+  `;
 
     const params = [];
 
@@ -79,9 +127,7 @@ const getTicketData = async (startDate, endDate, groupBy) => {
         params.push(endDate);
     }
 
-    query += getGroupByClause(groupBy, 'purchase_date');
-
-
+    query += ` GROUP BY ${dateExpr.groupBy}`;
     query += ` ORDER BY date`;
 
     const [rows] = await pool.query(query, params);
@@ -94,15 +140,16 @@ const getTicketData = async (startDate, endDate, groupBy) => {
 
 
 const getMerchandiseData = async (startDate, endDate, groupBy) => {
+    const dateExpr = getDateExpressions(groupBy, 'purchase_date');
+
     let query = `
     SELECT 
-      DATE(purchase_date) as date, 
+      ${dateExpr.select}, 
       CAST(SUM(total_cost) as SIGNED) as merchandise_sales,
       SUM(total_items_sold) as items_sold
     FROM merchandise_receipt
     WHERE 1=1
   `;
-
 
     const params = [];
 
@@ -116,13 +163,10 @@ const getMerchandiseData = async (startDate, endDate, groupBy) => {
         params.push(endDate);
     }
 
-    query += getGroupByClause(groupBy, 'purchase_date');
-
+    query += ` GROUP BY ${dateExpr.groupBy}`;
     query += ` ORDER BY date`;
 
     const [rows] = await pool.query(query, params);
-
-    //console.log(typeof row.merchandise_sales);
 
     return rows.map(row => ({
         ...row,
@@ -132,14 +176,16 @@ const getMerchandiseData = async (startDate, endDate, groupBy) => {
 
 
 const getMaintenanceData = async (startDate, endDate, groupBy) => {
+    const dateExpr = getDateExpressions(groupBy, 'maintenance_date');
+
     let query = `
-  SELECT 
-    DATE(maintenance_date) as date,  
-    SUM(maintenance_cost) as maintenance_costs,
-    COUNT(*) as maintenance_count
-  FROM maintenance_logs
-  WHERE 1=1
-`;
+    SELECT 
+      ${dateExpr.select},  
+      SUM(maintenance_cost) as maintenance_costs,
+      COUNT(*) as maintenance_count
+    FROM maintenance_logs
+    WHERE 1=1
+  `;
 
     const params = [];
 
@@ -153,8 +199,7 @@ const getMaintenanceData = async (startDate, endDate, groupBy) => {
         params.push(endDate);
     }
 
-    query += getGroupByClause(groupBy, 'maintenance_date');
-
+    query += ` GROUP BY ${dateExpr.groupBy}`;
     query += ` ORDER BY date`;
 
     const [rows] = await pool.query(query, params);
@@ -164,86 +209,84 @@ const getMaintenanceData = async (startDate, endDate, groupBy) => {
 
 
 const getCombinedReport = async (startDate, endDate, groupBy) => {
-    let dateField;
-    let groupField;
+    const ticketData = await getTicketData(startDate, endDate, groupBy);
+    const merchandiseData = await getMerchandiseData(startDate, endDate, groupBy);
+    const maintenanceData = await getMaintenanceData(startDate, endDate, groupBy);
 
-    switch (groupBy) {
-        case 'daily':
-            groupField = 'DATE(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date))';
-            dateField = 'DATE(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date)) as date';
-            break;
-        case 'weekly':
-            groupField = 'YEARWEEK(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date), 1)';
-            dateField = 'DATE_ADD(DATE(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date)), INTERVAL - WEEKDAY(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date)) DAY) as date';
-            break;
-        case 'monthly':
-            groupField = 'DATE_FORMAT(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date), "%Y-%m")';
-            dateField = 'DATE_FORMAT(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date), "%Y-%m-01") as date';
-            break;
-        case 'yearly':
-            groupField = 'YEAR(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date))';
-            dateField = 'DATE_FORMAT(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date), "%Y-01-01") as date';
-            break;
-        case 'none':
-        default:
-            groupField = 'DATE(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date))';
-            dateField = 'DATE(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date)) as date';
-            break;
+    const dateMap = new Map();
+
+    const getDate = (dateValue) => {
+        if (typeof dateValue != 'string') {
+            return dateValue.toISOString().split('T')[0];
+        } else {
+            return dateValue;
+        }
     }
 
-    let query = `
-    SELECT 
-      ${dateField},
-      COALESCE(SUM(t.total_cost), 0) as ticket_sales,
-      CAST(COALESCE(SUM(m.total_cost), 0) AS SIGNED) as merchandise_sales,
-      COALESCE(SUM(t.total_cost), 0) + COALESCE(SUM(m.total_cost), 0) as total_sales,
-      COALESCE(SUM(ml.maintenance_cost), 0) as maintenance_costs,
-      COALESCE(SUM(t.total_cost), 0) + COALESCE(SUM(m.total_cost), 0) - COALESCE(SUM(ml.maintenance_cost), 0) as profit
-    FROM 
-        (
-        SELECT DISTINCT DATE(purchase_date) as purchase_date FROM ticket_receipt
-        UNION 
-        SELECT DISTINCT DATE(purchase_date) as purchase_date FROM merchandise_receipt
-        UNION 
-        SELECT DISTINCT DATE(maintenance_date) as purchase_date FROM maintenance_logs
-      ) as dates
-    LEFT JOIN ticket_receipt t ON DATE(dates.purchase_date) = DATE(t.purchase_date)
-    LEFT JOIN merchandise_receipt m ON DATE(dates.purchase_date) = DATE(m.purchase_date)
-    LEFT JOIN maintenance_logs ml ON DATE(dates.purchase_date) = DATE(ml.maintenance_date)
-    WHERE 1=1
-  `;
+    // Process ticket data
+    ticketData.forEach(record => {
+        //console.log(typeof record.date)
+        const dateKey = getDate(record.date);
+        //const dateKey = record.date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+        if (!dateMap.has(dateKey)) {
+            dateMap.set(dateKey, {
+                date: record.date,
+                ticket_sales: 0,
+                merchandise_sales: 0,
+                maintenance_costs: 0,
+                total_sales: 0,
+                profit: 0
+            });
+        }
 
-    const params = [];
+        const entry = dateMap.get(dateKey);
+        entry.ticket_sales = record.ticket_sales || 0;
+        entry.total_sales += record.ticket_sales || 0;
+        entry.profit = entry.total_sales - entry.maintenance_costs;
+    });
 
-    if (startDate) {
-        query += ` AND (
-      (t.purchase_date IS NOT NULL AND t.purchase_date >= ?) OR
-      (m.purchase_date IS NOT NULL AND m.purchase_date >= ?) OR
-      (ml.maintenance_date IS NOT NULL AND ml.maintenance_date >= ?)
-    )`;
-        params.push(startDate, startDate, startDate);
-    }
+    merchandiseData.forEach(record => {
+        const dateKey = getDate(record.date);
+        if (!dateMap.has(dateKey)) {
+            dateMap.set(dateKey, {
+                date: record.date,
+                ticket_sales: 0,
+                merchandise_sales: 0,
+                maintenance_costs: 0,
+                total_sales: 0,
+                profit: 0
+            });
+        }
 
-    if (endDate) {
-        query += ` AND (
-      (t.purchase_date IS NOT NULL AND t.purchase_date <= ?) OR
-      (m.purchase_date IS NOT NULL AND m.purchase_date <= ?) OR
-      (ml.maintenance_date IS NOT NULL AND ml.maintenance_date <= ?)
-    )`;
-        params.push(endDate, endDate, endDate);
-    }
+        const entry = dateMap.get(dateKey);
+        entry.merchandise_sales = record.merchandise_sales || 0;
+        entry.total_sales = entry.ticket_sales + entry.merchandise_sales;
+        entry.profit = entry.total_sales - entry.maintenance_costs;
+    });
 
-    query += ` GROUP BY ${groupField}`;
+    maintenanceData.forEach(record => {
+        const dateKey = getDate(record.date);
+        if (!dateMap.has(dateKey)) {
+            dateMap.set(dateKey, {
+                date: record.date,
+                ticket_sales: 0,
+                merchandise_sales: 0,
+                maintenance_costs: 0,
+                total_sales: 0,
+                profit: 0
+            });
+        }
 
-    query += ` ORDER BY date`;
+        const entry = dateMap.get(dateKey);
+        entry.maintenance_costs = record.maintenance_costs || 0;
+        entry.profit = entry.total_sales - entry.maintenance_costs;
+    });
 
-    const [rows] = await pool.query(query, params);
+    const combinedData = Array.from(dateMap.values())
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    //console.log(rows);
-
-    return rows;
+    return combinedData;
 };
-
 
 const getTicketSummary = async (startDate, endDate) => {
     let query = `
@@ -334,7 +377,7 @@ const getMaintenanceSummary = async (startDate, endDate) => {
 
     const [rows] = await pool.query(query, params);
 
-    console.log(rows[0].totalMaintenanceCosts);
+    //console.log(rows[0].totalMaintenanceCosts);
 
     return {
         totalMaintenanceCosts: rows[0].totalMaintenanceCosts,
@@ -369,6 +412,7 @@ const getCombinedSummary = async (startDate, endDate) => {
 };
 
 
+//I don't think we are going to need this function in the future. Leaving it in here just in case.
 const getGroupByClause = (groupBy, dateField) => {
     switch (groupBy) {
         case 'daily':
