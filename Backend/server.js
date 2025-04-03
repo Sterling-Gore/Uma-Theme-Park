@@ -20,6 +20,10 @@ const { updateMerchandiseStock } = require('./employeePortal/updateMerchandiseSt
 const { updateMerchandisePrice } = require('./employeePortal/updateMerchandisePrice');
 const { updateMerchandiseImage } = require('./employeePortal/updateMerchandiseImage');
 const { createAttraction } = require('./employeePortal/createAttraction');
+const { createDining } = require('./employeePortal/createDining');
+const {updateDiningDescription} = require('./employeePortal/updateDiningDescription');
+const {updateDiningStatus} = require('./employeePortal/updateDiningStatus');
+const {updateDiningImage} = require('./employeePortal/updateDiningImage');
 const { updateAttractionImage } = require('./employeePortal/updateAttractionImage');
 const { updateAttractionStatus } = require('./employeePortal/updateAttractionStatus');
 const { updateAttractionDescription } = require('./employeePortal/updateAttractionDescription');
@@ -44,6 +48,7 @@ const { UpdateAccount } = require('./accountHandler/UpdateAccount');
 const { getTicketOrders } = require('./myorders/getTicketOrders');
 const { getMerchandiseOrders } = require('./myorders/getMerchandiseOrders');
 const { getAttractions } = require('./attractions/getAttractions');
+const { getDining } = require('./dining/getDining')
 const { getAttractionName } = require('./attractions/getAttractionName');
 const { getFeedback } = require('./employeePortal/getFeedback');
 const { getTasks } = require('./employeePortal/getTasks')
@@ -132,6 +137,9 @@ const server = http.createServer(async (req, res) => {
     else if(req.url === '/createAttraction' && req.method === 'POST'){
         createAttraction(req, res)
     }
+    else if(req.url === '/createDining' && req.method === 'POST'){
+        createDining(req, res)
+    }
     else if(req.url === '/updateAttractionStatus' && req.method === 'POST'){
         updateAttractionStatus(req, res)
     }
@@ -140,6 +148,15 @@ const server = http.createServer(async (req, res) => {
     }
     else if(req.url === '/updateAttractionDescription' && req.method === 'POST'){
         updateAttractionDescription(req, res)
+    }
+    else if(req.url === '/updateDiningStatus' && req.method === 'POST'){
+        updateDiningStatus(req, res)
+    }
+    else if(req.url === '/updateDiningImage' && req.method === 'POST'){
+        updateDiningImage(req, res)
+    }
+    else if(req.url === '/updateDiningDescription' && req.method === 'POST'){
+        updateDiningDescription(req, res)
     }
     else if(req.url === '/updateAttractionDuration' && req.method === 'POST'){
         updateAttractionDuration(req, res)
@@ -194,6 +211,9 @@ const server = http.createServer(async (req, res) => {
     }
     else if(req.url === '/getAttractions' && req.method === 'GET'){
         getAttractions(req, res)
+    }
+    else if(req.url === '/getDining' && req.method === 'GET'){
+        getDining(req, res)
     }
     else if(req.url === '/getFeedback' && req.method === 'GET'){
         getFeedback(req, res)

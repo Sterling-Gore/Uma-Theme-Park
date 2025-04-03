@@ -8,6 +8,8 @@ import HandleMerchandise from './components/HandleMerchandise';
 import CreateMerchandise from './components/createMerchandise';
 import HandleAttraction from './components/handleAttraction';
 import CreateAttraction from './components/createAttraction';
+import HandleDining from './components/handleDining';
+import CreateDining from './components/createDining';
 import Reports from './components/reports';
 import './EmployeePortal.css';
 import AuthContext from '../../context/AuthContext';
@@ -92,6 +94,8 @@ function EmployeePortal() {
           {activeTab === 'createMerchandise' && <CreateMerchandise setActiveTab={setActiveTab} />}
           {activeTab === 'handleAttractions' && <HandleAttraction setActiveTab={setActiveTab} />}
           {activeTab === 'createAttraction' && <CreateAttraction setActiveTab={setActiveTab} />}
+          {activeTab === 'handleDining' && <HandleDining setActiveTab={setActiveTab} />}
+          {activeTab === 'createDining' && <CreateDining setActiveTab={setActiveTab} />}
           {activeTab === 'reports' && <Reports setActiveTab={setActiveTab} />}
           {activeTab === 'showFeedback' && <ShowFeedback setActiveTab={setActiveTab} />}
 

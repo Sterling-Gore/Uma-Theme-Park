@@ -352,7 +352,8 @@ const HandleMerchandise = ({ setActiveTab }) => {
                             <img 
                                 src={`data:${Merchandise.mimeType};base64,${Merchandise.viewing_image}`}
                                 alt="Merchandise Image"
-                                style={{ width: '300px', height: '300px', objectFit: 'contain' }} 
+                                className="center-image"
+                                //style={{ width: '300px', height: '300px', objectFit: 'contain' }} 
                             />
                         ) : (
                             <p>Loading Image ... </p>
@@ -401,7 +402,8 @@ const HandleMerchandise = ({ setActiveTab }) => {
                                     <img 
                                         src={imagePreview}
                                         alt="Preview"
-                                        style={{ width: "200px", height: "200px", objectFit: "contain", marginTop: "10px" }}
+                                        className="center-image"
+                                        //style={{ width: "200px", height: "200px", objectFit: "contain", marginTop: "10px" }}
                                     />
                                 )
                                 }

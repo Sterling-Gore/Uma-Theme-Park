@@ -435,7 +435,8 @@ const HandleAttraction = ({ setActiveTab }) => {
                                 <img 
                                     src={`data:${Attraction.mimeType};base64,${Attraction.viewing_image}`}
                                     alt="Attraction Image"
-                                    style={{ width: '300px', height: '300px', objectFit: 'contain' }} 
+                                    className="center-image"
+                                    //style={{ width: '300px', height: '300px', objectFit: 'contain' }} 
                                 />
                             ) : (
                                 <p>Loading Image ... </p>
@@ -489,7 +490,6 @@ const HandleAttraction = ({ setActiveTab }) => {
                             {Attraction.is_editing_capacity && ( <label className="label-header"> Set Capacity </label> )}
                             {Attraction.is_editing_duration && ( <label className="label-header"> Set Duration </label> )}
                             {Attraction.is_editing_description && ( <label className="label-header"> Set Description </label> )}
-                            {Attraction.is_editing_description && ( <label className="label-header"> Set Description </label> )}
                             {Attraction.is_editing_image && ( <label className="label-header"> Set Image </label> )}
                             <div className="attraction-footer">
                                 
@@ -529,7 +529,8 @@ const HandleAttraction = ({ setActiveTab }) => {
                                         <img 
                                             src={imagePreview}
                                             alt="Preview"
-                                            style={{ width: "200px", height: "200px", objectFit: "contain", marginTop: "10px" }}
+                                            className="center-image"
+                                            //style={{ width: "200px", height: "200px", objectFit: "contain", marginTop: "10px" }}
                                         />
                                     )
                                     }
