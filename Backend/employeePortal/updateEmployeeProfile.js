@@ -11,11 +11,11 @@ async function updateEmployeeProfile(req, res) {
 
         req.on('end', async () => {
             try {
-                const { employee_id, first_name, last_name, email, password } = JSON.parse(body);
+                const { employee_id, first_name, last_name, email} = JSON.parse(body);
 
                 const newPassword = await bcrypt.hash(password, 10);
 
-                const updateEmployeeQuery = "UPDATE employee SET first_name = ?, last_name = ?, email = ?, password = ? WHERE employee_id = ?";
+                const updateEmployeeQuery = "UPDATE employee SET first_name = ?, last_name = ?, email = ? WHERE employee_id = ?";
                 await pool.execute(updateEmployeeQuery, [first_name, last_name, email, newPassword, employee_id]);
 
                 res.writeHead(200, { 'Content-Type': 'application/json' });
