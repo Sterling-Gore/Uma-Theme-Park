@@ -12,9 +12,10 @@ async function closeMaintenanceLog(req, res) {
         req.on('end', async () => {
             try {
                 const {log_id} = JSON.parse(body);
+                const today = new Date(); 
                 
-                const closeMaintenanceLogQuery= "UPDATE theme_park.maintenance_logs SET currently_under_maintenance = false WHERE log_id = ?";
-                const [closeMaintenanceLogResult] = await pool.execute(closeMaintenanceLogQuery, [log_id]);
+                const closeMaintenanceLogQuery= "UPDATE theme_park.maintenance_logs SET currently_under_maintenance = false, finalized_date = ? WHERE log_id = ?";
+                const [closeMaintenanceLogResult] = await pool.execute(closeMaintenanceLogQuery, [today, log_id]);
 
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 return res.end(JSON.stringify({ message: "Success", success : true}));

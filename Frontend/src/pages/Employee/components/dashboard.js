@@ -11,6 +11,7 @@ const Dashboard = ({ setActiveTab }) => {
     const [activeMaintenanceLog, setActiveMaintenanceLog] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [showActiveLog, setShowActiveLog] = useState(true);
+    const [previousMaintenanceLogs, setPreviousMaintenanceLogs] = useState(null);
 
     const[ formData, setFormData] = useState({
       maintenanceLogName : "",
@@ -18,6 +19,111 @@ const Dashboard = ({ setActiveTab }) => {
       maintenanceLogEstimatedPrice: "",
       maintenanceLogExpectedCompletionDate : ""
     })
+
+
+
+
+    useEffect(() => {
+      const fetchAttraction = async () => {
+          try {
+            const userID = localStorage.getItem('userID');
+              const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getEmployeeAssignedAttraction`, {
+                  method: 'POST',
+                  mode: 'cors',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ userID: userID })
+              });
+              
+              if (!response.ok) {
+                  throw new Error('Failed to fetch attractions');
+              }
+              const result = await response.json();
+
+              if (result.success) {
+                setEmployeeAttraction(result.data);
+              } else {
+                  throw new Error(result.message || 'Failed to fetch attractions');
+              }
+          } catch (error) {
+              console.error('Error fetching attractions:', error);
+          } finally {
+              setLoading(false);
+          }
+      };
+
+      fetchAttraction();
+  }, [refreshPage]);
+
+    
+  useEffect(() => {
+    const fetchActiveMaintenanceLog = async () => {
+        try {
+          const userID = localStorage.getItem('userID');
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getActiveMaintenanceLog`, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userID: userID })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch active maintenance log');
+            }
+            const result = await response.json();
+
+            if (result.success) {
+              setActiveMaintenanceLog(result.data);
+            } else {
+                throw new Error(result.message || 'Failed to fetch active maintenance log');
+            }
+        } catch (error) {
+            console.error('Error fetching active maintenance log:', error);
+        } finally {
+            setLoading(false);
+        }
+        };
+
+        fetchActiveMaintenanceLog();
+    }, [refreshPage]); 
+
+
+    useEffect(() => {
+      const fetchPreviousMaintenanceLogs = async () => {
+          try {
+            const userID = localStorage.getItem('userID');
+              const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getPreviousMaintenanceLogsForEmployee`, {
+                  method: 'POST',
+                  mode: 'cors',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ userID: userID })
+              });
+              
+              if (!response.ok) {
+                  throw new Error('Failed to fetch previous maintenance logs');
+              }
+              const result = await response.json();
+  
+              if (result.success) {
+                setPreviousMaintenanceLogs(result.data);
+              } else {
+                  throw new Error(result.message || 'Failed to fetch previous maintenance logs');
+              }
+          } catch (error) {
+              console.error('Error fetching previous maintenance logs:', error);
+          } finally {
+              setLoading(false);
+          }
+          };
+  
+          fetchPreviousMaintenanceLogs();
+      }, [refreshPage]); 
+
 
     function isDateValid(date) {
       const today = new Date();
@@ -116,7 +222,6 @@ const Dashboard = ({ setActiveTab }) => {
           expectedDate : formData.maintenanceLogExpectedCompletionDate,
           attractionID : employeeAttraction.attraction_id
         }
-        console.log(dataToSend);
         const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/createMaintenanceLog`, {
             method: 'POST',
             credentials: 'include',
@@ -134,7 +239,6 @@ const Dashboard = ({ setActiveTab }) => {
               goBack();
           }
       } catch (error) {
-        console.log(`Error creating maintenance log: ${error}`)
         console.error('Error creating maintenance log:', error);
         alertShown.current = true;
         alert("Error creating maintenance log ");
@@ -146,7 +250,6 @@ const Dashboard = ({ setActiveTab }) => {
         const dataToSend = {
           log_id : activeMaintenanceLog.log_id
         }
-        console.log(dataToSend);
         const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/closeMaintenanceLog`, {
             method: 'POST',
             credentials: 'include',
@@ -161,17 +264,26 @@ const Dashboard = ({ setActiveTab }) => {
           }
           const data = await response.json();
           if (data.success) {
-            console.log("SUCESSSSSSSS");
               setActiveMaintenanceLog(null);
               //window.location.reload();
           }
       } catch (error) {
-        console.log(`Error close maintenance log: ${error}`)
         console.error('Error close maintenance log:', error);
         alertShown.current = true;
         alert("Error close maintenance log ");
       }
     }
+
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      //return date.ToString();
+      return date.toLocaleDateString('en-US', {
+        timeZone: 'UTC',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    };
 
     const saveEdit = async () => {
       try {
@@ -182,7 +294,6 @@ const Dashboard = ({ setActiveTab }) => {
           cost : activeMaintenanceLog.maintenance_cost,
           expected_completion_date : activeMaintenanceLog.expected_completion_date
         }
-        console.log(dataToSend);
         const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/editMaintenanceLog`, {
             method: 'POST',
             credentials: 'include',
@@ -197,84 +308,15 @@ const Dashboard = ({ setActiveTab }) => {
           }
           const data = await response.json();
           if (data.success) {
-            console.log("SUCESSSSSSSS");
               setIsEditing(false);
               //window.location.reload();
           }
       } catch (error) {
-        console.log(`Error edit maintenance log: ${error}`)
         console.error('Error edit maintenance log:', error);
         alertShown.current = true;
         alert("Error edit maintenance log ");
       }
     }
-    
-    useEffect(() => {
-        const fetchAttraction = async () => {
-            try {
-              const userID = localStorage.getItem('userID');
-                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getEmployeeAssignedAttraction`, {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ userID: userID })
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to fetch attractions');
-                }
-                const result = await response.json();
-
-                if (result.success) {
-                  setEmployeeAttraction(result.data);
-                } else {
-                    throw new Error(result.message || 'Failed to fetch attractions');
-                }
-            } catch (error) {
-                console.error('Error fetching attractions:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchAttraction();
-    }, [refreshPage]);
-
-      
-    useEffect(() => {
-      const fetchActiveMaintenanceLog = async () => {
-          try {
-            const userID = localStorage.getItem('userID');
-              const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getActiveMaintenanceLog`, {
-                  method: 'POST',
-                  mode: 'cors',
-                  headers: {
-                      'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({ userID: userID })
-              });
-              
-              if (!response.ok) {
-                  throw new Error('Failed to fetch active maintenance log');
-              }
-              const result = await response.json();
-
-              if (result.success) {
-                setActiveMaintenanceLog(result.data);
-              } else {
-                  throw new Error(result.message || 'Failed to fetch active maintenance log');
-              }
-          } catch (error) {
-              console.error('Error fetching active maintenance log:', error);
-          } finally {
-              setLoading(false);
-          }
-      };
-
-      fetchActiveMaintenanceLog();
-  }, [refreshPage]); 
 
     function cancelEdit()
     {
@@ -308,8 +350,6 @@ const Dashboard = ({ setActiveTab }) => {
     }
 
 
-
-    console.log(activeMaintenanceLog);
 
     
     return (
@@ -582,7 +622,39 @@ const Dashboard = ({ setActiveTab }) => {
           )}
         </>) : (
           <>
-
+            {previousMaintenanceLogs === null ? (
+              <>
+                <p className="activities-intro">There are no previous maintenance logs on this attraction.</p>
+              </>) : (
+              <>
+              <div className="tasks-list">
+                {previousMaintenanceLogs.map((maintenance_log) => (
+                  <div
+                    key={maintenance_log.log_id}
+                    className={`task-card ${true ? 'completed-task' : 'pending-task'}`}
+                  >
+                    <div className="task-content">
+                      <div className="task-header">
+                        <h3>
+                          {maintenance_log.maintenance_name || 'Maintenance log'}
+                          <span className={`task-status ${true ? 'status-completed' : 'status-pending'}`}>
+                            {true ? 'Completed' : 'Pending'}
+                          </span>
+                        </h3>
+                        <p className="task-date">{formatDate(maintenance_log.maintenance_date)}</p>
+                        
+                        <p className="task-date">{formatDate(maintenance_log.expected_completion_date)}</p>
+                      </div>
+                      <div className="task-details">
+                        <p><strong>Description:</strong> {maintenance_log.maintenance_description}</p>
+                        {/*task.merchandise_id && <p><strong>Merchandise ID:</strong> {task.merchandise_id}</p>*/}
+                      </div>
+                      
+                    </div>
+                  </div>
+                ))}
+              </div>
+              </>)}
 
 
           </>)}
