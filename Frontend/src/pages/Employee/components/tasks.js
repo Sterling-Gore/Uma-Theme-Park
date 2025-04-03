@@ -76,9 +76,11 @@ const Tasks = ({ setActiveTab }) => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
+      timeZone: 'UTC',
       year: 'numeric',
       month: 'short',
       day: 'numeric'
+      
     });
   };
 

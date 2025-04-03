@@ -3,12 +3,15 @@ import React, { useState, useEffect, useRef } from "react";
 const Dashboard = ({ setActiveTab }) => {
     const alertShown = useRef(false);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [creationError, setCreationError] = useState('');
+    const [updateError, setUpdateError] = useState('');
     const [employeeAttraction, setEmployeeAttraction] = useState(null);
     const [step, setStep] = useState(1);
     const [refreshPage, setRefreshPage] = useState(false);
     const [activeMaintenanceLog, setActiveMaintenanceLog] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [showActiveLog, setShowActiveLog] = useState(true);
+    const [previousMaintenanceLogs, setPreviousMaintenanceLogs] = useState(null);
 
     const[ formData, setFormData] = useState({
       maintenanceLogName : "",
@@ -16,6 +19,111 @@ const Dashboard = ({ setActiveTab }) => {
       maintenanceLogEstimatedPrice: "",
       maintenanceLogExpectedCompletionDate : ""
     })
+
+
+
+
+    useEffect(() => {
+      const fetchAttraction = async () => {
+          try {
+            const userID = localStorage.getItem('userID');
+              const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getEmployeeAssignedAttraction`, {
+                  method: 'POST',
+                  mode: 'cors',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ userID: userID })
+              });
+              
+              if (!response.ok) {
+                  throw new Error('Failed to fetch attractions');
+              }
+              const result = await response.json();
+
+              if (result.success) {
+                setEmployeeAttraction(result.data);
+              } else {
+                  throw new Error(result.message || 'Failed to fetch attractions');
+              }
+          } catch (error) {
+              console.error('Error fetching attractions:', error);
+          } finally {
+              setLoading(false);
+          }
+      };
+
+      fetchAttraction();
+  }, [refreshPage]);
+
+    
+  useEffect(() => {
+    const fetchActiveMaintenanceLog = async () => {
+        try {
+          const userID = localStorage.getItem('userID');
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getActiveMaintenanceLog`, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userID: userID })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch active maintenance log');
+            }
+            const result = await response.json();
+
+            if (result.success) {
+              setActiveMaintenanceLog(result.data);
+            } else {
+                throw new Error(result.message || 'Failed to fetch active maintenance log');
+            }
+        } catch (error) {
+            console.error('Error fetching active maintenance log:', error);
+        } finally {
+            setLoading(false);
+        }
+        };
+
+        fetchActiveMaintenanceLog();
+    }, [refreshPage]); 
+
+
+    useEffect(() => {
+      const fetchPreviousMaintenanceLogs = async () => {
+          try {
+            const userID = localStorage.getItem('userID');
+              const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getPreviousMaintenanceLogsForEmployee`, {
+                  method: 'POST',
+                  mode: 'cors',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ userID: userID })
+              });
+              
+              if (!response.ok) {
+                  throw new Error('Failed to fetch previous maintenance logs');
+              }
+              const result = await response.json();
+  
+              if (result.success) {
+                setPreviousMaintenanceLogs(result.data);
+              } else {
+                  throw new Error(result.message || 'Failed to fetch previous maintenance logs');
+              }
+          } catch (error) {
+              console.error('Error fetching previous maintenance logs:', error);
+          } finally {
+              setLoading(false);
+          }
+          };
+  
+          fetchPreviousMaintenanceLogs();
+      }, [refreshPage]); 
+
 
     function isDateValid(date) {
       const today = new Date();
@@ -26,41 +134,82 @@ const Dashboard = ({ setActiveTab }) => {
       return date >= minDate && date <= maxDate;
     }
   
-    function checkError()
+    function checkCreationError()
     {
         if ( formData.maintenanceLogName === "")
         {
-            setError("Give the maintenance log a name");
+          setCreationError("Give the maintenance log a name");
             return true;
         }
         if ( formData.maintenanceLogDescription === "")
         {
-            setError("Give the maintenance log a description");
+          setCreationError("Give the maintenance log a description");
             return true;
         }
         if ( formData.maintenanceLogEstimatedPrice === "")
         {
-            setError("Give the estimated cost for the maintenance log");
+          setCreationError("Give the estimated cost for the maintenance log");
             return true;
         }
-        if ( formData.birthday === "")
+        if ( formData.maintenanceLogExpectedCompletionDate === "")
         {
-            setError("Give the expected maintenance completion date");
+          setCreationError("Give the expected maintenance completion date");
             return true;
         }
         if (!isDateValid(formData.maintenanceLogExpectedCompletionDate))
         {
-            setError("Give a valid maintenance completion date within this year")
+          setCreationError("Give a valid maintenance completion date within this year")
             return true;
         }          
         
-        setError("");
+        setCreationError("");
         return false;
     }
 
     useEffect(() => {
-        checkError();
+      checkCreationError();
     }, [formData])
+
+    function checkUpdateError()
+    {
+        if ( activeMaintenanceLog === null)
+        {
+          setUpdateError("No maintenance log active");
+            return true;
+        }
+        if ( activeMaintenanceLog.maintenance_name === "")
+        {
+          setCreationError("Give the maintenance log a name");
+            return true;
+        }
+        if ( activeMaintenanceLog.maintenance_description === "")
+        {
+          setUpdateError("Give the maintenance log a description");
+            return true;
+        }
+        if ( activeMaintenanceLog.maintenance_cost === "")
+        {
+          setUpdateError("Give the estimated cost for the maintenance log");
+            return true;
+        }
+        if ( activeMaintenanceLog.expected_completion_date === "")
+        {
+          setUpdateError("Give the expected maintenance completion date");
+            return true;
+        }
+        if (!isDateValid(activeMaintenanceLog.expected_completion_date))
+        {
+          setUpdateError("Give a valid maintenance completion date within this year")
+            return true;
+        }          
+        
+        setUpdateError("");
+        return false;
+    }
+
+    useEffect(() => {
+      checkUpdateError();
+    }, [activeMaintenanceLog])
 
 
 
@@ -73,7 +222,6 @@ const Dashboard = ({ setActiveTab }) => {
           expectedDate : formData.maintenanceLogExpectedCompletionDate,
           attractionID : employeeAttraction.attraction_id
         }
-        console.log(dataToSend);
         const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/createMaintenanceLog`, {
             method: 'POST',
             credentials: 'include',
@@ -91,7 +239,6 @@ const Dashboard = ({ setActiveTab }) => {
               goBack();
           }
       } catch (error) {
-        console.log(`Error creating maintenance log: ${error}`)
         console.error('Error creating maintenance log:', error);
         alertShown.current = true;
         alert("Error creating maintenance log ");
@@ -103,7 +250,6 @@ const Dashboard = ({ setActiveTab }) => {
         const dataToSend = {
           log_id : activeMaintenanceLog.log_id
         }
-        console.log(dataToSend);
         const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/closeMaintenanceLog`, {
             method: 'POST',
             credentials: 'include',
@@ -118,17 +264,26 @@ const Dashboard = ({ setActiveTab }) => {
           }
           const data = await response.json();
           if (data.success) {
-            console.log("SUCESSSSSSSS");
               setActiveMaintenanceLog(null);
               //window.location.reload();
           }
       } catch (error) {
-        console.log(`Error close maintenance log: ${error}`)
         console.error('Error close maintenance log:', error);
         alertShown.current = true;
         alert("Error close maintenance log ");
       }
     }
+
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      //return date.ToString();
+      return date.toLocaleDateString('en-US', {
+        timeZone: 'UTC',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    };
 
     const saveEdit = async () => {
       try {
@@ -139,7 +294,6 @@ const Dashboard = ({ setActiveTab }) => {
           cost : activeMaintenanceLog.maintenance_cost,
           expected_completion_date : activeMaintenanceLog.expected_completion_date
         }
-        console.log(dataToSend);
         const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/editMaintenanceLog`, {
             method: 'POST',
             credentials: 'include',
@@ -154,84 +308,15 @@ const Dashboard = ({ setActiveTab }) => {
           }
           const data = await response.json();
           if (data.success) {
-            console.log("SUCESSSSSSSS");
               setIsEditing(false);
               //window.location.reload();
           }
       } catch (error) {
-        console.log(`Error edit maintenance log: ${error}`)
         console.error('Error edit maintenance log:', error);
         alertShown.current = true;
         alert("Error edit maintenance log ");
       }
     }
-    
-    useEffect(() => {
-        const fetchAttraction = async () => {
-            try {
-              const userID = localStorage.getItem('userID');
-                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getEmployeeAssignedAttraction`, {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ userID: userID })
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to fetch attractions');
-                }
-                const result = await response.json();
-
-                if (result.success) {
-                  setEmployeeAttraction(result.data);
-                } else {
-                    throw new Error(result.message || 'Failed to fetch attractions');
-                }
-            } catch (error) {
-                console.error('Error fetching attractions:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchAttraction();
-    }, [refreshPage]);
-
-      
-    useEffect(() => {
-      const fetchActiveMaintenanceLog = async () => {
-          try {
-            const userID = localStorage.getItem('userID');
-              const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getActiveMaintenanceLog`, {
-                  method: 'POST',
-                  mode: 'cors',
-                  headers: {
-                      'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({ userID: userID })
-              });
-              
-              if (!response.ok) {
-                  throw new Error('Failed to fetch active maintenance log');
-              }
-              const result = await response.json();
-
-              if (result.success) {
-                setActiveMaintenanceLog(result.data);
-              } else {
-                  throw new Error(result.message || 'Failed to fetch active maintenance log');
-              }
-          } catch (error) {
-              console.error('Error fetching active maintenance log:', error);
-          } finally {
-              setLoading(false);
-          }
-      };
-
-      fetchActiveMaintenanceLog();
-  }, [refreshPage]); 
 
     function cancelEdit()
     {
@@ -244,6 +329,7 @@ const Dashboard = ({ setActiveTab }) => {
     {
       setRefreshPage(!refreshPage);
       setStep(1);
+      setIsEditing(false);
       setFormData({
         maintenanceLogName : "",
         maintenanceLogDescription : "",
@@ -254,22 +340,44 @@ const Dashboard = ({ setActiveTab }) => {
     
 
 
+    function swapTabs(isActiveLog)
+    {
+      if(isActiveLog !== showActiveLog)
+      {
+        goBack();
+        setShowActiveLog(isActiveLog);
+      }
+    }
 
 
-
-
-    console.log(activeMaintenanceLog);
 
     
     return (
       <div className="dashboard-container">
         <div className="content-header">
             <h2>Your Dashboard</h2>
+            <div className="filter-buttons">
+              <button
+                className={showActiveLog ? "active-filter" : ""}
+                onClick={() => swapTabs(true)}
+              >
+                Active Log
+              </button>
+              <button
+                className={!showActiveLog ? "active-filter" : ""}
+                onClick={() => swapTabs(false)}
+              >
+                Previous Logs
+              </button>
+            </div>
         </div>
         {loading ? (
           <p className="activities-intro">Loading your page...</p>
-        ):
+        ): (
+          
           <>
+          {showActiveLog ? (<>
+
           {employeeAttraction === null ? (
             <p className="activities-intro">You have not been assigned an attraction, notify your manager.</p>
           ) : (
@@ -299,7 +407,7 @@ const Dashboard = ({ setActiveTab }) => {
                           //const onlyLettersAndSpaces = e.target.value.replace(/[^a-zA-Z\s]/g, ""); // Allow letters and spaces
                           setActiveMaintenanceLog({ ...activeMaintenanceLog, maintenance_name: e.target.value });
                       }} 
-                      disabled = {!isEditing}
+                      disabled = {true}
                       placeholder="Name for Maintenance Log"
                       maxLength="200"
                       minLength="1"
@@ -384,14 +492,19 @@ const Dashboard = ({ setActiveTab }) => {
                       </button>   
                   </div>
                   ) : (
+                    <>
+                    {updateError !== "" && (<p className="error-message">{updateError}</p>)}
                     <div className="attraction-footer">
                       <button className="attraction-button" onClick={() => cancelEdit()}>
                           Cancel Edit
                       </button>
+                      { updateError === "" && (
                       <button className="attraction-button" onClick={() => saveEdit()}>
                           Save Edit
-                      </button>   
+                      </button>  
+                      )} 
                     </div>
+                    </>
                   )}
               </>
             ) : 
@@ -488,12 +601,12 @@ const Dashboard = ({ setActiveTab }) => {
                   />
                   </div>
 
-                  {error !== "" && (<p className="error-message">{error}</p>)}
+                  {creationError !== "" && (<p className="error-message">{creationError}</p>)}
                   <div className="attraction-footer">
                       <button className="attraction-button" onClick={() => goBack()}>
                           Cancel Maintenance
                       </button>
-                      {error === "" && (
+                      {creationError === "" && (
                       <button className="attraction-button" onClick={() => submitMaintenanceLog()}>
                           Submit Maintenance
                       </button>
@@ -507,8 +620,46 @@ const Dashboard = ({ setActiveTab }) => {
             </>
           
           )}
+        </>) : (
+          <>
+            {previousMaintenanceLogs === null ? (
+              <>
+                <p className="activities-intro">There are no previous maintenance logs on this attraction.</p>
+              </>) : (
+              <>
+              <div className="tasks-list">
+                {previousMaintenanceLogs.map((maintenance_log) => (
+                  <div
+                    key={maintenance_log.log_id}
+                    className={`task-card ${true ? 'completed-task' : 'pending-task'}`}
+                  >
+                    <div className="task-content">
+                      <div className="task-header">
+                        <h3>
+                          {maintenance_log.maintenance_name || 'Maintenance log'}
+                          <span className={`task-status ${true ? 'status-completed' : 'status-pending'}`}>
+                            {true ? 'Completed' : 'Pending'}
+                          </span>
+                        </h3>
+                        <p >Start Date: {formatDate(maintenance_log.maintenance_date)}</p>
+                        <p >Expected Date: {formatDate(maintenance_log.expected_completion_date)}</p>
+                        <p >End Date: {formatDate(maintenance_log.finalized_date)}</p>
+                      </div>
+                      <div className="task-details">
+                        <p><strong>Description:</strong> {maintenance_log.maintenance_description}</p>
+                        {/*task.merchandise_id && <p><strong>Merchandise ID:</strong> {task.merchandise_id}</p>*/}
+                      </div>
+                      
+                    </div>
+                  </div>
+                ))}
+              </div>
+              </>)}
+
+
+          </>)}
           </>
-        }
+        )}
 
       </div>
     );

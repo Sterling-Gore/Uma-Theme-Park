@@ -26,6 +26,7 @@ const { updateAttractionDescription } = require('./employeePortal/updateAttracti
 const { updateAttractionCapacity } = require('./employeePortal/updateAttractionCapacity');
 const { updateAttractionDuration } = require('./employeePortal/updateAttractionDuration');
 const { getEmployeeAssignedAttraction } = require('./employeePortal/getEmployeeAssignedAttraction');
+const { getPreviousMaintenanceLogsForEmployee } = require('./employeePortal/getPreviousMaintenanceLogsForEmployee')
 const { getActiveMaintenanceLog } = require('./employeePortal/getActiveMaintenanceLog');
 const { createMaintenanceLog } = require('./employeePortal/createMaintenanceLog');
 const { closeMaintenanceLog } = require('./employeePortal/closeMaintenanceLog');
@@ -145,6 +146,9 @@ const server = http.createServer(async (req, res) => {
     }
     else if(req.url === '/getEmployeeAssignedAttraction' && req.method === 'POST'){
         getEmployeeAssignedAttraction(req, res)
+    }
+    else if(req.url === '/getPreviousMaintenanceLogsForEmployee' && req.method === 'POST'){
+        getPreviousMaintenanceLogsForEmployee(req, res)
     }
     else if(req.url === '/getActiveMaintenanceLog' && req.method === 'POST'){
         getActiveMaintenanceLog(req, res)
