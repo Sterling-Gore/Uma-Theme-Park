@@ -46,7 +46,7 @@ const { getAttractionName } = require('./attractions/getAttractionName');
 const { getFeedback } = require('./employeePortal/getFeedback');
 const { getTasks } = require('./employeePortal/getTasks')
 const { updateTaskStatus } = require('./employeePortal/updateTaskStatus')
-const { updateEmployeeProfile} = require('./employeePortal/updateEmployeeProfile.js')
+const { updateEmployeeProfile} = require('./employeePortal/updateEmployeeProfile')
 
 const PORT = process.env.PORT || 7000;
 
