@@ -1,103 +1,49 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from "react";
 
-const Profile = ({ setActiveTab }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phoneNumber: '',
-    password: ''
-  });
+export default function UpdateEmployeeForm() {
+    const [employeeData, setEmployeeData] = useState({
+        employee_id: "",
+        first_name: "",
+        last_name: "",
+        email: "",
+        password: ""
+    });
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+    const handleChange = (e) => {
+        setEmployeeData({
+            ...employeeData,
+            [e.target.name]: e.target.value
+        });
+    };
 
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/updateEmployeeProfile`, {
+                method: 'PUT',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(employeeData)
+            });
 
-  const handleSave = () => {
-    setIsEditing(false);
-    console.log('Updated Data:', formData);
-  };
+            const result = await response.json();
+            alert(result.message);
+        } catch (error) {
+            console.error("Error updating employee profile:", error);
+            alert("Failed to update employee profile");
+        }
+    };
 
-  return (
-    <div className="max-w-xl mx-auto p-6 bg-white shadow-md rounded-md">
-      <h2 className="text-2xl font-semibold text-center mb-4">My Account</h2>
-      <div className="flex justify-end">
-        {!isEditing && (
-          <button onClick={handleEdit} className="px-4 py-2 bg-gray-300 rounded">Edit</button>
-        )}
-      </div>
-      <div className="grid grid-cols-2 gap-4 mt-4">
-        <div>
-          <label className="block font-medium">First Name</label>
-          <input 
-            type="text" 
-            name="firstName" 
-            value={formData.firstName} 
-            onChange={handleChange} 
-            disabled={!isEditing}
-            className="w-full border p-2 rounded"
-          />
-        </div>
-        <div>
-          <label className="block font-medium">Last Name</label>
-          <input 
-            type="text" 
-            name="lastName" 
-            value={formData.lastName} 
-            onChange={handleChange} 
-            disabled={!isEditing}
-            className="w-full border p-2 rounded"
-          />
-        </div>
-      </div>
-      <div className="mt-4">
-        <label className="block font-medium">Email</label>
-        <input 
-          type="email" 
-          name="email" 
-          value={formData.email} 
-          onChange={handleChange} 
-          disabled={!isEditing}
-          className="w-full border p-2 rounded"
-        />
-      </div>
-      <div className="mt-4">
-        <label className="block font-medium">Phone Number</label>
-        <input 
-          type="text" 
-          name="phoneNumber" 
-          value={formData.phoneNumber} 
-          onChange={handleChange} 
-          disabled={!isEditing}
-          className="w-full border p-2 rounded"
-        />
-      </div>
-      <div className="mt-4">
-        <label className="block font-medium">Password</label>
-        <input 
-          type="password" 
-          name="password" 
-          value={formData.password} 
-          onChange={handleChange} 
-          disabled={!isEditing}
-          className="w-full border p-2 rounded"
-        />
-      </div>
-      {isEditing && (
-        <div className="mt-4 text-right">
-          <button onClick={handleSave} className="px-4 py-2 bg-blue-500 text-white rounded">Save</button>
-        </div>
-      )}
-      <div className="mt-4 text-center">
-        <button onClick={() => setActiveTab('dashboard')} className="px-4 py-2 bg-gray-500 text-white rounded">Back to Dashboard</button>
-      </div>
-    </div>
-  );
-};
-
-export default Profile;
+    return (
+        <form onSubmit={handleSubmit}>
+            <input type="text" name="employee_id" placeholder="Employee ID" value={employeeData.employee_id} onChange={handleChange} required />
+            <input type="text" name="first_name" placeholder="First Name" value={employeeData.first_name} onChange={handleChange} required />
+            <input type="text" name="last_name" placeholder="Last Name" value={employeeData.last_name} onChange={handleChange} required />
+            <input type="email" name="email" placeholder="Email" value={employeeData.email} onChange={handleChange} required />
+            <input type="password" name="password" placeholder="New Password" value={employeeData.password} onChange={handleChange} required />
+            <button type="submit">Update Profile</button>
+        </form>
+    );
+}
