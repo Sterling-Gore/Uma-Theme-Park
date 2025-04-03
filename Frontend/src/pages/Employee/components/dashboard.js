@@ -3,12 +3,14 @@ import React, { useState, useEffect, useRef } from "react";
 const Dashboard = ({ setActiveTab }) => {
     const alertShown = useRef(false);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [creationError, setCreationError] = useState('');
+    const [updateError, setUpdateError] = useState('');
     const [employeeAttraction, setEmployeeAttraction] = useState(null);
     const [step, setStep] = useState(1);
     const [refreshPage, setRefreshPage] = useState(false);
     const [activeMaintenanceLog, setActiveMaintenanceLog] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [showActiveLog, setShowActiveLog] = useState(true);
 
     const[ formData, setFormData] = useState({
       maintenanceLogName : "",
@@ -26,41 +28,82 @@ const Dashboard = ({ setActiveTab }) => {
       return date >= minDate && date <= maxDate;
     }
   
-    function checkError()
+    function checkCreationError()
     {
         if ( formData.maintenanceLogName === "")
         {
-            setError("Give the maintenance log a name");
+          setCreationError("Give the maintenance log a name");
             return true;
         }
         if ( formData.maintenanceLogDescription === "")
         {
-            setError("Give the maintenance log a description");
+          setCreationError("Give the maintenance log a description");
             return true;
         }
         if ( formData.maintenanceLogEstimatedPrice === "")
         {
-            setError("Give the estimated cost for the maintenance log");
+          setCreationError("Give the estimated cost for the maintenance log");
             return true;
         }
-        if ( formData.birthday === "")
+        if ( formData.maintenanceLogExpectedCompletionDate === "")
         {
-            setError("Give the expected maintenance completion date");
+          setCreationError("Give the expected maintenance completion date");
             return true;
         }
         if (!isDateValid(formData.maintenanceLogExpectedCompletionDate))
         {
-            setError("Give a valid maintenance completion date within this year")
+          setCreationError("Give a valid maintenance completion date within this year")
             return true;
         }          
         
-        setError("");
+        setCreationError("");
         return false;
     }
 
     useEffect(() => {
-        checkError();
+      checkCreationError();
     }, [formData])
+
+    function checkUpdateError()
+    {
+        if ( activeMaintenanceLog === null)
+        {
+          setUpdateError("No maintenance log active");
+            return true;
+        }
+        if ( activeMaintenanceLog.maintenance_name === "")
+        {
+          setCreationError("Give the maintenance log a name");
+            return true;
+        }
+        if ( activeMaintenanceLog.maintenance_description === "")
+        {
+          setUpdateError("Give the maintenance log a description");
+            return true;
+        }
+        if ( activeMaintenanceLog.maintenance_cost === "")
+        {
+          setUpdateError("Give the estimated cost for the maintenance log");
+            return true;
+        }
+        if ( activeMaintenanceLog.expected_completion_date === "")
+        {
+          setUpdateError("Give the expected maintenance completion date");
+            return true;
+        }
+        if (!isDateValid(activeMaintenanceLog.expected_completion_date))
+        {
+          setUpdateError("Give a valid maintenance completion date within this year")
+            return true;
+        }          
+        
+        setUpdateError("");
+        return false;
+    }
+
+    useEffect(() => {
+      checkUpdateError();
+    }, [activeMaintenanceLog])
 
 
 
@@ -244,6 +287,7 @@ const Dashboard = ({ setActiveTab }) => {
     {
       setRefreshPage(!refreshPage);
       setStep(1);
+      setIsEditing(false);
       setFormData({
         maintenanceLogName : "",
         maintenanceLogDescription : "",
@@ -254,7 +298,14 @@ const Dashboard = ({ setActiveTab }) => {
     
 
 
-
+    function swapTabs(isActiveLog)
+    {
+      if(isActiveLog !== showActiveLog)
+      {
+        goBack();
+        setShowActiveLog(isActiveLog);
+      }
+    }
 
 
 
@@ -265,11 +316,28 @@ const Dashboard = ({ setActiveTab }) => {
       <div className="dashboard-container">
         <div className="content-header">
             <h2>Your Dashboard</h2>
+            <div className="filter-buttons">
+              <button
+                className={showActiveLog ? "active-filter" : ""}
+                onClick={() => swapTabs(true)}
+              >
+                Active Log
+              </button>
+              <button
+                className={!showActiveLog ? "active-filter" : ""}
+                onClick={() => swapTabs(false)}
+              >
+                Previous Logs
+              </button>
+            </div>
         </div>
         {loading ? (
           <p className="activities-intro">Loading your page...</p>
-        ):
+        ): (
+          
           <>
+          {showActiveLog ? (<>
+
           {employeeAttraction === null ? (
             <p className="activities-intro">You have not been assigned an attraction, notify your manager.</p>
           ) : (
@@ -299,7 +367,7 @@ const Dashboard = ({ setActiveTab }) => {
                           //const onlyLettersAndSpaces = e.target.value.replace(/[^a-zA-Z\s]/g, ""); // Allow letters and spaces
                           setActiveMaintenanceLog({ ...activeMaintenanceLog, maintenance_name: e.target.value });
                       }} 
-                      disabled = {!isEditing}
+                      disabled = {true}
                       placeholder="Name for Maintenance Log"
                       maxLength="200"
                       minLength="1"
@@ -384,14 +452,19 @@ const Dashboard = ({ setActiveTab }) => {
                       </button>   
                   </div>
                   ) : (
+                    <>
+                    {updateError !== "" && (<p className="error-message">{updateError}</p>)}
                     <div className="attraction-footer">
                       <button className="attraction-button" onClick={() => cancelEdit()}>
                           Cancel Edit
                       </button>
+                      { updateError === "" && (
                       <button className="attraction-button" onClick={() => saveEdit()}>
                           Save Edit
-                      </button>   
+                      </button>  
+                      )} 
                     </div>
+                    </>
                   )}
               </>
             ) : 
@@ -488,12 +561,12 @@ const Dashboard = ({ setActiveTab }) => {
                   />
                   </div>
 
-                  {error !== "" && (<p className="error-message">{error}</p>)}
+                  {creationError !== "" && (<p className="error-message">{creationError}</p>)}
                   <div className="attraction-footer">
                       <button className="attraction-button" onClick={() => goBack()}>
                           Cancel Maintenance
                       </button>
-                      {error === "" && (
+                      {creationError === "" && (
                       <button className="attraction-button" onClick={() => submitMaintenanceLog()}>
                           Submit Maintenance
                       </button>
@@ -507,8 +580,14 @@ const Dashboard = ({ setActiveTab }) => {
             </>
           
           )}
+        </>) : (
+          <>
+
+
+
+          </>)}
           </>
-        }
+        )}
 
       </div>
     );
