@@ -1,4 +1,5 @@
 const pool = require("../database");
+const bcrypt = require('bcrypt');
 
 async function updateEmployeeProfile(req, res) {
     try {
@@ -11,9 +12,11 @@ async function updateEmployeeProfile(req, res) {
         req.on('end', async () => {
             try {
                 const { employee_id, first_name, last_name, email, password } = JSON.parse(body);
-                
+
+                const newPassword = await bcrypt.hash(password, 10);
+
                 const updateEmployeeQuery = "UPDATE employee SET first_name = ?, last_name = ?, email = ?, password = ? WHERE employee_id = ?";
-                await pool.execute(updateEmployeeQuery, [first_name, last_name, email, password, employee_id]);
+                await pool.execute(updateEmployeeQuery, [first_name, last_name, email, newPassword, employee_id]);
 
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 return res.end(JSON.stringify({ message: "Employee profile updated successfully" }));
