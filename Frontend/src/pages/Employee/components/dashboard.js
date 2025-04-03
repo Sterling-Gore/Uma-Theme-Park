@@ -641,9 +641,9 @@ const Dashboard = ({ setActiveTab }) => {
                             {true ? 'Completed' : 'Pending'}
                           </span>
                         </h3>
-                        <p className="task-date">{formatDate(maintenance_log.maintenance_date)}</p>
-                        
-                        <p className="task-date">{formatDate(maintenance_log.expected_completion_date)}</p>
+                        <p >Start Date: {formatDate(maintenance_log.maintenance_date)}</p>
+                        <p >Expected Date: {formatDate(maintenance_log.expected_completion_date)}</p>
+                        <p >End Date: {formatDate(maintenance_log.finalized_date)}</p>
                       </div>
                       <div className="task-details">
                         <p><strong>Description:</strong> {maintenance_log.maintenance_description}</p>
