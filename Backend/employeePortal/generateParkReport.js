@@ -13,6 +13,7 @@ const generateParkReport = async (req, res) => {
             attractionVisits: await getAttractionVisits(),
             totalTickets: await getTotalTickets(startDate, endDate),
             popularTicketType: await getPopularTicketType(startDate, endDate),
+            totalFoodPasses: await getTotalFoodPasses(startDate, endDate)
         };
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -117,5 +118,28 @@ const getPopularTicketType = async (startDate, endDate) => {
 
     return ticketTypes[0];
 };
+const getTotalFoodPasses = async (startDate, endDate) => {
+    let query = `
+        SELECT COUNT(*) AS totalFoodPasses
+        FROM ticket_dates td
+        JOIN ticket_receipt tr ON td.ticket_receipt_id = tr.ticket_receipt_id
+        WHERE td.includes_food_pass = 1
+    `;
+    const params = [];
+
+    if (startDate) {
+        query += ` AND tr.purchase_date >= ?`;
+        params.push(startDate);
+    }
+
+    if (endDate) {
+        query += ` AND tr.purchase_date <= ?`;
+        params.push(endDate);
+    }
+
+    const [rows] = await pool.query(query, params);
+    return rows[0].totalFoodPasses || 0;
+};
+
 
 module.exports = { generateParkReport };
