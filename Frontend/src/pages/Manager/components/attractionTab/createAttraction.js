@@ -1,13 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import "../../../App.css";
+import "../../../../App.css";
 
-const CreateDining = ({ setActiveTab }) => {
+const CreateAttraction = ({ setActiveTab }) => {
     const alertShown = useRef(false);
     const [formData, setFormData] = useState({
-        dining_name : "",
-        dining_status : "",
-        dining_description : "",
-        dining_image : null
+        attraction_name : "",
+        attraction_capacity : "",
+        attraction_duration : "",
+        attraction_status : "",
+        attraction_description : "",
+        attraction_image : null
     });
     const [imagePreview, setImagePreview] = useState(null);
     const [error, setError] = useState('');
@@ -19,24 +21,34 @@ const CreateDining = ({ setActiveTab }) => {
     }, [formData]);
 
     function checkError(){
-        if(formData.dining_name == "")
+        if(formData.attraction_name == "")
         {
-            setError("Enter a name for the dining");
+            setError("Enter a name for the attraction");
             return false;
         }
-        if(formData.dining_description == "")
+        if(formData.attraction_description == "")
         {
-            setError("Enter the description for the dining");
+            setError("Enter the description for the attraction");
             return false;
         }
-        if(formData.dining_status == "")
+        if(formData.attraction_capacity == "")
         {
-            setError("Enter the status for the dining");
+            setError("Enter the capacity for the attraction");
             return false;
         }
-        if(formData.dining_image == null)
+        if(formData.attraction_duration.length <  8)
         {
-            setError("Enter an image of the dining");
+            setError("Enter the duration for the attraction");
+            return false;
+        }
+        if(formData.attraction_status == "")
+        {
+            setError("Enter the status for the attraction");
+            return false;
+        }
+        if(formData.attraction_image == null)
+        {
+            setError("Enter an image of the attraction");
             return false;
         }
         setError("");
@@ -55,13 +67,15 @@ const CreateDining = ({ setActiveTab }) => {
 
                 console.log(base64String);
                 const dataToSend = {
-                    name : formData.dining_name,
-                    description : formData.dining_description,
-                    status : formData.dining_status,
+                    name : formData.attraction_name,
+                    capacity : Number(formData.attraction_capacity),
+                    duration : formData.attraction_duration,
+                    description : formData.attraction_description,
+                    status : formData.attraction_status,
                     image : base64String
                 }
 
-                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/createDining`, {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/createAttraction`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -72,23 +86,23 @@ const CreateDining = ({ setActiveTab }) => {
 
                 
                 if (!response.ok) {
-                    throw new Error('Failed to create dining');
+                    throw new Error('Failed to create attraction');
                 }
                 const data = await response.json();
                 if (data.success) {
-                    setActiveTab('handleDining')
+                    setActiveTab('handleAttractions')
                     
                 }
             } catch (error) {
-                console.log(`Error creating dining: ${error}`)
-                console.error('Error creating dining:', error);
+                console.log(`Error creating attraction: ${error}`)
+                console.error('Error creating attraction:', error);
                 alertShown.current = true;
-                alert("Error creating dining ");
+                alert("Error creating attraction ");
             }
         };
 
         const reader = new FileReader();
-        reader.readAsDataURL(formData.dining_image);
+        reader.readAsDataURL(formData.attraction_image);
         reader.onload = () => {
             const base64String = reader.result.split(',')[1]; // Remove metadata prefix
             submitData(base64String);
@@ -98,7 +112,7 @@ const CreateDining = ({ setActiveTab }) => {
 
     const handleImageChange = (e) => {
         const file = e.target.files[0]; // Get selected file
-        setFormData({ ...formData, dining_image: file });
+        setFormData({ ...formData, attraction_image: file });
         if (file) {
             const reader = new FileReader();
             reader.readAsDataURL(file); // Convert file to Base64
@@ -111,37 +125,37 @@ const CreateDining = ({ setActiveTab }) => {
     return (
         <div className="employee-form-container">
         <div className="content-header">
-            <h2>Create New Dining</h2>
+            <h2>Create New Attraction</h2>
         </div>
         
         <div /*onSubmit={handleSubmit}*/ className="employee-form">
             <div className="form-group">
-            <label htmlFor="attraction_name">Dining Name</label>
+            <label htmlFor="attraction_name">Attraction Name</label>
             <input
                 type="text"
                 id="attraction_name"
                 name="attraction_name"
-                value={formData.dining_name || ''}
+                value={formData.attraction_name || ''}
                 onChange={(e) => {
                     //const onlyLettersAndSpaces = e.target.value.replace(/[^a-zA-Z\s]/g, ""); // Allow letters and spaces
-                    setFormData({ ...formData, dining_name: e.target.value });
+                    setFormData({ ...formData, attraction_name: e.target.value });
                 }} 
-                placeholder="Dining Name"
-                maxLength="100"
+                placeholder="Attraction Name"
+                maxLength="50"
                 minLength="1"
                 required
             />
             </div>
 
             <div className="form-group">
-            <label htmlFor="attraction_description">Dining Description</label>
+            <label htmlFor="attraction_description">Attraction Description</label>
             <textarea
                 className="description-box"
                 id="attraction_description"
                 name="attraction_description"
-                value={formData.dining_description || ''}
+                value={formData.attraction_description || ''}
                 onChange={(e) => {
-                    setFormData({ ...formData, dining_description: e.target.value });
+                    setFormData({ ...formData, attraction_description: e.target.value });
                 }}   
                 placeholder="Description"
                 maxLength="200"
@@ -150,18 +164,55 @@ const CreateDining = ({ setActiveTab }) => {
             />
             </div>
 
-    
+            <div className="form-group">
+            <label htmlFor="attraction_capacity">Attraction Capacity</label>
+            <input
+                type="text"
+                id="attraction_capacity"
+                name="attraction_capacity"
+                value={formData.attraction_capacity || ''}
+                onChange={(e) => {
+                    let digitsOnly = e.target.value.replace(/\D/g, ""); 
+                    setFormData({ ...formData, attraction_capacity: digitsOnly });
+                }} 
+                placeholder="Capacity For Attraction"
+                maxLength="4"
+                minLength="1"
+                required
+            />
+            </div>
+
 
             <div className="form-group">
-            <label htmlFor="attraction_status">Dining Status</label>
+            <label htmlFor="attraction_duration">Attraction Duration</label>
+            <input
+                type="text"
+                id="attraction_duration"
+                name="attraction_duration"
+                value={formData.attraction_duration || ''}
+                onChange={ (e) => {
+                    let value = e.target.value.replace(/\D/g, ""); // Remove non-digits
+                    value = value.match(/.{1,2}/g)?.join(":") || "";
+                    value = value.slice(0, 8);
+                    setFormData({ ...formData, attraction_duration: value });
+                }}  
+                placeholder="Attraction Duration (00:00:00)"
+                maxLength="8"
+                minLength="1"
+                required
+            />
+            </div>
+
+            <div className="form-group">
+            <label htmlFor="attraction_status">Attraction Status</label>
             <select 
                 id="attraction_status"
                 name="attraction_status"
                 //className="custom-select"
                 //className="form-input"
-                value={formData.dining_status || ''}
+                value={formData.attraction_status || ''}
                 onChange={(e) => {
-                    setFormData({ ...formData, dining_status: e.target.value });
+                    setFormData({ ...formData, attraction_status: e.target.value });
                 }}
                 required
             >
@@ -173,12 +224,12 @@ const CreateDining = ({ setActiveTab }) => {
             </div>
 
             <div className="form-group">
-            <label htmlFor="attraction_image">Image For Dining</label>
+            <label htmlFor="attraction_image">Image For Attraction</label>
             <input
                 type="file"
                 accept="image/*"
-                id="dining_image"
-                name="dining_image"
+                id="attraction_image"
+                name="attraction_image"
                 //value={formData.merchandise_stock}
                 onChange= {handleImageChange}
                 //placeholder="Amount In Stock For Merchandise"
@@ -202,7 +253,7 @@ const CreateDining = ({ setActiveTab }) => {
                 <p className="error-message">{error}</p>
             ) : (
                 <button /*type="submit"*/ onClick={() => handleSubmit()} className="submit-btn">
-                    Create Dining
+                    Create Attraction
                 </button>
             )}
             
@@ -219,4 +270,4 @@ const CreateDining = ({ setActiveTab }) => {
     );
 };
 
-export default CreateDining;
+export default CreateAttraction;

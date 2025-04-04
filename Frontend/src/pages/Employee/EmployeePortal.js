@@ -4,17 +4,11 @@ import Sidebar from './components/Sidebar';
 import Dashboard from './components/dashboard';
 import Profile from './components/profile';
 import Tasks from './components/tasks';
-import HandleMerchandise from './components/HandleMerchandise';
-import CreateMerchandise from './components/createMerchandise';
-import HandleAttraction from './components/handleAttraction';
-import CreateAttraction from './components/createAttraction';
-import HandleDining from './components/handleDining';
-import CreateDining from './components/createDining';
-import Reports from './components/reports';
+
 import './EmployeePortal.css';
 import AuthContext from '../../context/AuthContext';
 import ShowFeedback from "./components/showFeedback";
-import AttractReport from "../Manager/components/attractReport";
+
 function EmployeePortal() {
   const navigate = useNavigate();
   const { isLoggedIn, userType, isLoading } = useContext(AuthContext);
@@ -90,15 +84,7 @@ function EmployeePortal() {
           {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
           {activeTab === 'profile' && <Profile setActiveTab={setActiveTab} />}
           {activeTab === 'tasks' && <Tasks setActiveTab={setActiveTab} />}
-          {activeTab === 'handleMerchandise' && <HandleMerchandise setActiveTab={setActiveTab} />}
-          {activeTab === 'createMerchandise' && <CreateMerchandise setActiveTab={setActiveTab} />}
-          {activeTab === 'handleAttractions' && <HandleAttraction setActiveTab={setActiveTab} />}
-          {activeTab === 'createAttraction' && <CreateAttraction setActiveTab={setActiveTab} />}
-          {activeTab === 'handleDining' && <HandleDining setActiveTab={setActiveTab} />}
-          {activeTab === 'createDining' && <CreateDining setActiveTab={setActiveTab} />}
-          {activeTab === 'reports' && <Reports setActiveTab={setActiveTab} />}
           {activeTab === 'showFeedback' && <ShowFeedback setActiveTab={setActiveTab} />}
-          {activeTab === 'AttractReport' && <AttractReport setActiveTab={setActiveTab} />}
 
 
         </div>

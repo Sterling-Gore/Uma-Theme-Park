@@ -1,81 +1,44 @@
 import React, { useState, useRef, useEffect } from 'react';
-import "../../../App.css";
+import "../../../../App.css";
 
-const CreateMerchandise = ({ setActiveTab }) => {
+const CreateDining = ({ setActiveTab }) => {
     const alertShown = useRef(false);
-    const [merchandises, setMerchandises] = useState([]);
     const [formData, setFormData] = useState({
-        merchandise_name : "",
-        merchandise_price : "",
-        merchandise_stock : "",
-        merchandise_image : null
+        dining_name : "",
+        dining_status : "",
+        dining_description : "",
+        dining_image : null
     });
     const [imagePreview, setImagePreview] = useState(null);
-    const [refreshMerchandise, setRefreshMerchandise] = useState(false);
     const [error, setError] = useState('');
-    //const [attractions, setAttractions] = useState([]);
-    //const [loading, setLoading] = useState(true);
-    //const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchMerchandise = async () => {
-            try {
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getMerchandise`, {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                'Content-Type': 'application/json'
-                }
-            });
-            
-            if (!response.ok) {
-                throw new Error('Failed to fetch merchandise');
-            }
-            
-            const data = await response.json();
-            if (data.success) {
-                //setEmployees(data.data);
-                setMerchandises(data.data);
-                console.log(data.data);
-
-                //console.log(merch);
-                
-            }
-            } catch (error) {
-            console.error('Error fetching merchandise:', error);
-            }
-        };
-
-        fetchMerchandise();
-        
-    }, [refreshMerchandise]);
+    
 
     useEffect(() => {
         checkError();
     }, [formData]);
 
     function checkError(){
-        if(formData.merchandise_name == "")
+        if(formData.dining_name == "")
         {
-            setError("Enter a name for the merchandise");
+            setError("Enter a name for the dining");
             return false;
         }
-        if(formData.merchandise_price == "")
+        if(formData.dining_description == "")
         {
-            setError("Enter a price for the merchandise");
+            setError("Enter the description for the dining");
             return false;
         }
-        if(formData.merchandise_stock == "")
+        if(formData.dining_status == "")
         {
-            setError("Enter the amount in stock");
+            setError("Enter the status for the dining");
             return false;
         }
-        if(formData.merchandise_image == null)
+        if(formData.dining_image == null)
         {
-            setError("Enter an image of the merchandise");
+            setError("Enter an image of the dining");
             return false;
         }
-        console.log(formData.merchandise_image);
         setError("");
         return true;
     }
@@ -92,13 +55,13 @@ const CreateMerchandise = ({ setActiveTab }) => {
 
                 console.log(base64String);
                 const dataToSend = {
-                    name : formData.merchandise_name,
-                    price : Number(formData.merchandise_price),
-                    stock : Number(formData.merchandise_stock),
+                    name : formData.dining_name,
+                    description : formData.dining_description,
+                    status : formData.dining_status,
                     image : base64String
                 }
 
-                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/createMerchandise`, {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/createDining`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -109,23 +72,23 @@ const CreateMerchandise = ({ setActiveTab }) => {
 
                 
                 if (!response.ok) {
-                    throw new Error('Failed to create merchandise');
+                    throw new Error('Failed to create dining');
                 }
                 const data = await response.json();
                 if (data.success) {
-                    setActiveTab('handleMerchandise')
+                    setActiveTab('handleDining')
                     
                 }
             } catch (error) {
-                console.log(`Error creating merchandise: ${error}`)
-                console.error('Error creating merchandise:', error);
+                console.log(`Error creating dining: ${error}`)
+                console.error('Error creating dining:', error);
                 alertShown.current = true;
-                alert("Error creating merchandise ");
+                alert("Error creating dining ");
             }
         };
 
         const reader = new FileReader();
-        reader.readAsDataURL(formData.merchandise_image);
+        reader.readAsDataURL(formData.dining_image);
         reader.onload = () => {
             const base64String = reader.result.split(',')[1]; // Remove metadata prefix
             submitData(base64String);
@@ -135,7 +98,7 @@ const CreateMerchandise = ({ setActiveTab }) => {
 
     const handleImageChange = (e) => {
         const file = e.target.files[0]; // Get selected file
-        setFormData({ ...formData, merchandise_image: file });
+        setFormData({ ...formData, dining_image: file });
         if (file) {
             const reader = new FileReader();
             reader.readAsDataURL(file); // Convert file to Base64
@@ -148,22 +111,22 @@ const CreateMerchandise = ({ setActiveTab }) => {
     return (
         <div className="employee-form-container">
         <div className="content-header">
-            <h2>Create New Merchandise</h2>
+            <h2>Create New Dining</h2>
         </div>
         
         <div /*onSubmit={handleSubmit}*/ className="employee-form">
             <div className="form-group">
-            <label htmlFor="merchandise_name">Merchandise Name</label>
+            <label htmlFor="attraction_name">Dining Name</label>
             <input
                 type="text"
-                id="merchandise_name"
-                name="merchandise_name"
-                value={formData.merchandise_name || ''}
+                id="attraction_name"
+                name="attraction_name"
+                value={formData.dining_name || ''}
                 onChange={(e) => {
                     //const onlyLettersAndSpaces = e.target.value.replace(/[^a-zA-Z\s]/g, ""); // Allow letters and spaces
-                    setFormData({ ...formData, merchandise_name: e.target.value });
+                    setFormData({ ...formData, dining_name: e.target.value });
                 }} 
-                placeholder="Merchandise Name"
+                placeholder="Dining Name"
                 maxLength="100"
                 minLength="1"
                 required
@@ -171,48 +134,51 @@ const CreateMerchandise = ({ setActiveTab }) => {
             </div>
 
             <div className="form-group">
-            <label htmlFor="merchandise_price">Price</label>
-            <input
-                type="text"
-                id="merchandise_price"
-                name="merchandise_price"
-                value={formData.merchandise_price || ''}
+            <label htmlFor="attraction_description">Dining Description</label>
+            <textarea
+                className="description-box"
+                id="attraction_description"
+                name="attraction_description"
+                value={formData.dining_description || ''}
                 onChange={(e) => {
-                    let digitsOnly = e.target.value.replace(/\D/g, ""); 
-                    setFormData({ ...formData, merchandise_price: digitsOnly });
-                }} 
-                placeholder="Price For Merchandise"
-                maxLength="3"
+                    setFormData({ ...formData, dining_description: e.target.value });
+                }}   
+                placeholder="Description"
+                maxLength="200"
                 minLength="1"
                 required
             />
             </div>
 
+    
+
             <div className="form-group">
-            <label htmlFor="merchandise_stock">Amount In Stock</label>
-            <input
-                type="text"
-                id="merchandise_stock"
-                name="merchandise_stock"
-                value={formData.merchandise_stock || ''}
+            <label htmlFor="attraction_status">Dining Status</label>
+            <select 
+                id="attraction_status"
+                name="attraction_status"
+                //className="custom-select"
+                //className="form-input"
+                value={formData.dining_status || ''}
                 onChange={(e) => {
-                    let digitsOnly = e.target.value.replace(/\D/g, ""); 
-                    setFormData({ ...formData, merchandise_stock: digitsOnly });
-                }} 
-                placeholder="Amount In Stock For Merchandise"
-                maxLength="3"
-                minLength="1"
+                    setFormData({ ...formData, dining_status: e.target.value });
+                }}
                 required
-            />
+            >
+                <option value="">Select Status</option>
+                <option value="Open">Open</option>
+                <option value="Maintenance">Maintenance</option>
+                <option value="Closed">Closed</option>
+            </select>
             </div>
 
             <div className="form-group">
-            <label htmlFor="merchandise_image">Image For Merchandise</label>
+            <label htmlFor="attraction_image">Image For Dining</label>
             <input
                 type="file"
                 accept="image/*"
-                id="merchandise_image"
-                name="merchandise_image"
+                id="dining_image"
+                name="dining_image"
                 //value={formData.merchandise_stock}
                 onChange= {handleImageChange}
                 //placeholder="Amount In Stock For Merchandise"
@@ -236,7 +202,7 @@ const CreateMerchandise = ({ setActiveTab }) => {
                 <p className="error-message">{error}</p>
             ) : (
                 <button /*type="submit"*/ onClick={() => handleSubmit()} className="submit-btn">
-                    Create Merchandise
+                    Create Dining
                 </button>
             )}
             
@@ -253,4 +219,4 @@ const CreateMerchandise = ({ setActiveTab }) => {
     );
 };
 
-export default CreateMerchandise;
+export default CreateDining;
