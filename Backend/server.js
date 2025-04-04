@@ -57,6 +57,7 @@ const { getTasks } = require('./employeePortal/getTasks')
 const { updateTaskStatus } = require('./employeePortal/updateTaskStatus')
 const { updateEmployeeProfile} = require('./employeePortal/employeeProfile/updateEmployeeProfile');
 const { generateFinanceReport } = require('./managerPortal/reports/financeReport');
+const { generateMaintenanceReport } = require('./managerPortal/reports/maintenanceReport');
 const { getEmployeeInfo } = require('./employeePortal/employeeProfile/getEmployeeInfo');
 const { updateEmployeePassword } = require('./employeePortal/employeeProfile/updateEmployeePassword');
 const { makeMerchOrder } = require('./employeePortal/makeMerchOrder');
@@ -246,6 +247,10 @@ const server = http.createServer(async (req, res) => {
     }
     else if(url.parse(req.url).pathname === '/financeReport' && req.method === 'GET') {
         generateFinanceReport(req, res)
+    }
+    
+    else if(url.parse(req.url).pathname === '/maintenanceReport' && req.method === 'GET') {
+        generateMaintenanceReport(req, res)
     }
 
     else if(url.parse(req.url).pathname === '/generateParkReport' && req.method === 'GET') {

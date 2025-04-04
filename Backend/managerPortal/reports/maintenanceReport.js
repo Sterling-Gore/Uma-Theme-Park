@@ -1,6 +1,6 @@
 const pool = require('../../database');
 
-const generateFinanceReport = async (req, res) => {
+const generateMaintenanceReport = async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
     const reportType = url.searchParams.get('reportType') || 'all';
     const startDate = url.searchParams.get('startDate');
@@ -23,16 +23,21 @@ const generateFinanceReport = async (req, res) => {
 
         switch (reportType) {
             case 'all':
-                data = await getTotalData(startDate, endDate, dateType);
+                data = await getTotalData(startDate, endDate, dateType, orderBy);
                 summary = await getTotalSummary(startDate, endDate, dateType);
                 break;
             case 'attraction':
-                data = await getAttractionData(startDate, endDate, dateType);
+                data = await getAttractionData(startDate, endDate, dateType, orderBy);
                 summary = await getAttractionSummary(startDate, endDate, dateType);
                 break;
             case 'dining':
-                data = await getDiningData(startDate, endDate, dateType);
+                data = await getDiningData(startDate, endDate, dateType, orderBy);
                 summary = await getDiningSummary(startDate, endDate, dateType);
+                break;
+            default:
+                case 'all':
+                data = await getTotalData(startDate, endDate, dateType, orderBy);
+                summary = await getTotalSummary(startDate, endDate, dateType);
                 break;
         }
 
@@ -78,7 +83,7 @@ const generateFinanceReport = async (req, res) => {
 
 
 
-const getTotalData = async (startDate, endDate, dateType) => {
+const getTotalData = async (startDate, endDate, dateType, orderBy) => {
     let query = `
         SELECT 
             M.maintenance_name AS name,
@@ -108,6 +113,9 @@ const getTotalData = async (startDate, endDate, dateType) => {
             case 'end':
                 query += ` AND finalized_date >= ?`
                 break;
+            default:
+                query += ` AND finalized_date >= ?`
+                break;
         }
         
         params.push(startDate);
@@ -126,12 +134,16 @@ const getTotalData = async (startDate, endDate, dateType) => {
             case 'end':
                 query += ` AND finalized_date <= ?`
                 break;
+            default:
+                query += ` AND maintenance_date <= ?`
+                break;
         }
         
         params.push(endDate);
     }
 
-    if(orderBy === 'start')
+
+    if(!orderBy || orderBy === 'start')
     {
         query += ` ORDER BY maintenance_date`;
     }
@@ -146,7 +158,7 @@ const getTotalData = async (startDate, endDate, dateType) => {
 }
 
 
-const getAttractionData = async (startDate, endDate, dateType) => {
+const getAttractionData = async (startDate, endDate, dateType, orderBy) => {
     let query = `
     SELECT 
         M.maintenance_name as name,
@@ -174,6 +186,9 @@ const getAttractionData = async (startDate, endDate, dateType) => {
             case 'end':
                 query += ` AND finalized_date >= ?`
                 break;
+            default:
+                query += ` AND finalized_date >= ?`
+                break;
         }
         
         params.push(startDate);
@@ -192,12 +207,15 @@ const getAttractionData = async (startDate, endDate, dateType) => {
             case 'end':
                 query += ` AND finalized_date <= ?`
                 break;
+            default:
+                query += ` AND maintenance_date <= ?`
+                break;
         }
         
         params.push(endDate);
     }
 
-    if(orderBy === 'start')
+    if(!orderBy || orderBy === 'start')
     {
         query += ` ORDER BY maintenance_date`;
     }
@@ -211,7 +229,7 @@ const getAttractionData = async (startDate, endDate, dateType) => {
     
 }
 
-const getDiningData = async (startDate, endDate, dateType) => {
+const getDiningData = async (startDate, endDate, dateType, orderBy) => {
     let query = `
     SELECT 
         M.maintenance_name as name,
@@ -239,6 +257,9 @@ const getDiningData = async (startDate, endDate, dateType) => {
             case 'end':
                 query += ` AND finalized_date >= ?`
                 break;
+            default:
+                query += ` AND finalized_date >= ?`
+                break;
         }
         
         params.push(startDate);
@@ -257,12 +278,15 @@ const getDiningData = async (startDate, endDate, dateType) => {
             case 'end':
                 query += ` AND finalized_date <= ?`
                 break;
+            default:
+                query += ` AND maintenance_date <= ?`
+                break;
         }
         
         params.push(endDate);
     }
 
-    if(orderBy === 'start')
+    if(!orderBy || orderBy === 'start')
     {
         query += ` ORDER BY maintenance_date`;
     }
@@ -304,6 +328,9 @@ const getTotalSummary = async (startDate, endDate, dateType) => {
             case 'end':
                 query += ` AND finalized_date >= ?`
                 break;
+            default:
+                query += ` AND finalized_date >= ?`
+                break;
         }
         
         params.push(startDate);
@@ -321,6 +348,9 @@ const getTotalSummary = async (startDate, endDate, dateType) => {
                 break;
             case 'end':
                 query += ` AND finalized_date <= ?`
+                break;
+            default:
+                query += ` AND maintenance_date <= ?`
                 break;
         }
         
@@ -359,6 +389,9 @@ const getAttractionSummary = async (startDate, endDate, dateType) => {
             case 'end':
                 query += ` AND finalized_date >= ?`
                 break;
+            default:
+                query += ` AND finalized_date >= ?`
+                break;
         }
         
         params.push(startDate);
@@ -376,6 +409,9 @@ const getAttractionSummary = async (startDate, endDate, dateType) => {
                 break;
             case 'end':
                 query += ` AND finalized_date <= ?`
+                break;
+            default:
+                query += ` AND maintenance_date <= ?`
                 break;
         }
         
@@ -416,6 +452,9 @@ const getDiningSummary = async (startDate, endDate, dateType) => {
             case 'end':
                 query += ` AND finalized_date >= ?`
                 break;
+            default:
+                query += ` AND finalized_date >= ?`
+                break;
         }
         
         params.push(startDate);
@@ -434,6 +473,9 @@ const getDiningSummary = async (startDate, endDate, dateType) => {
             case 'end':
                 query += ` AND finalized_date <= ?`
                 break;
+            default:
+                query += ` AND maintenance_date <= ?`
+                break;
         }
         
         params.push(endDate);
@@ -449,5 +491,5 @@ const getDiningSummary = async (startDate, endDate, dateType) => {
 
 
 module.exports = {
-    generateFinanceReport
+    generateMaintenanceReport
 };
