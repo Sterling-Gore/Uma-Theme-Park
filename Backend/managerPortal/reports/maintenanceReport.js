@@ -1,11 +1,12 @@
 const pool = require('../../database');
 
-const generateFinanceReport = async (req, res) => {
+const generateMaintenanceReport = async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
     const reportType = url.searchParams.get('reportType') || 'all';
     const startDate = url.searchParams.get('startDate');
     const endDate = url.searchParams.get('endDate');
     const dateType = url.searchParams.get('dateType');
+    const orderBy = url.searchParams.get('orderBy');
 
     try {
         let data = [];
@@ -22,35 +23,51 @@ const generateFinanceReport = async (req, res) => {
 
         switch (reportType) {
             case 'all':
+                data = await getTotalData(startDate, endDate, dateType, orderBy);
+                summary = await getTotalSummary(startDate, endDate, dateType);
                 break;
             case 'attraction':
+                data = await getAttractionData(startDate, endDate, dateType, orderBy);
+                summary = await getAttractionSummary(startDate, endDate, dateType);
                 break;
             case 'dining':
+                data = await getDiningData(startDate, endDate, dateType, orderBy);
+                summary = await getDiningSummary(startDate, endDate, dateType);
                 break;
-            case 'tickets':
-                data = await getTicketData(startDate, endDate, groupBy);
-                summary = await getTicketSummary(startDate, endDate);
-                break;
-            case 'merchandise':
-                data = await getMerchandiseData(startDate, endDate, groupBy);
-                summary = await getMerchandiseSummary(startDate, endDate);
-                break;
-            case 'maintenance':
-                data = await getMaintenanceData(startDate, endDate, groupBy);
-                summary = await getMaintenanceSummary(startDate, endDate);
-                break;
-            case 'all':
             default:
-                data = await getCombinedReport(startDate, endDate, groupBy);
-                summary = await getCombinedSummary(startDate, endDate);
+                case 'all':
+                data = await getTotalData(startDate, endDate, dateType, orderBy);
+                summary = await getTotalSummary(startDate, endDate, dateType);
                 break;
         }
+
+        function combineSummary(summary) {
+            // Initialize an empty object to hold the combined result
+            const combined = {};
+        
+            // Iterate over each object in the summary array
+            summary.forEach(item => {
+                // For each key in the item object, add the value to the combined object
+                Object.keys(item).forEach(key => {
+                    if (combined[key] === undefined) {
+                        combined[key] = item[key];
+                    } else {
+                        combined[key] += item[key];  // Or use another operation depending on your needs (e.g., sum, concatenation)
+                    }
+                });
+            });
+        
+            return combined;
+        }
+
+        const combinedSummary = combineSummary(summary);
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
             success: true,
             data,
-            summary
+            summary,
+            combinedSummary
         }));
     } catch (error) {
         console.error('Error generating finance report:', error);
@@ -63,334 +80,416 @@ const generateFinanceReport = async (req, res) => {
     }
 };
 
-const getTicketData = async (startDate, endDate, groupBy) => {
+
+
+
+const getTotalData = async (startDate, endDate, dateType, orderBy) => {
     let query = `
-  SELECT 
-    DATE(purchase_date) as date, 
-    SUM(total_cost) as ticket_sales,
-    SUM(number_of_standards + number_of_children + number_of_seniors) as number_of_tickets
-  FROM ticket_receipt
-  WHERE 1=1
-`;
+        SELECT 
+            M.maintenance_name AS name,
+            COALESCE(A.attraction_name, D.dining_name) AS facility_name,
+            M.maintenance_cost AS cost,
+            DATE(M.maintenance_date) AS start_date,
+            DATE(M.finalized_date) AS end_date,
+            DATE(M.expected_completion_date) AS expected_end_date,
+            DATEDIFF(M.finalized_date, M.expected_completion_date) AS date_difference 
+        FROM maintenance_logs AS M
+        LEFT JOIN attractions AS A ON M.attraction_id = A.attraction_id
+        LEFT JOIN dining AS D ON M.dining_id = D.dining_id
+        WHERE 1 = 1
+    `;
 
     const params = [];
-
-    if (startDate) {
-        query += ` AND purchase_date >= ?`;
+    if (startDate )
+    {
+        switch (dateType) 
+        {
+            case 'all':
+                query += ` AND finalized_date >= ?`
+                break;
+            case 'start':
+                query += ` AND maintenance_date >= ?`
+                break;
+            case 'end':
+                query += ` AND finalized_date >= ?`
+                break;
+            default:
+                query += ` AND finalized_date >= ?`
+                break;
+        }
+        
         params.push(startDate);
     }
 
-    if (endDate) {
-        query += ` AND purchase_date <= ?`;
+    if ( endDate )
+    {
+        switch (dateType) 
+        {
+            case 'all':
+                query += ` AND maintenance_date <= ?`
+                break;
+            case 'start':
+                query += ` AND maintenance_date <= ?`
+                break;
+            case 'end':
+                query += ` AND finalized_date <= ?`
+                break;
+            default:
+                query += ` AND maintenance_date <= ?`
+                break;
+        }
+        
         params.push(endDate);
     }
 
-    query += getGroupByClause(groupBy, 'purchase_date');
 
-
-    query += ` ORDER BY date`;
+    if(!orderBy || orderBy === 'start')
+    {
+        query += ` ORDER BY maintenance_date`;
+    }
+    else
+    {
+        query += ` ORDER BY finalized_date`;
+    }
 
     const [rows] = await pool.query(query, params);
-
-    return rows.map(row => ({
-        ...row,
-        avg_ticket_price: row.number_of_tickets > 0 ? row.ticket_sales / row.number_of_tickets : 0
-    }));
-};
-
-
-const getMerchandiseData = async (startDate, endDate, groupBy) => {
-    let query = `
-    SELECT 
-      DATE(purchase_date) as date, 
-      CAST(SUM(total_cost) as SIGNED) as merchandise_sales,
-      SUM(total_items_sold) as items_sold
-    FROM merchandise_receipt
-    WHERE 1=1
-  `;
-
-
-    const params = [];
-
-    if (startDate) {
-        query += ` AND purchase_date >= ?`;
-        params.push(startDate);
-    }
-
-    if (endDate) {
-        query += ` AND purchase_date <= ?`;
-        params.push(endDate);
-    }
-
-    query += getGroupByClause(groupBy, 'purchase_date');
-
-    query += ` ORDER BY date`;
-
-    const [rows] = await pool.query(query, params);
-
-    //console.log(typeof row.merchandise_sales);
-
-    return rows.map(row => ({
-        ...row,
-        avg_item_price: row.items_sold > 0 ? row.merchandise_sales / row.items_sold : 0
-    }));
-};
-
-
-const getMaintenanceData = async (startDate, endDate, groupBy) => {
-    let query = `
-  SELECT 
-    DATE(maintenance_date) as date,  
-    SUM(maintenance_cost) as maintenance_costs,
-    COUNT(*) as maintenance_count
-  FROM maintenance_logs
-  WHERE 1=1
-`;
-
-    const params = [];
-
-    if (startDate) {
-        query += ` AND maintenance_date >= ?`;
-        params.push(startDate);
-    }
-
-    if (endDate) {
-        query += ` AND maintenance_date <= ?`;
-        params.push(endDate);
-    }
-
-    query += getGroupByClause(groupBy, 'maintenance_date');
-
-    query += ` ORDER BY date`;
-
-    const [rows] = await pool.query(query, params);
-
     return rows;
-};
+    
+}
 
 
-const getCombinedReport = async (startDate, endDate, groupBy) => {
-    let dateField;
-    let groupField;
-
-    switch (groupBy) {
-        case 'daily':
-            groupField = 'DATE(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date))';
-            dateField = 'DATE(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date)) as date';
-            break;
-        case 'weekly':
-            groupField = 'YEARWEEK(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date), 1)';
-            dateField = 'DATE_ADD(DATE(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date)), INTERVAL - WEEKDAY(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date)) DAY) as date';
-            break;
-        case 'monthly':
-            groupField = 'DATE_FORMAT(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date), "%Y-%m")';
-            dateField = 'DATE_FORMAT(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date), "%Y-%m-01") as date';
-            break;
-        case 'yearly':
-            groupField = 'YEAR(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date))';
-            dateField = 'DATE_FORMAT(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date), "%Y-01-01") as date';
-            break;
-        case 'none':
-        default:
-            groupField = 'DATE(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date))';
-            dateField = 'DATE(coalesce(t.purchase_date, m.purchase_date, ml.maintenance_date)) as date';
-            break;
-    }
-
+const getAttractionData = async (startDate, endDate, dateType, orderBy) => {
     let query = `
     SELECT 
-      ${dateField},
-      COALESCE(SUM(t.total_cost), 0) as ticket_sales,
-      CAST(COALESCE(SUM(m.total_cost), 0) AS SIGNED) as merchandise_sales,
-      COALESCE(SUM(t.total_cost), 0) + COALESCE(SUM(m.total_cost), 0) as total_sales,
-      COALESCE(SUM(ml.maintenance_cost), 0) as maintenance_costs,
-      COALESCE(SUM(t.total_cost), 0) + COALESCE(SUM(m.total_cost), 0) - COALESCE(SUM(ml.maintenance_cost), 0) as profit
-    FROM 
-        (
-        SELECT DISTINCT DATE(purchase_date) as purchase_date FROM ticket_receipt
-        UNION 
-        SELECT DISTINCT DATE(purchase_date) as purchase_date FROM merchandise_receipt
-        UNION 
-        SELECT DISTINCT DATE(maintenance_date) as purchase_date FROM maintenance_logs
-      ) as dates
-    LEFT JOIN ticket_receipt t ON DATE(dates.purchase_date) = DATE(t.purchase_date)
-    LEFT JOIN merchandise_receipt m ON DATE(dates.purchase_date) = DATE(m.purchase_date)
-    LEFT JOIN maintenance_logs ml ON DATE(dates.purchase_date) = DATE(ml.maintenance_date)
-    WHERE 1=1
-  `;
+        M.maintenance_name as name,
+        A.attraction_name as facility_name,
+        M.maintenance_cost as cost,
+        DATE(maintenance_date) as start_date,
+        DATE(finalized_date) as end_date,
+        DATE(expected_completion_date) as expected_end_date,
+        DATEDIFF(M.finalized_date, M.expected_completion_date) as date_difference 
+    FROM maintenance_logs as M, attractions as A
+    WHERE M.attraction_id = A.attraction_id 
+    `;
 
     const params = [];
-
-    if (startDate) {
-        query += ` AND (
-      (t.purchase_date IS NOT NULL AND t.purchase_date >= ?) OR
-      (m.purchase_date IS NOT NULL AND m.purchase_date >= ?) OR
-      (ml.maintenance_date IS NOT NULL AND ml.maintenance_date >= ?)
-    )`;
-        params.push(startDate, startDate, startDate);
+    if (startDate )
+    {
+        switch (dateType) 
+        {
+            case 'all':
+                query += ` AND finalized_date >= ?`
+                break;
+            case 'start':
+                query += ` AND maintenance_date >= ?`
+                break;
+            case 'end':
+                query += ` AND finalized_date >= ?`
+                break;
+            default:
+                query += ` AND finalized_date >= ?`
+                break;
+        }
+        
+        params.push(startDate);
     }
 
-    if (endDate) {
-        query += ` AND (
-      (t.purchase_date IS NOT NULL AND t.purchase_date <= ?) OR
-      (m.purchase_date IS NOT NULL AND m.purchase_date <= ?) OR
-      (ml.maintenance_date IS NOT NULL AND ml.maintenance_date <= ?)
-    )`;
-        params.push(endDate, endDate, endDate);
+    if ( endDate )
+    {
+        switch (dateType) 
+        {
+            case 'all':
+                query += ` AND maintenance_date <= ?`
+                break;
+            case 'start':
+                query += ` AND maintenance_date <= ?`
+                break;
+            case 'end':
+                query += ` AND finalized_date <= ?`
+                break;
+            default:
+                query += ` AND maintenance_date <= ?`
+                break;
+        }
+        
+        params.push(endDate);
     }
 
-    query += ` GROUP BY ${groupField}`;
-
-    query += ` ORDER BY date`;
+    if(!orderBy || orderBy === 'start')
+    {
+        query += ` ORDER BY maintenance_date`;
+    }
+    else
+    {
+        query += ` ORDER BY finalized_date`;
+    }
 
     const [rows] = await pool.query(query, params);
-
-    //console.log(rows);
-
     return rows;
-};
+    
+}
 
-
-const getTicketSummary = async (startDate, endDate) => {
+const getDiningData = async (startDate, endDate, dateType, orderBy) => {
     let query = `
     SELECT 
-      COALESCE(SUM(total_cost), 0) as totalTicketSales,
-      COUNT(*) as totalTransactions,
-      SUM(number_of_standards + number_of_children + number_of_seniors) as totalTickets
-    FROM ticket_receipt
-    WHERE 1=1
-  `;
+        M.maintenance_name as name,
+        D.dining_name as facility_name,
+        M.maintenance_cost as cost,
+        DATE(maintenance_date) as start_date,
+        DATE(finalized_date) as end_date,
+        DATE(expected_completion_date) as expected_end_date,
+        DATEDIFF(M.finalized_date, M.expected_completion_date) as date_difference 
+    FROM maintenance_logs as M, dining as D
+    WHERE M.dining_id = D.dining_id
+    `;
 
     const params = [];
-
-    if (startDate) {
-        query += ` AND purchase_date >= ?`;
+    if (startDate )
+    {
+        switch (dateType) 
+        {
+            case 'all':
+                query += ` AND finalized_date >= ?`
+                break;
+            case 'start':
+                query += ` AND maintenance_date >= ?`
+                break;
+            case 'end':
+                query += ` AND finalized_date >= ?`
+                break;
+            default:
+                query += ` AND finalized_date >= ?`
+                break;
+        }
+        
         params.push(startDate);
     }
 
-    if (endDate) {
-        query += ` AND purchase_date <= ?`;
+    if ( endDate )
+    {
+        switch (dateType) 
+        {
+            case 'all':
+                query += ` AND maintenance_date <= ?`
+                break;
+            case 'start':
+                query += ` AND maintenance_date <= ?`
+                break;
+            case 'end':
+                query += ` AND finalized_date <= ?`
+                break;
+            default:
+                query += ` AND maintenance_date <= ?`
+                break;
+        }
+        
         params.push(endDate);
     }
 
+    if(!orderBy || orderBy === 'start')
+    {
+        query += ` ORDER BY maintenance_date`;
+    }
+    else
+    {
+        query += ` ORDER BY finalized_date`;
+    }
+
     const [rows] = await pool.query(query, params);
-
-    return {
-        totalTicketSales: rows[0].totalTicketSales,
-        totalTransactions: rows[0].totalTransactions,
-        totalTickets: rows[0].totalTickets,
-        avgTicketPrice: rows[0].totalTickets > 0 ? rows[0].totalTicketSales / rows[0].totalTickets : 0
-    };
-};
+    return rows;
+    
+}
 
 
-const getMerchandiseSummary = async (startDate, endDate) => {
+const getTotalSummary = async (startDate, endDate, dateType) => {
     let query = `
     SELECT 
-      COALESCE(SUM(total_cost), 0) as totalMerchandiseSales,
-      COUNT(*) as totalTransactions,
-      SUM(total_items_sold) as totalItems
-    FROM merchandise_receipt
-    WHERE 1=1
-  `;
+        COALESCE(A.attraction_name, D.dining_name) AS facility_name,
+        COUNT(*) AS maintenance_count,
+        COALESCE(SUM(M.maintenance_cost), 0) AS cost,
+        AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) AS average_date_difference
+    FROM maintenance_logs AS M
+    LEFT JOIN attractions AS A ON M.attraction_id = A.attraction_id
+    LEFT JOIN dining AS D ON M.dining_id = D.dining_id
+    WHERE 1 = 1
+    `;
 
     const params = [];
-
-    if (startDate) {
-        query += ` AND purchase_date >= ?`;
+    if (startDate )
+    {
+        switch (dateType) 
+        {
+            case 'all':
+                query += ` AND finalized_date >= ?`
+                break;
+            case 'start':
+                query += ` AND maintenance_date >= ?`
+                break;
+            case 'end':
+                query += ` AND finalized_date >= ?`
+                break;
+            default:
+                query += ` AND finalized_date >= ?`
+                break;
+        }
+        
         params.push(startDate);
     }
 
-    if (endDate) {
-        query += ` AND purchase_date <= ?`;
+    if ( endDate )
+    {
+        switch (dateType) 
+        {
+            case 'all':
+                query += ` AND maintenance_date <= ?`
+                break;
+            case 'start':
+                query += ` AND maintenance_date <= ?`
+                break;
+            case 'end':
+                query += ` AND finalized_date <= ?`
+                break;
+            default:
+                query += ` AND maintenance_date <= ?`
+                break;
+        }
+        
         params.push(endDate);
     }
 
+    query += ` GROUP BY facility_name`
+
     const [rows] = await pool.query(query, params);
+    return rows;
+}
 
-    return {
-        totalMerchandiseSales: rows[0].totalMerchandiseSales,
-        totalTransactions: rows[0].totalTransactions,
-        totalItems: rows[0].totalItems,
-        avgItemPrice: rows[0].totalItems > 0 ? rows[0].totalMerchandiseSales / rows[0].totalItems : 0
-    };
-};
-
-
-const getMaintenanceSummary = async (startDate, endDate) => {
+const getAttractionSummary = async (startDate, endDate, dateType) => {
     let query = `
     SELECT 
-      COALESCE(SUM(maintenance_cost), 0) as totalMaintenanceCosts,
-      COUNT(*) as totalMaintenanceItems
-    FROM maintenance_logs
-    WHERE 1=1
-  `;
+        A.attraction_name as facility_name,
+        COUNT(*) AS maintenance_count,
+        COALESCE(SUM(M.maintenance_cost),0) as cost,
+        AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) as average_date_difference 
+    FROM maintenance_logs as M
+    JOIN attractions AS A ON M.attraction_id = A.attraction_id
+    WHERE 1 = 1
+    `;
 
     const params = [];
-
-    if (startDate) {
-        query += ` AND maintenance_date >= ?`;
+    if (startDate )
+    {
+        switch (dateType) 
+        {
+            case 'all':
+                query += ` AND finalized_date >= ?`
+                break;
+            case 'start':
+                query += ` AND maintenance_date >= ?`
+                break;
+            case 'end':
+                query += ` AND finalized_date >= ?`
+                break;
+            default:
+                query += ` AND finalized_date >= ?`
+                break;
+        }
+        
         params.push(startDate);
     }
 
-    if (endDate) {
-        query += ` AND maintenance_date <= ?`;
+    if ( endDate )
+    {
+        switch (dateType) 
+        {
+            case 'all':
+                query += ` AND maintenance_date <= ?`
+                break;
+            case 'start':
+                query += ` AND maintenance_date <= ?`
+                break;
+            case 'end':
+                query += ` AND finalized_date <= ?`
+                break;
+            default:
+                query += ` AND maintenance_date <= ?`
+                break;
+        }
+        
         params.push(endDate);
     }
 
+    query += ` GROUP BY D.dining_name`
+
     const [rows] = await pool.query(query, params);
-
-    console.log(rows[0].totalMaintenanceCosts);
-
-    return {
-        totalMaintenanceCosts: rows[0].totalMaintenanceCosts,
-        totalMaintenanceItems: rows[0].totalMaintenanceItems,
-        avgMaintenanceCost: rows[0].totalMaintenanceItems > 0 ? rows[0].totalMaintenanceCosts / rows[0].totalMaintenanceItems : 0
-    };
-};
+    return rows;
+}
 
 
-const getCombinedSummary = async (startDate, endDate) => {
-    const ticketSummary = await getTicketSummary(startDate, endDate);
-    const merchandiseSummary = await getMerchandiseSummary(startDate, endDate);
-    const maintenanceSummary = await getMaintenanceSummary(startDate, endDate);
 
-    // console.log('Summary data types:', {
-    //     ticketSales: typeof ticketSummary.totalTicketSales,
-    //     merchSales: typeof merchandiseSummary.totalMerchandiseSales,
-    //     maintCosts: typeof maintenanceSummary.totalMaintenanceCosts,
-    //     ticketValue: ticketSummary.totalTicketSales,
-    //     merchValue: merchandiseSummary.totalMerchandiseSales,
-    //     maintValue: maintenanceSummary.totalMaintenanceCosts,
-    //     totalSales: ticketSummary.totalTicketSales + Number(merchandiseSummary.totalMerchandiseSales)
-    //   });
+const getDiningSummary = async (startDate, endDate, dateType) => {
+    let query = `
+    SELECT 
+        D.dining_name as facility_name,
+        COUNT(*) AS maintenance_count,
+        COALESCE(SUM(M.maintenance_cost),0) as cost,
+        AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) as average_date_difference 
+    FROM maintenance_logs as M
+    JOIN dining AS D ON M.dining_id = D.dining_id
+    WHERE 1 = 1
+    `;
 
-    return {
-        totalTicketSales: ticketSummary.totalTicketSales,
-        totalMerchandiseSales: merchandiseSummary.totalMerchandiseSales,
-        totalSales: ticketSummary.totalTicketSales + Number(merchandiseSummary.totalMerchandiseSales),
-        totalMaintenanceCosts: maintenanceSummary.totalMaintenanceCosts,
-        totalProfit: (ticketSummary.totalTicketSales + Number(merchandiseSummary.totalMerchandiseSales)) - maintenanceSummary.totalMaintenanceCosts
-    };
-};
-
-
-const getGroupByClause = (groupBy, dateField) => {
-    switch (groupBy) {
-        case 'daily':
-            return ` GROUP BY DATE(${dateField})`;
-        case 'weekly':
-            return ` GROUP BY YEARWEEK(${dateField}, 1)`;
-        case 'monthly':
-            return ` GROUP BY DATE_FORMAT(${dateField}, '%Y-%m')`;
-        case 'yearly':
-            return ` GROUP BY YEAR(${dateField})`;
-        case 'none':
-        default:
-            return ` GROUP BY DATE(${dateField})`;
+    const params = [];
+    if (startDate )
+    {
+        switch (dateType) 
+        {
+            case 'all':
+                query += ` AND finalized_date >= ?`
+                break;
+            case 'start':
+                query += ` AND maintenance_date >= ?`
+                break;
+            case 'end':
+                query += ` AND finalized_date >= ?`
+                break;
+            default:
+                query += ` AND finalized_date >= ?`
+                break;
+        }
+        
+        params.push(startDate);
     }
-};
+
+    if ( endDate )
+    {
+        switch (dateType) 
+        {
+            case 'all':
+                query += ` AND maintenance_date <= ?`
+                break;
+            case 'start':
+                query += ` AND maintenance_date <= ?`
+                break;
+            case 'end':
+                query += ` AND finalized_date <= ?`
+                break;
+            default:
+                query += ` AND maintenance_date <= ?`
+                break;
+        }
+        
+        params.push(endDate);
+    }
+
+    query += ` GROUP BY D.dining_name`
+
+    const [rows] = await pool.query(query, params);
+    return rows;
+}
+
+
+
 
 module.exports = {
-    generateFinanceReport
+    generateMaintenanceReport
 };

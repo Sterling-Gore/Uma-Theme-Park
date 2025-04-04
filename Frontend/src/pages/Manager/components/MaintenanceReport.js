@@ -11,6 +11,7 @@ const MaintenanceReport = ({ setActiveTab }) => {
 
     // State for report data
     const [reportData, setReportData] = useState(null);
+    const [overviewData, setOverviewData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [summary, setSummary] = useState(null);
@@ -33,12 +34,13 @@ const MaintenanceReport = ({ setActiveTab }) => {
             const params = new URLSearchParams({
                 reportType,
                 groupBy,
+                dateType,
                 ...(startDate && { startDate }),
                 ...(endDate && { endDate })
             });
 
             // Fetch data from the backend
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/maintenanceDate?${params}`, {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/maintenanceReport?${params}`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
@@ -54,7 +56,8 @@ const MaintenanceReport = ({ setActiveTab }) => {
 
             if (data.success) {
                 setReportData(data.data);
-                setSummary(data.summary);
+                setOverviewData(data.summary);
+                setSummary(data.combinedSummary);
             } else {
                 setError(data.message || 'Failed to fetch report data');
             }
