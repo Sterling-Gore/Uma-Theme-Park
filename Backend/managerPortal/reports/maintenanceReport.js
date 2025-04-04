@@ -6,6 +6,7 @@ const generateFinanceReport = async (req, res) => {
     const startDate = url.searchParams.get('startDate');
     const endDate = url.searchParams.get('endDate');
     const dateType = url.searchParams.get('dateType');
+    const orderBy = url.searchParams.get('orderBy');
 
     try {
         let data = [];
@@ -22,27 +23,16 @@ const generateFinanceReport = async (req, res) => {
 
         switch (reportType) {
             case 'all':
+                data = await getTotalData(startDate, endDate, dateType);
+                summary = await getTotalSummary(startDate, endDate, dateType);
                 break;
             case 'attraction':
+                data = await getAttractionData(startDate, endDate, dateType);
+                summary = await getAttractionSummary(startDate, endDate, dateType);
                 break;
             case 'dining':
-                break;
-            case 'tickets':
-                data = await getTicketData(startDate, endDate, groupBy);
-                summary = await getTicketSummary(startDate, endDate);
-                break;
-            case 'merchandise':
-                data = await getMerchandiseData(startDate, endDate, groupBy);
-                summary = await getMerchandiseSummary(startDate, endDate);
-                break;
-            case 'maintenance':
-                data = await getMaintenanceData(startDate, endDate, groupBy);
-                summary = await getMaintenanceSummary(startDate, endDate);
-                break;
-            case 'all':
-            default:
-                data = await getCombinedReport(startDate, endDate, groupBy);
-                summary = await getCombinedSummary(startDate, endDate);
+                data = await getDiningData(startDate, endDate, dateType);
+                summary = await getDiningSummary(startDate, endDate, dateType);
                 break;
         }
 
@@ -63,6 +53,71 @@ const generateFinanceReport = async (req, res) => {
     }
 };
 
+
+const getAttractionData = async (startDate, endDate, dateType) => {
+    let query = `
+    SELECT 
+        M.maintenance_name as name,
+        A.attraction_name as facility_name,
+        M.maintenance_cost as cost,
+        DATE(maintenance_date) as start_date,
+        DATE(finalized_date) as end_date,
+        DATE(expected_completion_date) as expected_end_date,
+        DATEDIFF(M.finalized_date, M.expected_completion_date) as date_difference 
+    FROM maintenance_logs as M, attractions as A
+    WHERE M.attraction_id = A.attraction_id 
+    `;
+
+    const params = [];
+    if (startDate )
+    {
+        switch (dateType) 
+        {
+            case 'all':
+                query += ` AND finalized_date >= ?`
+                break;
+            case 'start':
+                query += ` AND maintenance_date >= ?`
+                break;
+            case 'end':
+                query += ` AND finalized_date >= ?`
+                break;
+        }
+        
+        params.push(startDate);
+    }
+
+    if ( endDate )
+    {
+        switch (dateType) 
+        {
+            case 'all':
+                query += ` AND maintenance_date <= ?`
+                break;
+            case 'start':
+                query += ` AND maintenance_date <= ?`
+                break;
+            case 'end':
+                query += ` AND finalized_date <= ?`
+                break;
+        }
+        
+        params.push(endDate);
+    }
+
+    if(orderBy === 'start')
+    {
+        query += ` ORDER BY maintenance_date`;
+    }
+    else
+    {
+        query += ` ORDER BY finalized_date`;
+    }
+
+    const [rows] = await pool.query(query, params);
+    return rows;
+    
+}
 const getTicketData = async (startDate, endDate, groupBy) => {
     let query = `
   SELECT 
