@@ -14,7 +14,9 @@ async function updateEmployeeProfile(req, res) {
 
 
                 const updateEmployeeQuery = "UPDATE employee SET first_name = ?, last_name = ?, email = ? WHERE employee_id = ?";
+
                 await pool.execute(updateEmployeeQuery, [first_name, last_name, email, employee_id]);
+
 
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 return res.end(JSON.stringify({ message: "Employee profile updated successfully" }));

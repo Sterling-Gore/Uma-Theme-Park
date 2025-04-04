@@ -60,6 +60,8 @@ const { generateFinanceReport } = require('./managerPortal/reports/financeReport
 const { getEmployeeInfo } = require('./employeePortal/getEmployeeInfo');
 const { updateEmployeePassword } = require('./employeePortal/updateEmployeePassword')
 
+const {generateParkReport} = require('./employeePortal/generateParkReport')
+
 const PORT = process.env.PORT || 7000;
 
 const allowedOrigins = ['http://localhost:3000', 'https://bluehorizonadventures.vercel.app'];
@@ -243,6 +245,10 @@ const server = http.createServer(async (req, res) => {
     }
     else if(url.parse(req.url).pathname === '/financeReport' && req.method === 'GET') {
         generateFinanceReport(req, res)
+    }
+
+    else if(url.parse(req.url).pathname === '/generateParkReport' && req.method === 'GET') {
+        generateParkReport(req, res)
     }
     else if (req.url === '/getEmployeeInfo' && req.method === 'POST'){
         getEmployeeInfo(req, res)
