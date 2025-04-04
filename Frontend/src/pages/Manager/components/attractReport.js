@@ -78,6 +78,11 @@ const AttractReport = ({ setActiveTab }) => {
                             <p className="value">{report.totalTickets}</p>
                         </div>
                         <div className="summary-card">
+    <p className="label">Total Food Passes</p>
+    <p className="value">{report.totalFoodPasses}</p>
+</div>
+
+                        <div className="summary-card">
                             <p className="label">Type</p>
                             <p className="value">{report.popularTicketType.type}</p>
                         </div>
