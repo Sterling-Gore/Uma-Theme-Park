@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import "../ManagerPortal.css"
 
 const ViewEmployees = ({ setActiveTab }) => {
   const [employees, setEmployees] = useState([]);
