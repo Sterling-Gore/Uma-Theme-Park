@@ -72,12 +72,12 @@ const generateMaintenanceReport = async (req, res) => {
             let total_maintenance = 0;
         
             // Iterate over each object in the summary array
-            console.log(summary);
+            //console.log(summary);
             for(const item of summary){
                 
                 if(dataToCollect === 'total' || (dataToCollect === 'attraction' && item.isAttraction === 1) || (dataToCollect === 'dining' && item.isAttraction === 0))
                 {
-                    console.log(dataToCollect + " " + item.isAttraction);
+                    //console.log(dataToCollect + " " + item.isAttraction);
                     if(item.average_date_difference !== null)
                     {
                         total_maintenance += item.maintenance_count ?? 0;
