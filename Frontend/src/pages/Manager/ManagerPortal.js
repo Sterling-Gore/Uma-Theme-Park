@@ -8,6 +8,7 @@ import CreateEmployee from './components/CreateEmployee';
 import './ManagerPortal.css';
 import AuthContext from '../../context/AuthContext';
 import FinanceReport from './components/FinanceReport';
+import AttractReport from './components/attractReport';
 
 function ManagerPortal() {
   const [activeTab, setActiveTab] = useState('view');
@@ -47,6 +48,7 @@ function ManagerPortal() {
           {activeTab === 'create' && <CreateEmployee setActiveTab={setActiveTab} />}
           {activeTab === 'assign' && <AttractionAssignment setActiveTab={setActiveTab} />}
           {activeTab === 'financeReport' && <FinanceReport setActiveTab={setActiveTab} />}
+          {activeTab === 'AttractReport' && <AttractReport setActiveTab={setActiveTab} />}
         </div>
       </div>
     </div>

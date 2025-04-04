@@ -25,6 +25,12 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
         >
           Finance Report
         </button>
+        <button 
+          className={activeTab === 'AttractReport' ? 'active' : ''} 
+          onClick={() => setActiveTab('AttractReport')}
+        >
+          Attract Report
+        </button>
       </nav>
     </div>
   );
