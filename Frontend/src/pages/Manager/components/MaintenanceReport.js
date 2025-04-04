@@ -7,7 +7,7 @@ const MaintenanceReport = ({ setActiveTab }) => {
     const [endDate, setEndDate] = useState('');
     const [dateType, setDateType] = useState('all');
     const [reportType, setReportType] = useState('all');
-    const [groupBy, setGroupBy] = useState('none');
+    const [orderBy, setOrderBy] = useState('start');
 
     // State for report data
     const [reportData, setReportData] = useState(null);
@@ -33,7 +33,7 @@ const MaintenanceReport = ({ setActiveTab }) => {
             // Create request parameters
             const params = new URLSearchParams({
                 reportType,
-                groupBy,
+                orderBy,
                 dateType,
                 ...(startDate && { startDate }),
                 ...(endDate && { endDate })
@@ -73,6 +73,7 @@ const MaintenanceReport = ({ setActiveTab }) => {
     const getColumnHeaders = () => {
         const columns = {
             maintenance_log: 'Maintenance Log',
+            facility: 'Facility',
             cost: 'Maintenance Cost',
             start_date: 'Maintenance Start Date',
             end_date: 'Maintenance End Date',
@@ -118,7 +119,7 @@ const MaintenanceReport = ({ setActiveTab }) => {
         setEndDate('');
         setDateType('all');
         setReportType('all');
-        setGroupBy('none');
+        setOrderBy('start');
         setReportData(null);
         setSummary(null);
         setError(null);
@@ -181,17 +182,14 @@ const MaintenanceReport = ({ setActiveTab }) => {
 
 
                         <div className="filter-group">
-                            <label htmlFor="groupBy">Group By</label>
+                            <label htmlFor="orderBy">Order By</label>
                             <select
-                                id="groupBy"
-                                value={groupBy}
-                                onChange={(e) => setGroupBy(e.target.value)}
+                                id="orderBy"
+                                value={orderBy}
+                                onChange={(e) => setOrderBy(e.target.value)}
                             >
-                                <option value="none">No Grouping</option>
-                                <option value="daily">Daily</option>
-                                <option value="weekly">Weekly</option>
-                                <option value="monthly">Monthly</option>
-                                <option value="yearly">Yearly</option>
+                                <option value="start">Start Date</option>
+                                <option value="end">End Date</option>
                             </select>
                         </div>
                     </div>
