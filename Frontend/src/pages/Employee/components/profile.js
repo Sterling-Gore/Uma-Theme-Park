@@ -3,7 +3,7 @@ import "./profile.css";
 
 export default function UpdateEmployeeForm() {
     const [employeeData, setEmployeeData] = useState({
-        employee_id: "",
+        employee_id: localStorage.getItem("userID"),
         first_name: "",
         last_name: "",
         email: ""
@@ -18,7 +18,6 @@ export default function UpdateEmployeeForm() {
     const [showPasswordForm, setShowPasswordForm] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    // Fetch employee data on component mount
     useEffect(() => {
         const fetchEmployeeData = async () => {
             try {
@@ -67,6 +66,7 @@ export default function UpdateEmployeeForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log(employeeData);
         try {
             const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/updateEmployeeProfile`, {
                 method: "PUT",

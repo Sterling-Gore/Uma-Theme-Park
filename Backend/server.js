@@ -29,7 +29,7 @@ const { updateAttractionStatus } = require('./employeePortal/updateAttractionSta
 const { updateAttractionDescription } = require('./employeePortal/updateAttractionDescription');
 const { updateAttractionCapacity } = require('./employeePortal/updateAttractionCapacity');
 const { updateAttractionDuration } = require('./employeePortal/updateAttractionDuration');
-const { getEmployeeAssignedAttraction } = require('./employeePortal/getEmployeeAssignedAttraction');
+const { getEmployeeAssignment } = require('./employeePortal/getEmployeeAssignment');
 const { getPreviousMaintenanceLogsForEmployee } = require('./employeePortal/getPreviousMaintenanceLogsForEmployee')
 const { getActiveMaintenanceLog } = require('./employeePortal/getActiveMaintenanceLog');
 const { createMaintenanceLog } = require('./employeePortal/createMaintenanceLog');
@@ -59,6 +59,7 @@ const { updateEmployeeProfile} = require('./employeePortal/updateEmployeeProfile
 const { generateFinanceReport } = require('./managerPortal/reports/financeReport');
 const { getEmployeeInfo } = require('./employeePortal/getEmployeeInfo');
 const { updateEmployeePassword } = require('./employeePortal/updateEmployeePassword')
+
 const {generateParkReport} = require('./employeePortal/generateParkReport')
 
 const PORT = process.env.PORT || 7000;
@@ -166,8 +167,8 @@ const server = http.createServer(async (req, res) => {
     else if(req.url === '/updateAttractionDuration' && req.method === 'POST'){
         updateAttractionDuration(req, res)
     }
-    else if(req.url === '/getEmployeeAssignedAttraction' && req.method === 'POST'){
-        getEmployeeAssignedAttraction(req, res)
+    else if(req.url === '/getEmployeeAssignment' && req.method === 'POST'){
+        getEmployeeAssignment(req, res)
     }
     else if(req.url === '/getPreviousMaintenanceLogsForEmployee' && req.method === 'POST'){
         getPreviousMaintenanceLogsForEmployee(req, res)
@@ -245,10 +246,10 @@ const server = http.createServer(async (req, res) => {
     else if(url.parse(req.url).pathname === '/financeReport' && req.method === 'GET') {
         generateFinanceReport(req, res)
     }
+
     else if(url.parse(req.url).pathname === '/generateParkReport' && req.method === 'GET') {
         generateParkReport(req, res)
     }
-
     else if (req.url === '/getEmployeeInfo' && req.method === 'POST'){
         getEmployeeInfo(req, res)
     }
