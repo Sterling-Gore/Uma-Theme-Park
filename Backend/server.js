@@ -58,7 +58,8 @@ const { updateTaskStatus } = require('./employeePortal/updateTaskStatus')
 const { updateEmployeeProfile} = require('./employeePortal/updateEmployeeProfile');
 const { generateFinanceReport } = require('./managerPortal/reports/financeReport');
 const { getEmployeeInfo } = require('./employeePortal/getEmployeeInfo');
-const { updateEmployeePassword } = require('./employeePortal/updateEmployeePassword')
+const { updateEmployeePassword } = require('./employeePortal/updateEmployeePassword');
+const { makeMerchOrder } = require('./employeePortal/makeMerchOrder');
 
 const {generateParkReport} = require('./employeePortal/generateParkReport')
 
@@ -255,6 +256,9 @@ const server = http.createServer(async (req, res) => {
     }
     else if(req.url === '/updateEmployeePassword' && req.method === 'PUT'){
         updateEmployeePassword(req, res);
+    }
+    else if(req.url === '/makeMerchOrder' && req.method === 'POST'){
+        makeMerchOrder(req, res);
     }
     else if( req.url === '/testDatabaseConnection' && req.method === 'GET'){
         pool.getConnection((err, connection) => {
