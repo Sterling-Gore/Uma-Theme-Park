@@ -487,7 +487,7 @@ const getAttractionSummary = async (startDate, endDate, dateType) => {
         params.push(endDate);
     }
 
-    query += ` GROUP BY D.dining_name`
+    query += ` GROUP BY A.attraction_name`
 
     const [rows] = await pool.query(query, params);
     return rows;

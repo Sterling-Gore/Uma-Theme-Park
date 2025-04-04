@@ -20,7 +20,13 @@ const MaintenanceReport = ({ setActiveTab }) => {
     const formatDate = (dateString) => {
         if (!dateString) return '';
         const date = new Date(dateString);
-        return date.toLocaleDateString();
+        return date.toLocaleDateString('en-US', {
+            timeZone: 'UTC',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+      
+          });
     };
 
     // Fetch report data from backend
@@ -55,9 +61,12 @@ const MaintenanceReport = ({ setActiveTab }) => {
             const data = await response.json();
 
             if (data.success) {
+                console.log(data.data);
+                console.log(data.summary);
+                console.log(data.combined_summary)
                 setReportData(data.data);
                 setOverviewData(data.summary);
-                setSummary(data.combinedSummary);
+                setSummary(data.combined_summary);
             } else {
                 setError(data.message || 'Failed to fetch report data');
             }
@@ -72,13 +81,13 @@ const MaintenanceReport = ({ setActiveTab }) => {
     // Get column headers based on report type
     const getColumnHeaders = () => {
         const columns = {
-            maintenance_log: 'Maintenance Log',
-            facility: 'Facility',
+            name: 'Maintenance Log',
+            facility_name: 'Facility',
             cost: 'Maintenance Cost',
             start_date: 'Maintenance Start Date',
             end_date: 'Maintenance End Date',
             expected_end_date: 'Expected Maintenance End Date',
-            expected_difference: 'Expected To Actual End Date Difference'
+            date_difference: 'Expected To Actual End Date Difference'
             
         }
         return columns;
@@ -230,42 +239,73 @@ const MaintenanceReport = ({ setActiveTab }) => {
                         </p>
 
                         {summary && (
-                            <div className="report-summary">
-                                <h4>Summary</h4>
-                                <div className="summary-grid">
-                                    {reportType === 'all' || reportType === 'attraction' ? (
+                            <>
+                            {reportType === 'all' && (
+                                <div className="report-summary">
+                                    <h4>Total Summary</h4>
+                                    <div className="summary-grid">
+                                        <div className="summary-item">
+                                            <span className="summary-label">Total Maintenance Logs:</span>
+                                            <span className="summary-value">{summary && summary.total_combined_summary && summary.total_combined_summary.maintenance_count ? summary.total_combined_summary.maintenance_count : 'missing'}</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span className="summary-label">Total Maintenance Cost:</span>
+                                            <span className="summary-value">{summary && summary.total_combined_summary && summary.total_combined_summary.cost ? summary.total_combined_summary.cost.toFixed(2) : 'missing'}</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span className="summary-label">Average Expected vs End Date Difference:</span>
+                                            <span className="summary-value">{summary && summary.total_combined_summary && summary.total_combined_summary.average_date_difference ? summary.total_combined_summary.average_date_difference.toFixed(3) : 'missing'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            {(reportType === 'all' || reportType === 'attraction' )&& (
+                                <div className="report-summary">
+                                    <h4>Attraction Summary</h4>
+                                    <div className="summary-grid">
                                         <div className="summary-item">
                                             <span className="summary-label">Total Attraction Maintenance Logs:</span>
-                                            <span className="summary-value">${summary && summary.totalTicketSales ? summary.totalTicketSales : '0.00'}</span>
+                                            <span className="summary-value">{summary && summary.attraction_combined_summary && summary.attraction_combined_summary.maintenance_count ? summary.attraction_combined_summary.maintenance_count : 'missing'}</span>
                                         </div>
-                                    ) : null}
-
-                                    {reportType === 'all' || reportType === 'merchandise' ? (
                                         <div className="summary-item">
-                                            <span className="summary-label">Total Merchandise Sales:</span>
-                                            <span className="summary-value">${summary && summary.totalMerchandiseSales ? summary.totalMerchandiseSales : '0.00'}</span>
+                                            <span className="summary-label">Total Attraction Maintenance Cost:</span>
+                                            <span className="summary-value">{summary && summary.attraction_combined_summary && summary.attraction_combined_summary.cost ? summary.attraction_combined_summary.cost.toFixed(2) : 'missing'}</span>
                                         </div>
-                                    ) : null}
-
-                                    {reportType === 'all' || reportType === 'maintenance' ? (
                                         <div className="summary-item">
-                                            <span className="summary-label">Total Maintenance Costs:</span>
-                                            <span className="summary-value">${summary && summary.totalMaintenanceCosts ? summary.totalMaintenanceCosts : '0.00'}</span>
+                                            <span className="summary-label">Average Attraction Expected vs End Date Difference:</span>
+                                            <span className="summary-value">{summary && summary.attraction_combined_summary && summary.attraction_combined_summary.average_date_difference ? summary.attraction_combined_summary.average_date_difference.toFixed(3) : 'missing'}</span>
                                         </div>
-                                    ) : null}
-
-                                    {reportType === 'all' && (
-                                        <div className="summary-item">
-                                            <span className="summary-label">Total Profit:</span>
-                                            <span className="summary-value">${summary && summary.totalProfit ? summary.totalProfit : '0.00'}</span>
-                                        </div>
-                                    )}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
+                            {(reportType === 'all' || reportType ==='dining') && (
+                                <div className="report-summary">
+                                    <h4>Dining Summary</h4>
+                                    <div className="summary-grid">
+                                        <div className="summary-item">
+                                            <span className="summary-label">Total Dining Maintenance Logs:</span>
+                                            <span className="summary-value">{summary && summary.dining_combined_summary && summary.dining_combined_summary.maintenance_count ? summary.dining_combined_summary.maintenance_count : 'missing'}</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span className="summary-label">Total Dining Maintenance Cost:</span>
+                                            <span className="summary-value">{summary && summary.dining_combined_summary && summary.dining_combined_summary.cost ? summary.dining_combined_summary.cost.toFixed(2) : 'missing'}</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span className="summary-label">Average Dining Expected vs End Date Difference:</span>
+                                            <span className="summary-value">{summary && summary.dining_combined_summary && summary.dining_combined_summary.average_date_difference ? summary.dining_combined_summary.average_date_difference.toFixed(3) : 'missing'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            </>
                         )}
 
+
                         <div className="table-container">
+                            <h4>Total Overview</h4>
+                            {/*
                             <table className="report-table">
+                                
                                 <thead>
                                     <tr>
                                         {Object.values(getColumnHeaders()).map((header, index) => (
@@ -279,11 +319,18 @@ const MaintenanceReport = ({ setActiveTab }) => {
                                             <tr key={index}>
                                                 {Object.keys(getColumnHeaders()).map((key, colIndex) => (
                                                     <td key={colIndex}>
-                                                        {key === 'date' ? formatDate(record[key]) :
-                                                            typeof record[key] === 'number' ?
-                                                                key.includes('number') || key.includes('count') ?
-                                                                    record[key] : `$${record[key].toFixed(2)}` :
-                                                                record[key] || '-'}
+                                                        {(key === 'start_date' || key === 'end_date' || key === 'expected_end_date') && 
+                                                            (<>{record[key] ? (formatDate(record[key])) : ('-')}</>)
+                                                        }
+                                                        {key === 'cost' && 
+                                                            (<>{record[key]  ? (record[key].toFixed(2)) : ('-')  }</>) 
+                                                        }
+                                                        {key === 'date_difference' && 
+                                                            (<>{ record[key] ? (record[key]) : ('-')  }</>)
+                                                        }
+                                                        {(key === 'name' || key === 'facility_name') && 
+                                                            (<>{ record[key] ?  record[key] : ('-')}</>)
+                                                        }
                                                     </td>
                                                 ))}
                                             </tr>
@@ -296,7 +343,9 @@ const MaintenanceReport = ({ setActiveTab }) => {
                                         </tr>
                                     )}
                                 </tbody>
+                                
                             </table>
+                            */}
                         </div>
                     </div>
                 )}
