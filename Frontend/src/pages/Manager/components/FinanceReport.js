@@ -18,7 +18,13 @@ const FinanceReport = ({ setActiveTab }) => {
     const formatDate = (dateString) => {
         if (!dateString) return '';
         const date = new Date(dateString);
-        return date.toLocaleDateString();
+        return date.toLocaleDateString('en-US', {
+            timeZone: 'UTC',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+      
+          });
     };
 
     // Fetch report data from backend

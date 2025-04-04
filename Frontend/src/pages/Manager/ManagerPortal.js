@@ -3,7 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import ViewEmployees from './components/ViewEmployees';
 import AttractionAssignment from './components/AttractionAssignment';
-import Reports from './components/Reports';
+import HandleMerchandise from './components/MerchTab/HandleMerchandise';
+import CreateMerchandise from './components/MerchTab/createMerchandise';
+import HandleAttraction from './components/attractionTab/handleAttraction';
+import CreateAttraction from './components/attractionTab/createAttraction';
+import HandleDining from './components/diningTab/handleDining';
+import CreateDining from './components/diningTab/createDining';
 import CreateEmployee from './components/CreateEmployee';
 import './ManagerPortal.css';
 import AuthContext from '../../context/AuthContext';
@@ -49,6 +54,12 @@ function ManagerPortal() {
           {activeTab === 'assign' && <AttractionAssignment setActiveTab={setActiveTab} />}
           {activeTab === 'financeReport' && <FinanceReport setActiveTab={setActiveTab} />}
           {activeTab === 'AttractReport' && <AttractReport setActiveTab={setActiveTab} />}
+          {activeTab === 'handleMerchandise' && <HandleMerchandise setActiveTab={setActiveTab} />}
+          {activeTab === 'createMerchandise' && <CreateMerchandise setActiveTab={setActiveTab} />}
+          {activeTab === 'handleAttractions' && <HandleAttraction setActiveTab={setActiveTab} />}
+          {activeTab === 'createAttraction' && <CreateAttraction setActiveTab={setActiveTab} />}
+          {activeTab === 'handleDining' && <HandleDining setActiveTab={setActiveTab} />}
+          {activeTab === 'createDining' && <CreateDining setActiveTab={setActiveTab} />}
         </div>
       </div>
     </div>
