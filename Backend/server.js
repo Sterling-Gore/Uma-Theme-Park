@@ -14,29 +14,29 @@ const { employeeLogin } = require('./employeeHandler/employeeLogin')
 const pool = require('./database');
 //Mercandise
 const { getMerchandise } = require('./shoppingCart/getMerchandise');
-const { deleteMerchandise } = require('./employeePortal/deleteMerchandise');
-const { createMerchandise } = require('./employeePortal/createMerchandise');
-const { updateMerchandiseStock } = require('./employeePortal/updateMerchandiseStock');
-const { updateMerchandisePrice } = require('./employeePortal/updateMerchandisePrice');
-const { updateMerchandiseImage } = require('./employeePortal/updateMerchandiseImage');
-const { createAttraction } = require('./employeePortal/createAttraction');
-const { createDining } = require('./employeePortal/createDining');
-const {updateDiningDescription} = require('./employeePortal/updateDiningDescription');
-const {updateDiningStatus} = require('./employeePortal/updateDiningStatus');
-const {updateDiningImage} = require('./employeePortal/updateDiningImage');
-const { updateAttractionImage } = require('./employeePortal/updateAttractionImage');
-const { updateAttractionStatus } = require('./employeePortal/updateAttractionStatus');
-const { updateAttractionDescription } = require('./employeePortal/updateAttractionDescription');
-const { updateAttractionCapacity } = require('./employeePortal/updateAttractionCapacity');
-const { updateAttractionDuration } = require('./employeePortal/updateAttractionDuration');
-const { getEmployeeAssignment } = require('./employeePortal/getEmployeeAssignment');
-const { getPreviousMaintenanceLogsForEmployee } = require('./employeePortal/getPreviousMaintenanceLogsForEmployee')
-const { getActiveMaintenanceLog } = require('./employeePortal/getActiveMaintenanceLog');
-const { createMaintenanceLog } = require('./employeePortal/createMaintenanceLog');
-const { closeMaintenanceLog } = require('./employeePortal/closeMaintenanceLog');
-const { editMaintenanceLog } = require('./employeePortal/editMaintenanceLog');
-const { deleteAttraction } = require('./employeePortal/deleteAttraction');
-const { deleteDining } = require('./employeePortal/deleteDining');
+const { deleteMerchandise } = require('./employeePortal/merchandiseHandler/deleteMerchandise');
+const { createMerchandise } = require('./employeePortal/merchandiseHandler/createMerchandise');
+const { updateMerchandiseStock } = require('./employeePortal/merchandiseHandler/updateMerchandiseStock');
+const { updateMerchandisePrice } = require('./employeePortal/merchandiseHandler/updateMerchandisePrice');
+const { updateMerchandiseImage } = require('./employeePortal/merchandiseHandler/updateMerchandiseImage');
+const { createAttraction } = require('./employeePortal/attractionHandler/createAttraction');
+const { createDining } = require('./employeePortal/diningHandler/createDining');
+const {updateDiningDescription} = require('./employeePortal/diningHandler/updateDiningDescription');
+const {updateDiningStatus} = require('./employeePortal/diningHandler/updateDiningStatus');
+const {updateDiningImage} = require('./employeePortal/diningHandler/updateDiningImage');
+const { updateAttractionImage } = require('./employeePortal/attractionHandler/updateAttractionImage');
+const { updateAttractionStatus } = require('./employeePortal/attractionHandler/updateAttractionStatus');
+const { updateAttractionDescription } = require('./employeePortal/attractionHandler/updateAttractionDescription');
+const { updateAttractionCapacity } = require('./employeePortal/attractionHandler/updateAttractionCapacity');
+const { updateAttractionDuration } = require('./employeePortal/attractionHandler/updateAttractionDuration');
+const { getEmployeeAssignment } = require('./employeePortal/employeeProfile/getEmployeeAssignment');
+const { getPreviousMaintenanceLogsForEmployee } = require('./employeePortal/maintenanceHandler/getPreviousMaintenanceLogsForEmployee')
+const { getActiveMaintenanceLog } = require('./employeePortal/maintenanceHandler/getActiveMaintenanceLog');
+const { createMaintenanceLog } = require('./employeePortal/maintenanceHandler/createMaintenanceLog');
+const { closeMaintenanceLog } = require('./employeePortal/maintenanceHandler/closeMaintenanceLog');
+const { editMaintenanceLog } = require('./employeePortal/maintenanceHandler/editMaintenanceLog');
+const { deleteAttraction } = require('./employeePortal/attractionHandler/deleteAttraction');
+const { deleteDining } = require('./employeePortal/diningHandler/deleteDining');
 const { getMerchandiseStockQuantity } = require('./shoppingCart/getMerchandiseStockQuantity');
 const { purchaseTicketsAndMerch } = require('./shoppingCart/purchaseTicketsAndMerch');
 const { viewEmployees } = require('./managerPortal/viewEmployees');
@@ -55,10 +55,13 @@ const { getDiningName } = require('./dining/getDiningName');
 const { getFeedback } = require('./employeePortal/getFeedback');
 const { getTasks } = require('./employeePortal/getTasks')
 const { updateTaskStatus } = require('./employeePortal/updateTaskStatus')
-const { updateEmployeeProfile} = require('./employeePortal/updateEmployeeProfile');
+const { updateEmployeeProfile} = require('./employeePortal/employeeProfile/updateEmployeeProfile');
 const { generateFinanceReport } = require('./managerPortal/reports/financeReport');
-const { getEmployeeInfo } = require('./employeePortal/getEmployeeInfo');
-const { updateEmployeePassword } = require('./employeePortal/updateEmployeePassword')
+const { getEmployeeInfo } = require('./employeePortal/employeeProfile/getEmployeeInfo');
+const { updateEmployeePassword } = require('./employeePortal/employeeProfile/updateEmployeePassword');
+const { makeMerchOrder } = require('./employeePortal/makeMerchOrder');
+
+const {generateParkReport} = require('./employeePortal/generateParkReport')
 
 const PORT = process.env.PORT || 7000;
 
@@ -244,11 +247,18 @@ const server = http.createServer(async (req, res) => {
     else if(url.parse(req.url).pathname === '/financeReport' && req.method === 'GET') {
         generateFinanceReport(req, res)
     }
+
+    else if(url.parse(req.url).pathname === '/generateParkReport' && req.method === 'GET') {
+        generateParkReport(req, res)
+    }
     else if (req.url === '/getEmployeeInfo' && req.method === 'POST'){
         getEmployeeInfo(req, res)
     }
     else if(req.url === '/updateEmployeePassword' && req.method === 'PUT'){
         updateEmployeePassword(req, res);
+    }
+    else if(req.url === '/makeMerchOrder' && req.method === 'POST'){
+        makeMerchOrder(req, res);
     }
     else if( req.url === '/testDatabaseConnection' && req.method === 'GET'){
         pool.getConnection((err, connection) => {

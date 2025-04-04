@@ -28,56 +28,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           <span className="icon"></span>
           My Tasks
         </button>
-        <button 
-          className={activeTab === 'handleMerchandise' ? 'active' : ''} 
-          onClick={() => setActiveTab('handleMerchandise')}
-        >
-          <span className="icon"></span>
-          Edit Merchandise
-        </button>
-        <button 
-          className={activeTab === 'createMerchandise' ? 'active' : ''} 
-          onClick={() => setActiveTab('createMerchandise')}
-        >
-          <span className="icon"></span>
-          Create Merchandise
-        </button>
-        <button 
-          className={activeTab === 'handleAttractions' ? 'active' : ''} 
-          onClick={() => setActiveTab('handleAttractions')}
-        >
-          <span className="icon"></span>
-          Edit Attractions
-        </button>
-        <button 
-          className={activeTab === 'createAttraction' ? 'active' : ''} 
-          onClick={() => setActiveTab('createAttraction')}
-        >
-          <span className="icon"></span>
-          Create Attraction
-        </button>
 
-        <button 
-          className={activeTab === 'handleDining' ? 'active' : ''} 
-          onClick={() => setActiveTab('handleDining')}
-        >
-          <span className="icon"></span>
-          Edit Dining
-        </button>
-        <button 
-          className={activeTab === 'createDining' ? 'active' : ''} 
-          onClick={() => setActiveTab('createDining')}
-        >
-          <span className="icon"></span>
-          Create Dining
-        </button>
-        <button 
-          className={activeTab === 'reports' ? 'active' : ''} 
-          onClick={() => setActiveTab('reports')}
-        >
-          <span className="icon"></span>
-          Reports
-        </button>
         <button 
           className={activeTab === 'showFeedback' ? 'active' : ''} 
           onClick={() => setActiveTab('showFeedback')}
