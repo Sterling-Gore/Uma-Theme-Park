@@ -101,6 +101,7 @@ function Problems() {
                     <select 
                         id="feedback_type" 
                         name="feedback_type" 
+                        className= "feedbackType-box"
                         value={formData.feedback_type}
                         onChange={handleChange}
                         required
