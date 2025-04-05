@@ -167,7 +167,6 @@ const CreateDining = ({ setActiveTab }) => {
             >
                 <option value="">Select Status</option>
                 <option value="Open">Open</option>
-                <option value="Maintenance">Maintenance</option>
                 <option value="Closed">Closed</option>
             </select>
             </div>
