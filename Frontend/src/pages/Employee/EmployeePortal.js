@@ -4,11 +4,7 @@ import Sidebar from './components/Sidebar';
 import Dashboard from './components/dashboard';
 import Profile from './components/profile';
 import Tasks from './components/tasks';
-import HandleMerchandise from './components/HandleMerchandise';
-import CreateMerchandise from './components/createMerchandise';
-import HandleAttraction from './components/handleAttraction';
-import CreateAttraction from './components/createAttraction';
-import Reports from './components/reports';
+
 import './EmployeePortal.css';
 import AuthContext from '../../context/AuthContext';
 import ShowFeedback from "./components/showFeedback";
@@ -66,28 +62,30 @@ function EmployeePortal() {
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} /> 
       <div className="content-area">
         <div className="top-bar">
+        <div className="top-bar-inner-content">
           {isManager && (
             <button className="manager-portal-btn" onClick={handleManagerPortalRedirect}>
               <span className="manager-icon">🔙</span> Back to Manager Portal
             </button>
           )}
+          </div>
+          <div className="top-bar-inner-content-end">
           <div className="user-info">
             <span>Logged in as: {localStorage.getItem('fullName')}</span>
           </div>
-          <button className="logout-btn" onClick={handleLogout}>
-            <span className="logout-icon">🚪</span> Logout
-          </button>
+          <div className="portal-actions">
+            <button className="logout-btn" onClick={handleLogout}>
+              <span className="logout-icon">🚪</span> Logout
+            </button>
+          </div>
+          </div>
         </div>
         <div className="main-content">
           {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
           {activeTab === 'profile' && <Profile setActiveTab={setActiveTab} />}
           {activeTab === 'tasks' && <Tasks setActiveTab={setActiveTab} />}
-          {activeTab === 'handleMerchandise' && <HandleMerchandise setActiveTab={setActiveTab} />}
-          {activeTab === 'createMerchandise' && <CreateMerchandise setActiveTab={setActiveTab} />}
-          {activeTab === 'handleAttractions' && <HandleAttraction setActiveTab={setActiveTab} />}
-          {activeTab === 'createAttraction' && <CreateAttraction setActiveTab={setActiveTab} />}
-          {activeTab === 'reports' && <Reports setActiveTab={setActiveTab} />}
           {activeTab === 'showFeedback' && <ShowFeedback setActiveTab={setActiveTab} />}
+
 
         </div>
       </div>

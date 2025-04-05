@@ -52,6 +52,32 @@
     margin: 0;
 }
 
+.close-btn {
+    background-color: transparent;
+    border: none;
+    color: red;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 10px;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.close-btn:hover {
+    color: rgb(197, 20, 20);
+    background-color: rgb(119, 104, 104);
+    transform: scale(1.1);
+}
+
+.close-btn:focus {
+    outline: none;
+}
+
+.food-pass-container {
+    display: flex;          /* Use flexbox for layout */
+    justify-content: flex-end;  /* Align the content to the right */
+    gap: 10px;              /* Optional: adds space between the inner elements */
+  }
+
 /* Date list styling */
 .date-list {
     list-style-type: none;
@@ -71,6 +97,20 @@
 
 .food-pass-indicator {
     color: #4169E1;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.add-food-pass-indicator {
+    color: #4169E1;
+    background-color: #9da9ce;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.add-food-pass-indicator:hover {
+    color: #9da9ce;
+    background-color: #4169E1;
     font-weight: bold;
     font-size: 0.9rem;
 }

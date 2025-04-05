@@ -80,7 +80,7 @@
 /* Attraction description styling */
 .attraction-description {
     color: #444;
-    font-size: 0.95rem;
+    font-size: 1.2rem;
     line-height: 1.5;
     margin-bottom: 15px;
     flex-grow: 1;
@@ -92,6 +92,11 @@
     justify-content: space-between;
     margin-bottom: 15px;
     flex-wrap: wrap;
+}
+
+.smallish-attraction-text {
+    font-size: 20px;
+    margin-bottom: 5px;
 }
 
 .attraction-detail {

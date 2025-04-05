@@ -5,13 +5,15 @@ const CreateEmployee = ({ setActiveTab }) => {
         first_name: '',
         last_name: '',
         role: '',
-        attraction: '',
+        attraction_or_dining: '',
+        isAttraction: null,
         email: '',
         phone_number: '',
         password: ''
     });
 
     const [attractions, setAttractions] = useState([]);
+    const [dining, setDining] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -39,17 +41,67 @@ const CreateEmployee = ({ setActiveTab }) => {
         fetchAttractions();
     }, []);
 
+    useEffect(() => {
+        const fetchDining = async () => {
+            try {
+                setLoading(true);
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getDiningName`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                setDining(data);
+                setError(null);
+            } catch (err) {
+                console.error('Error fetching dining:', err);
+                setError('Failed to load dining. Please try again later.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDining();
+    }, []);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+        // Validate first and last name (allow only letters and spaces)
+    if ((name === 'first_name' || name === 'last_name') && !/^[A-Za-z\s]*$/.test(value)) {
+        return;
+    }
+
+    // Validate phone number (allow only numbers)
+    if (name === 'phone_number' && !/^\d*$/.test(value)) {
+        return;
+    }
         setFormData({
             ...formData,
             [name]: value
         });
     };
 
+    const handleAttractionOrDiningChange = (e) => {
+        const selectedValue = e.target.value;
+        setFormData({
+            ...formData,
+            attraction_or_dining: selectedValue,
+            isAttraction: attractions.some(attraction => attraction.attraction_id === selectedValue)
+        })
+    }
+
+    useEffect (() => {
+        console.log(formData.isAttraction);
+    }, [formData])
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        if(formData.password.length < 8)
+        {
+            alert("The password length must be atleast 8 characters long");
+            return;
+        }
         try {
             const createData = { ...formData };
 
@@ -80,7 +132,8 @@ const CreateEmployee = ({ setActiveTab }) => {
                     first_name: '',
                     last_name: '',
                     role: '',
-                    attraction: '',
+                    attraction_or_dining: '',
+                    isAttraction : null,
                     email: '',
                     phone_number: '',
                     password: ''
@@ -141,29 +194,39 @@ const CreateEmployee = ({ setActiveTab }) => {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="attraction">Assigned Attraction</label>
+                    <label htmlFor="attraction_or_dining">Assigned Attraction or Dining</label>
                     <select
-                        id="attraction"
-                        name="attraction"
-                        value={formData.attraction}
-                        onChange={handleInputChange}
+                        id="attraction_or_dining"
+                        name="attraction_or_dining"
+                        value={formData.attraction_or_dining || ""}
+                        onChange={handleAttractionOrDiningChange}
                         required
                         disabled={loading}
                     >
-                        <option value="">Select Attraction</option>
+                        <option value="">Select Attraction or Dining</option>
                         {error ? (
                             <option value="" disabled>{error}</option>
                         ) : loading ? (
-                            <option value="" disabled>Loading attractions...</option>
+                            <option value="" disabled>Loading attractions and dinings...</option>
                         ) : (
-                            attractions.map(attraction => (
+                            <>
+                            {attractions.map(attraction => (
                                 <option
                                     key={attraction.attraction_id}
                                     value={attraction.attraction_id}
                                 >
-                                    {attraction.attraction_name}
+                                    {`[ATTRACTION]:  ${attraction.attraction_name}`}
                                 </option>
-                            ))
+                            ))}
+                            {dining.map(dining_item => (
+                                <option
+                                    key={dining_item.dining_id}
+                                    value={dining_item.dining_id}
+                                >
+                                    {`[DINING]:  ${dining_item.dining_name}`}
+                                </option>
+                            ))}
+                            </>
                         )}
                     </select>
                 </div>
@@ -188,6 +251,7 @@ const CreateEmployee = ({ setActiveTab }) => {
                         name="phone_number"
                         value={formData.phone_number}
                         onChange={handleInputChange}
+                        maxLength={10}
                         required
                     />
                 </div>
@@ -201,6 +265,8 @@ const CreateEmployee = ({ setActiveTab }) => {
                         value={formData.password}
                         onChange={handleInputChange}
                         required
+                        maxLength={30}
+                        minLength={8}
                     />
                 </div>
 

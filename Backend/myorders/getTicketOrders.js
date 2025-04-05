@@ -23,7 +23,7 @@ async function getTickets(userID) {
                 AND t.ticket_receipt_id = td.ticket_receipt_id
                 AND c.customer_id = ?
             ORDER BY 
-                td.ticket_date`;
+                td.ticket_date desc`;
 
         const [rows] = await pool.query(sqlQuery, [userID]);
         return rows;

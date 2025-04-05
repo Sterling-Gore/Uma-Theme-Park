@@ -2,6 +2,7 @@
 require('dotenv').config();
 
 const http = require('http');
+const url = require('url')
 const { testing } = require('./testing');
 const { testingPost } = require('./testingPost');
 const { registerCustomer } = require('./registerUsers/registerCustomer');
@@ -13,18 +14,29 @@ const { employeeLogin } = require('./employeeHandler/employeeLogin')
 const pool = require('./database');
 //Mercandise
 const { getMerchandise } = require('./shoppingCart/getMerchandise');
-const { deleteMerchandise } = require('./employeePortal/deleteMerchandise');
-const { createMerchandise } = require('./employeePortal/createMerchandise');
-const { updateMerchandiseStock } = require('./employeePortal/updateMerchandiseStock');
-const { updateMerchandisePrice } = require('./employeePortal/updateMerchandisePrice');
-const { updateMerchandiseImage } = require('./employeePortal/updateMerchandiseImage');
-const { createAttraction } = require('./employeePortal/createAttraction');
-const { updateAttractionImage } = require('./employeePortal/updateAttractionImage');
-const { updateAttractionStatus } = require('./employeePortal/updateAttractionStatus');
-const { updateAttractionDescription } = require('./employeePortal/updateAttractionDescription');
-const { updateAttractionCapacity } = require('./employeePortal/updateAttractionCapacity');
-const { updateAttractionDuration } = require('./employeePortal/updateAttractionDuration');
-const { deleteAttraction } = require('./employeePortal/deleteAttraction');
+const { deleteMerchandise } = require('./employeePortal/merchandiseHandler/deleteMerchandise');
+const { createMerchandise } = require('./employeePortal/merchandiseHandler/createMerchandise');
+const { updateMerchandiseStock } = require('./employeePortal/merchandiseHandler/updateMerchandiseStock');
+const { updateMerchandisePrice } = require('./employeePortal/merchandiseHandler/updateMerchandisePrice');
+const { updateMerchandiseImage } = require('./employeePortal/merchandiseHandler/updateMerchandiseImage');
+const { createAttraction } = require('./employeePortal/attractionHandler/createAttraction');
+const { createDining } = require('./employeePortal/diningHandler/createDining');
+const {updateDiningDescription} = require('./employeePortal/diningHandler/updateDiningDescription');
+const {updateDiningStatus} = require('./employeePortal/diningHandler/updateDiningStatus');
+const {updateDiningImage} = require('./employeePortal/diningHandler/updateDiningImage');
+const { updateAttractionImage } = require('./employeePortal/attractionHandler/updateAttractionImage');
+const { updateAttractionStatus } = require('./employeePortal/attractionHandler/updateAttractionStatus');
+const { updateAttractionDescription } = require('./employeePortal/attractionHandler/updateAttractionDescription');
+const { updateAttractionCapacity } = require('./employeePortal/attractionHandler/updateAttractionCapacity');
+const { updateAttractionDuration } = require('./employeePortal/attractionHandler/updateAttractionDuration');
+const { getEmployeeAssignment } = require('./employeePortal/employeeProfile/getEmployeeAssignment');
+const { getPreviousMaintenanceLogsForEmployee } = require('./employeePortal/maintenanceHandler/getPreviousMaintenanceLogsForEmployee')
+const { getActiveMaintenanceLog } = require('./employeePortal/maintenanceHandler/getActiveMaintenanceLog');
+const { createMaintenanceLog } = require('./employeePortal/maintenanceHandler/createMaintenanceLog');
+const { closeMaintenanceLog } = require('./employeePortal/maintenanceHandler/closeMaintenanceLog');
+const { editMaintenanceLog } = require('./employeePortal/maintenanceHandler/editMaintenanceLog');
+const { deleteAttraction } = require('./employeePortal/attractionHandler/deleteAttraction');
+const { deleteDining } = require('./employeePortal/diningHandler/deleteDining');
 const { getMerchandiseStockQuantity } = require('./shoppingCart/getMerchandiseStockQuantity');
 const { purchaseTicketsAndMerch } = require('./shoppingCart/purchaseTicketsAndMerch');
 const { viewEmployees } = require('./managerPortal/viewEmployees');
@@ -37,10 +49,20 @@ const { UpdateAccount } = require('./accountHandler/UpdateAccount');
 const { getTicketOrders } = require('./myorders/getTicketOrders');
 const { getMerchandiseOrders } = require('./myorders/getMerchandiseOrders');
 const { getAttractions } = require('./attractions/getAttractions');
+const { getDining } = require('./dining/getDining')
 const { getAttractionName } = require('./attractions/getAttractionName');
+const { getDiningName } = require('./dining/getDiningName');
 const { getFeedback } = require('./employeePortal/getFeedback');
 const { getTasks } = require('./employeePortal/getTasks')
 const { updateTaskStatus } = require('./employeePortal/updateTaskStatus')
+const { updateEmployeeProfile} = require('./employeePortal/employeeProfile/updateEmployeeProfile');
+const { generateFinanceReport } = require('./managerPortal/reports/financeReport');
+const { generateMaintenanceReport } = require('./managerPortal/reports/maintenanceReport');
+const { getEmployeeInfo } = require('./employeePortal/employeeProfile/getEmployeeInfo');
+const { updateEmployeePassword } = require('./employeePortal/employeeProfile/updateEmployeePassword');
+const { makeMerchOrder } = require('./employeePortal/makeMerchOrder');
+
+const {generateParkReport} = require('./employeePortal/generateParkReport')
 
 const PORT = process.env.PORT || 7000;
 
@@ -123,6 +145,9 @@ const server = http.createServer(async (req, res) => {
     else if(req.url === '/createAttraction' && req.method === 'POST'){
         createAttraction(req, res)
     }
+    else if(req.url === '/createDining' && req.method === 'POST'){
+        createDining(req, res)
+    }
     else if(req.url === '/updateAttractionStatus' && req.method === 'POST'){
         updateAttractionStatus(req, res)
     }
@@ -132,14 +157,44 @@ const server = http.createServer(async (req, res) => {
     else if(req.url === '/updateAttractionDescription' && req.method === 'POST'){
         updateAttractionDescription(req, res)
     }
+    else if(req.url === '/updateDiningStatus' && req.method === 'POST'){
+        updateDiningStatus(req, res)
+    }
+    else if(req.url === '/updateDiningImage' && req.method === 'POST'){
+        updateDiningImage(req, res)
+    }
+    else if(req.url === '/updateDiningDescription' && req.method === 'POST'){
+        updateDiningDescription(req, res)
+    }
     else if(req.url === '/updateAttractionDuration' && req.method === 'POST'){
         updateAttractionDuration(req, res)
+    }
+    else if(req.url === '/getEmployeeAssignment' && req.method === 'POST'){
+        getEmployeeAssignment(req, res)
+    }
+    else if(req.url === '/getPreviousMaintenanceLogsForEmployee' && req.method === 'POST'){
+        getPreviousMaintenanceLogsForEmployee(req, res)
+    }
+    else if(req.url === '/getActiveMaintenanceLog' && req.method === 'POST'){
+        getActiveMaintenanceLog(req, res)
+    }
+    else if(req.url === '/createMaintenanceLog' && req.method === 'POST'){
+        createMaintenanceLog(req, res)
+    }
+    else if(req.url === '/closeMaintenanceLog' && req.method === 'POST'){
+        closeMaintenanceLog(req, res)
+    }
+    else if(req.url === '/editMaintenanceLog' && req.method === 'POST'){
+        editMaintenanceLog(req, res)
     }
     else if(req.url === '/updateAttractionCapacity' && req.method === 'POST'){
         updateAttractionCapacity(req, res)
     }
     else if(req.url === '/deleteAttraction' && req.method === 'POST'){
         deleteAttraction(req, res)
+    }
+    else if(req.url === '/deleteDining' && req.method === 'POST'){
+        deleteDining(req, res)
     }
     else if(req.url === '/getMerchandiseStockQuantity' && req.method === 'POST'){
         getMerchandiseStockQuantity(req, res)
@@ -168,17 +223,47 @@ const server = http.createServer(async (req, res) => {
     else if(req.url === '/getAttractions' && req.method === 'GET'){
         getAttractions(req, res)
     }
+    else if(req.url === '/getDining' && req.method === 'GET'){
+        getDining(req, res)
+    }
     else if(req.url === '/getFeedback' && req.method === 'GET'){
         getFeedback(req, res)
     }
+    else if(req.url === '/updateEmployeeProfile' && req.method === 'PUT')
+    {
+        updateEmployeeProfile(req,res)
+    }
     else if(req.url === '/getAttractionName' && req.method === 'GET'){
         getAttractionName(req, res)
+    }
+    else if(req.url === '/getDiningName' && req.method === 'GET'){
+        getDiningName(req, res)
     }
     else if(req.url === '/getTasks' && req.method === 'GET'){
         getTasks(req, res)
     }
     else if(req.url === '/updateTaskStatus' && req.method === 'PUT'){
         updateTaskStatus(req, res)
+    }
+    else if(url.parse(req.url).pathname === '/financeReport' && req.method === 'GET') {
+        generateFinanceReport(req, res)
+    }
+    
+    else if(url.parse(req.url).pathname === '/maintenanceReport' && req.method === 'GET') {
+        generateMaintenanceReport(req, res)
+    }
+
+    else if(url.parse(req.url).pathname === '/generateParkReport' && req.method === 'GET') {
+        generateParkReport(req, res)
+    }
+    else if (req.url === '/getEmployeeInfo' && req.method === 'POST'){
+        getEmployeeInfo(req, res)
+    }
+    else if(req.url === '/updateEmployeePassword' && req.method === 'PUT'){
+        updateEmployeePassword(req, res);
+    }
+    else if(req.url === '/makeMerchOrder' && req.method === 'POST'){
+        makeMerchOrder(req, res);
     }
     else if( req.url === '/testDatabaseConnection' && req.method === 'GET'){
         pool.getConnection((err, connection) => {

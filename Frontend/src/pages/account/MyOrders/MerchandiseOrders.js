@@ -67,6 +67,7 @@ function MerchandiseOrders() {
                 }
 
                 setOrders(data.receipts || []);
+                console.log(data.receipts);
             } catch (err) {
                 console.error('Error fetching orders:', err);
                 setError(err.message);
@@ -79,12 +80,19 @@ function MerchandiseOrders() {
     }, []);
 
 
+    
+
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
-
         const date = new Date(dateString);
-        return date.toLocaleString();
-    };
+        return date.toLocaleDateString('en-US', {
+          timeZone: 'UTC',
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+    
+        });
+      };
 
 
     const formatCurrency = (amount) => {
@@ -166,32 +174,35 @@ function MerchandiseOrders() {
                 {orders.map((receipt, index) => (
                     <div key={receipt.receipt_id || `order-${index}`} className="order-card">
                         <div className="order-header">
-                            <h3>Receipt #{receipt.receipt_id}</h3>
-                            <span className="order-date">
-                                {formatDate(receipt.purchase_date)}
-                            </span>
+                        
+                            <h2>Receipt ID: {receipt.head_receipt_id}</h2>
+                            <span className="order-cost">${Number(receipt.total_cost).toFixed(2)}</span>
+                        
+                            
                         </div>
-
+                        
                         <div className="order-details">
-                            <div className="detail-row">
-                                <span className="label">Order ID:</span>
-                                <span className="value">{receipt.receipt_id}</span>
-                            </div>
+                            <p><strong>Purchase Date:</strong> {formatDate(receipt.purchase_date)}</p>
+                            
 
                             <div className="detail-row">
-                                <span className="label">Total Amount:</span>
-                                <span className="value">{formatCurrency(receipt.total_cost)}</span>
+                                <p><strong>Items Purchased:</strong></p>
                             </div>
-
-                            <div className="detail-row">
-                                <span className="label">Items:</span>
-                                <span className="value">{receipt.total_items_sold}</span>
-                            </div>
-
-                            <div className="detail-row">
-                                <span className="label">Product:</span>
-                                <span className="value">{receipt.merchandise_name}</span>
-                            </div>
+                                {Object.entries(receipt.merchandise_summary).map( ([name, array]) => (
+                                    <div className="detail-row">
+                                    <li key={name}>
+                                        
+                                        <span className="value">{array[0]}x {name}   <span className="small-order-cost">${Number(array[1]).toFixed(2)}</span></span>
+                                        
+                                    
+                                    </li>
+                                    </div>
+                                    
+                                    
+                                ))}
+                                
+                                
+                            
                         </div>
 
                         {/* <div className="order-actions">

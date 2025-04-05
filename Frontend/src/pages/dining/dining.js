@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "../../App.css";
 import "./dining.css";
 
@@ -9,6 +9,37 @@ import mexicanImage from "../../assets/dining_page_mexican.jpg";
 import ticketImage from "../../assets/dining_page_food_pass.jpg";
 
 function Dining() {
+  const [dining, setDining] = useState([]);
+
+
+  useEffect(() => {
+        const fetchDining = async () => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/getDining`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                    });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch dining');
+                }
+                const result = await response.json();
+
+                if (result.success) {
+                    setDining(result.data);
+                } else {
+                    throw new Error(result.message || 'Failed to fetch dining');
+                }
+            } catch (error) {
+                console.error('Error fetching dining:', error);
+                //setError(error.message);
+            } 
+        };
+
+        fetchDining();
+    }, []);
   const foodStands = [
     {
       name: "Wonderland Treats",
@@ -44,21 +75,21 @@ function Dining() {
       <section className="food-stands-section">
         <h2>Food Stands</h2>
         <div className="food-stands-container">
-          {foodStands.map((stand, index) => (
+          {dining.map((stand, index) => (
             <div className="food-stand-card" key={index}>
               <div
                 className="food-stand-image"
                 style={{
-                  backgroundImage: `url(${stand.image})`
+                  backgroundImage: `url(data:${stand.mimeType};base64,${stand.viewing_image})`,
                 }}
               >
                 <div className="image-overlay">
-                  <div className="image-text">{stand.name}</div>
+                  <div className="image-text">{stand.dining_name}</div>
                 </div>
               </div>
               <div className="food-stand-info">
-                <h3>{stand.name}</h3>
-                <p>{stand.description}</p>
+                <h3>{stand.dining_name}</h3>
+                <p>{stand.dining_description}</p>
               </div>
             </div>
           ))}

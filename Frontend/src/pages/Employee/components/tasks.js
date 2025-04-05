@@ -43,7 +43,7 @@ const Tasks = ({ setActiveTab }) => {
     fetchTasks();
   }, [refreshTasks]);
 
-  const handleMarkCompleted = async (notificationId) => {
+  const handleMarkCompleted = async (notificationId, merchandiseID) => {
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/updateTaskStatus`, {
         method: 'PUT',
@@ -61,6 +61,19 @@ const Tasks = ({ setActiveTab }) => {
         throw new Error('Failed to update task status');
       }
 
+      const orderResponse = await fetch(`${process.env.REACT_APP_BACKEND_API}/makeMerchOrder`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type' : 'application/json'
+        },
+        body: JSON.stringify({merchandise_id: merchandiseID})
+      });
+
+      if(!orderResponse.ok) {
+        throw new Error('Failed to make merchandise order');
+      }
+
       setRefreshTasks(!refreshTasks);
     } catch (err) {
       console.error('Error updating task status:', err);
@@ -76,9 +89,11 @@ const Tasks = ({ setActiveTab }) => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
+      timeZone: 'UTC',
       year: 'numeric',
       month: 'short',
       day: 'numeric'
+
     });
   };
 
@@ -132,7 +147,7 @@ const Tasks = ({ setActiveTab }) => {
                 {!task.isCompleted && (
                   <button
                     className="complete-task-btn"
-                    onClick={() => handleMarkCompleted(task.merchandise_notification_id)}
+                    onClick={() => handleMarkCompleted(task.merchandise_notification_id, task.merchandise_id)}
                   >
                     Mark as Completed
                   </button>

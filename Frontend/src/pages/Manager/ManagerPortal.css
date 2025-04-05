@@ -662,3 +662,151 @@
 .manager-portal .cancel-btn:hover {
   background-color: #e9ecef;
 }
+
+/* Add these styles to your existing ManagerPortal.css file */
+
+/* Finance Report Styles */
+.manager-portal .filter-form {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--box-shadow);
+}
+
+.manager-portal .filter-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.manager-portal .filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.manager-portal .filter-group label {
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--text-color);
+}
+
+.manager-portal .filter-group input,
+.manager-portal .filter-group select {
+  padding: 10px;
+  border: 1px solid #e5e5e5;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+.manager-portal .filter-group input:focus,
+.manager-portal .filter-group select:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+}
+
+.manager-portal .filter-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.manager-portal .generate-btn {
+  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.manager-portal .generate-btn:hover {
+  background-color: #3651d4;
+}
+
+.manager-portal .reset-btn {
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  color: var(--text-color);
+  border: 1px solid #e5e5e5;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.manager-portal .reset-btn:hover {
+  background-color: #e9ecef;
+}
+
+.manager-portal .report-period {
+  margin-bottom: 15px;
+  font-weight: 500;
+  color: var(--light-text);
+}
+
+.manager-portal .report-summary {
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius);
+  padding: 15px;
+  margin-bottom: 20px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.manager-portal .report-summary h4 {
+  margin-bottom: 10px;
+  color: var(--primary-color);
+}
+
+.manager-portal .summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.manager-portal .summary-item {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.manager-portal .summary-label {
+  font-size: 0.85rem;
+  color: var(--light-text);
+  margin-bottom: 5px;
+}
+
+.manager-portal .summary-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.manager-portal .table-container {
+  overflow-x: auto;
+  margin-top: 20px;
+}
+
+/* Responsive adjustments for the financial report */
+@media (max-width: 768px) {
+  .manager-portal .filter-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .manager-portal .filter-actions {
+    flex-direction: column;
+  }
+  
+  .manager-portal .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

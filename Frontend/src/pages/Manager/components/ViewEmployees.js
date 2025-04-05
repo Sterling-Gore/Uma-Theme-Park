@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import "../ManagerPortal.css"
 
 const ViewEmployees = ({ setActiveTab }) => {
   const [employees, setEmployees] = useState([]);
@@ -96,7 +97,7 @@ const ViewEmployees = ({ setActiveTab }) => {
         <thead>
           <tr>
             <th>Name</th>
-            <th>Current Attraction</th>
+            <th>Assigned Attraction or Dining</th>
             <th>Role</th>
             <th>Email</th>
             <th>Phone</th>
@@ -108,13 +109,13 @@ const ViewEmployees = ({ setActiveTab }) => {
             filteredEmployees.map((employee) => (
               <tr key={employee.employee_id || employee.email}>
                 <td>{`${employee.first_name} ${employee.last_name}`}</td>
-                <td>{employee.attraction_name || 'Not Assigned'}</td>
+                <td>{employee.attraction_name || employee.dining_name || 'Not Assigned'}</td>
                 <td>{employee.role}</td>
                 <td>{employee.email}</td>
                 <td>{employee.phone_number}</td>
                 <td className="action-buttons">
                   <button className="edit-btn" onClick={() => handleAssignAttraction(employee)}>
-                    Assign Attraction
+                    Assign Attraction or Dining
                   </button>
                   <button className="delete-btn" onClick={() => handleDelete(employee.email)}>
                     Delete

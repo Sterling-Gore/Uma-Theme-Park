@@ -71,7 +71,13 @@ function MyOrders() {
                                 numberOfStandards: order.number_of_standards,
                                 numberOfChildren: order.number_of_children,
                                 numberOfSeniors: order.number_of_seniors,
-                                purchaseDate: new Date(order.purchase_date).toLocaleDateString(),
+                                purchaseDate: new Date(order.purchase_date).toLocaleDateString('en-US', {
+                                    timeZone: 'UTC',
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric'
+                              
+                                  }),
                                 dates: []
                             };
                         }
@@ -183,8 +189,8 @@ function MyOrders() {
                                 <table className="dates-table">
                                     <thead>
                                         <tr>
-                                            <th>Date</th>
-                                            <th>Includes Food Pass</th>
+                                            <th className="dark-text">Date</th>
+                                            <th className="dark-text">Includes Food Pass</th>
                                         </tr>
                                     </thead>
                                     <tbody>

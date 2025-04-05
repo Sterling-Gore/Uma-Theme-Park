@@ -11,22 +11,68 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           className={activeTab === 'view' ? 'active' : ''} 
           onClick={() => setActiveTab('view')}
         >
-          <span className="icon">👥</span>
           View Employees
         </button>
         <button 
           className={activeTab === 'create' ? 'active' : ''} 
           onClick={() => setActiveTab('create')}
         >
-          <span className="icon">➕</span>
           Create Employee
         </button>
         <button 
-          className={activeTab === 'reports' ? 'active' : ''} 
-          onClick={() => setActiveTab('reports')}
+          className={activeTab === 'financeReport' ? 'active' : ''} 
+          onClick={() => setActiveTab('financeReport')}
         >
-          <span className="icon">📊</span>
-          Reports
+          Finance Report
+        </button>
+        <button 
+          className={activeTab === 'MaintenanceReport' ? 'active' : ''} 
+          onClick={() => setActiveTab('MaintenanceReport')}
+        >
+          Maintenance Report
+        </button>
+        <button 
+          className={activeTab === 'AttractReport' ? 'active' : ''} 
+          onClick={() => setActiveTab('AttractReport')}
+        >
+          Attraction Report
+        </button>
+        <button 
+          className={activeTab === 'handleMerchandise' ? 'active' : ''} 
+          onClick={() => setActiveTab('handleMerchandise')}
+        >
+          Edit Merchandise
+        </button>
+        <button 
+          className={activeTab === 'createMerchandise' ? 'active' : ''} 
+          onClick={() => setActiveTab('createMerchandise')}
+        >
+          Create Merchandise
+        </button>
+        <button 
+          className={activeTab === 'handleAttractions' ? 'active' : ''} 
+          onClick={() => setActiveTab('handleAttractions')}
+        >
+          Edit Attractions
+        </button>
+        <button 
+          className={activeTab === 'createAttraction' ? 'active' : ''} 
+          onClick={() => setActiveTab('createAttraction')}
+        >
+          Create Attraction
+        </button>
+
+        <button 
+          className={activeTab === 'handleDining' ? 'active' : ''} 
+          onClick={() => setActiveTab('handleDining')}
+        >
+          Edit Dining
+        </button>
+        <button 
+          className={activeTab === 'createDining' ? 'active' : ''} 
+          onClick={() => setActiveTab('createDining')}
+        >
+          Create Dining
         </button>
       </nav>
     </div>

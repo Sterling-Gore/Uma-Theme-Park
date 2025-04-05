@@ -2,7 +2,20 @@ const pool = require('../database');
 
 
 async function getReceipt(userID) {
-    const sqlQuery = 'SELECT * FROM merchandise_receipt WHERE customer_id = ?';
+    //const sqlQuery = 'SELECT * FROM merchandise_receipt WHERE customer_id = ? ORDER BY purchase_date DESC';
+    const sqlQuery = `SELECT 
+        head_receipt_id,
+        SUM(total_cost) AS total_cost,
+        JSON_OBJECTAGG(merchandise_name, JSON_ARRAY(total_items_sold, total_cost)) AS merchandise_summary,
+        MAX(purchase_date) AS purchase_date
+    FROM 
+        merchandise_receipt
+    WHERE customer_id = ?
+    GROUP BY 
+        head_receipt_id
+    ORDER BY 
+        purchase_date DESC;
+    `;
     const [rows] = await pool.execute(sqlQuery, [userID]);
     return rows;
 }

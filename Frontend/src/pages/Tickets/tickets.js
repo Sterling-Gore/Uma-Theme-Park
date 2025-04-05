@@ -201,6 +201,7 @@ function Tickets() {
             numOfStandardTickets,
             numOfChildrenTickets,
             numOfSeniorTickets,
+            numOfTickets,
             numOfDays,
             selectedDates,
             selectedDatesForFoodPass,
@@ -277,7 +278,7 @@ function Tickets() {
                                 </div>
                                 <div className="ticket-type-container">
                                     <div className="ticket-type">
-                                        <div className="ticket-type-name">Standard Tickets</div>
+                                        <div className="ticket-type-name">Standard Tickets:  $10 per day</div>
                                         <div className="ticket-counter">
                                             <p className="ticket-age-range">Ages 13-59</p>
                                             <div className="counter-controls">
@@ -289,7 +290,7 @@ function Tickets() {
                                     </div>
     
                                     <div className="ticket-type">
-                                        <div className="ticket-type-name">Child Tickets</div>
+                                        <div className="ticket-type-name">Child Tickets:  $6 per day</div>
                                         <div className="ticket-counter">
                                             <p className="ticket-age-range">Ages 0-12</p>
                                             <div className="counter-controls">
@@ -301,7 +302,7 @@ function Tickets() {
                                     </div>
     
                                     <div className="ticket-type">
-                                        <div className="ticket-type-name">Senior Tickets</div>
+                                        <div className="ticket-type-name">Senior Tickets:  $4 per day</div>
                                         <div className="ticket-counter">
                                             <p className="ticket-age-range">Ages 60+</p>
                                             <div className="counter-controls">
@@ -384,7 +385,7 @@ function Tickets() {
                         </div>
                     ))}
                     </div>
-                    <button className="primary-button continue-button" onClick={() => (setStep(5),setPrice((selectedDatesForFoodPass.length * (numOfStandardTickets*3 + numOfSeniorTickets*2 + numOfChildrenTickets) ) + numOfDays * (4*numOfSeniorTickets + 6*numOfChildrenTickets + 10*numOfStandardTickets)))}>
+                    <button className="primary-button continue-button" onClick={() => (setStep(5),setPrice(numOfDays * (4*numOfSeniorTickets + 6*numOfChildrenTickets + 10*numOfStandardTickets)))}>
                         Continue
                     </button>
                     </>
@@ -397,7 +398,7 @@ function Tickets() {
                         <p className="ticket-duration">{numOfDays}-Day Ticket</p>
                         <ul className="date-list summary-list">
                             {selectedDates.map((date, index) => (
-                                <li className="date-item summary-item" key={index}>{date} {selectedDatesForFoodPass.includes(date) ? `(Includes $${numOfStandardTickets*3 + numOfSeniorTickets*2 + numOfChildrenTickets} Food Pass)` : ''}</li>
+                                <li className="date-item summary-item" key={index}>{date} {selectedDatesForFoodPass.includes(date) ? `(Includes $${numOfTickets * 5.99} Food Pass)` : ''}</li>
                             ))}
                         </ul>
                         <div className="summary-container">
@@ -415,7 +416,7 @@ function Tickets() {
                             </div>
                             <div className="summary-row total-row">
                                 <p className="summary-label total-label">Subtotal</p>
-                                <p className="summary-value total-value">${(selectedDatesForFoodPass.length * (numOfStandardTickets*3 + numOfSeniorTickets*2 + numOfChildrenTickets) ) + numOfDays * (4*numOfSeniorTickets + 6*numOfChildrenTickets + 10*numOfStandardTickets)} USD</p>
+                                <p className="summary-value total-value">${((selectedDatesForFoodPass.length * (numOfTickets * 5.99) ) + numOfDays * (4*numOfSeniorTickets + 6*numOfChildrenTickets + 10*numOfStandardTickets)).toFixed(2)} USD</p>
                             </div>
                         </div>
                         <button className="primary-button cart-button" onClick={handleAddToCart}>Add to Cart</button>

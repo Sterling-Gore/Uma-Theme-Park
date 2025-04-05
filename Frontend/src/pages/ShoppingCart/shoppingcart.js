@@ -199,13 +199,13 @@ function Shoppingcart()
         if(storedCartTickets === null)
         {
             cartItemsTickets.map((item) => (
-                accumulatedPrice += item.price
+                accumulatedPrice += ( (item.selectedDatesForFoodPass.length * (item.numOfTickets * 5.99) ) + item.price)
             ));
         }
         else
         {
             storedCartTickets.map((item) => (
-                accumulatedPrice += item.price
+                accumulatedPrice += ( (item.selectedDatesForFoodPass.length * (item.numOfTickets * 5.99) ) + item.price)
             ));
         }
 
@@ -243,6 +243,39 @@ function Shoppingcart()
         //CalculateTotalPrice(cartItemsTickets, updatedCart);
         console.log(indexID);
     };
+
+    const AddFoodPass = (IndexID, date) => {
+        const updatedCartTickets = cartItemsTickets.map((item) => 
+        {
+            if(Number(item.id) === Number(IndexID))
+            {
+                console.log("hewwo")
+                return({
+                    ...item,
+                    selectedDatesForFoodPass : [...item.selectedDatesForFoodPass, date]
+                })
+            }
+            return (item);
+        })
+        localStorage.setItem("cart-tickets", JSON.stringify(updatedCartTickets));
+        setCartItemsTickets(updatedCartTickets);
+    }
+
+    const RemoveFoodPass = (IndexID, date) => {
+        const updatedCartTickets = cartItemsTickets.map((item) => 
+        {
+            if(Number(item.id) === Number(IndexID))
+            {
+                return({
+                    ...item,
+                    selectedDatesForFoodPass : item.selectedDatesForFoodPass.filter(innerdate => innerdate !== date)
+                })
+            }
+            return (item);
+        })
+        localStorage.setItem("cart-tickets", JSON.stringify(updatedCartTickets));
+        setCartItemsTickets(updatedCartTickets);
+    }
 
     const AddOneMerchandise = (indexID) => {
         const updatedCartItems = cartItemsMerchs.map((item) =>
@@ -418,15 +451,28 @@ function Shoppingcart()
                         {cartItemsTickets.map((item, index) => (
                             <div key={index} className="cart-item">
                                 <div className="cart-item-header">
-                                    <button className="delete-btn" onClick={() => (DeleteTicket(item.id))}>Delete Ticket</button>
-                                    <p className="ticket-type">{item.numOfDays}-Day Ticket</p>
+                                    <button className="delete-button" onClick={() => (DeleteTicket(item.id))}>Delete Ticket</button>
                                 </div>
+                                <p className="ticket-type">{item.numOfDays}-Day Ticket</p>
                                 <ul className="date-list">
                                     {item.selectedDates.map((date, index2) => (
                                         <li className="date-item" key={index2}>
                                             <span className="date-text">{date}</span> 
+                                            <div className="food-pass-container">
                                             {item.selectedDatesForFoodPass.includes(date) ? 
-                                                <span className="food-pass-indicator">(Includes ${item.numOfStandardTickets*3 + item.numOfSeniorTickets*2 + item.numOfChildrenTickets} Food Pass)</span> : ''}
+                                                (
+                                                <>
+                                                <button class="close-btn" onClick={() => (RemoveFoodPass(index, date))} >&#10006;</button>
+                                                <span className="food-pass-indicator">(Includes ${item.numOfTickets * 5.99} Food Pass)</span>
+                                                </>
+                                                ) : (
+                                                <>
+                                                <button className="add-food-pass-indicator" onClick={() => (AddFoodPass(index, date))}>
+                                                    add a food pass
+                                                </button>
+                                                </>
+                                                )}
+                                            </div>
                                         </li>
                                     ))}
                                 </ul>
@@ -444,7 +490,7 @@ function Shoppingcart()
                                         <p className="ticket-price">{item.numOfSeniorTickets > 0 ? `$${item.numOfDays * 4 * item.numOfSeniorTickets}` : ""}</p>
                                     </div>
                                     <div className="total-price">
-                                        <p className="price-text">${item.price} USD</p>
+                                        <p className="price-text">${( (item.selectedDatesForFoodPass.length * (item.numOfTickets * 5.99) ) +  item.price).toFixed(2)} USD</p>
                                     </div>
                                 </div>
                             </div>
@@ -456,17 +502,17 @@ function Shoppingcart()
                         {cartItemsMerchs.map((item, index) => (
                             <div key={index} className="cart-item merch-item">
                                 <div className="cart-item-header">
-                                    <button className="delete-btn" onClick={() => (DeleteMerhandise(item.merchandise_id))}>Remove Merchandise</button>
-                                    <p className="merch-name">{item.in_shopping_cart}x {item.merchandise_name}{item.in_shopping_cart > 1 ? ('s') : ('')}</p>
+                                    <button className="delete-button" onClick={() => (DeleteMerhandise(item.merchandise_id))}>Remove Merchandise</button>
                                 </div>
+                                <p className="merch-name">{item.in_shopping_cart}x {item.merchandise_name}{item.in_shopping_cart > 1 ? ('s') : ('')}</p>
                                 <div className="merch-details">
                                     {item.stock_amount < 6 && <p className="low-stock">{item.stock_amount} Remaining</p>}
                                     <div className="quantity-controls">
-                                        <button className="quantity-btn" onClick={() => AddOneMerchandise(item.merchandise_id)}>+</button>
-                                        <button className="quantity-btn" onClick={() => RemoveOneMerchandise(item.merchandise_id)}>-</button>
+                                        <button className="counter-button" onClick={() => AddOneMerchandise(item.merchandise_id)}>+</button>
+                                        <button className="counter-button" onClick={() => RemoveOneMerchandise(item.merchandise_id)}>-</button>
                                     </div>
                                     <div className="total-price">
-                                        <p className="price-text">${item.merchandise_price * item.in_shopping_cart} USD <span className="unit-price">(${item.merchandise_price} per item)</span></p>
+                                        <p className="price-text">${(item.merchandise_price * item.in_shopping_cart).toFixed(2)} USD <span className="unit-price">(${item.merchandise_price} per item)</span></p>
                                     </div>
                                 </div>
                             </div>
@@ -474,7 +520,7 @@ function Shoppingcart()
                     </div>
 
                     <div className="cart-summary">
-                        <p className="total-amount">${totalPrice} USD</p>
+                        <p className="total-amount">${totalPrice.toFixed(2)} USD</p>
                         <button className="checkout-btn" onClick={() => handleCheckout()}>Checkout</button>
                     </div>
                     </>
