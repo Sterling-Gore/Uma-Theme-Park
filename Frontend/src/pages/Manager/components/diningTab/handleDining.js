@@ -40,7 +40,8 @@ const HandleDining = ({ setActiveTab }) => {
                             ...dining,
                             is_editing_status : false,
                             is_editing_description : false,
-                            is_editing_image : false
+                            is_editing_image : false,
+                            maintenanceWarning : false
                         };
                     });
                     setDining(dinings);
@@ -169,11 +170,23 @@ const HandleDining = ({ setActiveTab }) => {
         setDining(newDining);
     };
 
-    const submitEditDiningStatus = async (dining_id) => {
+    const cancelSumbitStatus = (dining_id) => {
+        const newDining = dining.map(item => {
+            if (item.dining_id === dining_id)
+            {
+                item.maintenanceWarning = false;
+            }
+            return item;
+        });
+        setDining(newDining);
+    }
+
+    const submitEditDiningStatus = async (dining_id, confirmChanges) => {
         try {
             const dataToSend = {
                 id : dining_id,
-                newStatus : newStatus
+                newStatus : newStatus,
+                confirmChanges : confirmChanges
             }
             const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/updateDiningStatus`, {
             method: 'POST',
@@ -187,10 +200,33 @@ const HandleDining = ({ setActiveTab }) => {
         if (!response.ok) {
             throw new Error('Failed to update dining');
         }
+
+        const result = await response.json();
+        if(result.status === "Blocked")
+        {
+            //setMaintenanceWarning(true);
+            const newDining = dining.map(item => {
+                if (item.dining_id === dining_id)
+                {
+                    item.maintenanceWarning = true;
+                }
+                return item;
+            });
+            setDining(newDining);
+        }
+        else if(result.status === "Success")
+        {
+            setIsEditing(false);
+            setNewStatus("");
+            setRefreshDining(!refreshDining);
+
+            if(confirmChanges === true)
+            {
+                cancelSumbitStatus(dining_id);
+            }
+        }
         
-        setIsEditing(false);
-        setNewStatus("");
-        setRefreshDining(!refreshDining);
+
 
         } catch (error) {
             console.error('Error fetching dining:', error);
@@ -329,21 +365,35 @@ const HandleDining = ({ setActiveTab }) => {
                             ) : (
                                 <p>Loading Image ... </p>
                             )}
+                            {dining_item.maintenanceWarning ? (
+                                <>
+                                <div>
+                                    <h2>There is a maintenance log currently on {dining_item.dining_name}. Do you want to close the log and open the dining facility?</h2>
+                                    <div /*make these buttons side by side*/>
+                                        <button className="attraction-button" onClick={() => submitEditDiningStatus(dining_item.dining_id, true)}>Continue</button>
+                                        <button className="delete-button" onClick={() => cancelSumbitStatus(dining_item.dining_id)}>Cancel</button>
+                                    </div>
+                                </div>
+                                </>
+                            ) : (
+                                <>
                             {!isEditing && (
                             <button className="attraction-button" onClick={() => EditDiningImage(dining_item.dining_id)}>
                                 Update Image
                             </button>
                             )}
-                            <p className="attraction-description">
-                                {dining_item.dining_description}
-                            </p>
+                            <div className="attraction-footer">
+                                <p className="attraction-text">
+                                    {dining_item.dining_description}
+                                </p>
+                            </div>
                             {!isEditing && (
                                 <button className="attraction-button" onClick={() => EditDiningDescription(dining_item.dining_id)}>
                                     Update Description
                                 </button>
                             )}
                             <div className="attraction-footer">
-                                <p className="attraction-description"><strong>Status:</strong> {dining_item.dining_status}</p>
+                                <p className="attraction-text"><strong>Status:</strong> {dining_item.dining_status}</p>
                                 {!isEditing && (
                                 <button className="attraction-button" onClick={() => EditDiningStatus(dining_item.dining_id)}>
                                     Update Status
@@ -440,11 +490,10 @@ const HandleDining = ({ setActiveTab }) => {
                                     >
                                         <option value="">Select Status</option>
                                         <option value="Open">Open</option>
-                                        <option value="Maintenance">Maintenance</option>
                                         <option value="Closed">Closed</option>
                                     </select>
                                     {newStatus !== "" && (
-                                        <button className="attraction-button" onClick={() => submitEditDiningStatus(dining_item.dining_id)}>
+                                        <button className="attraction-button" onClick={() => submitEditDiningStatus(dining_item.dining_id, false)}>
                                             Confirm Changes
                                         </button>
                                     )}
@@ -454,10 +503,15 @@ const HandleDining = ({ setActiveTab }) => {
                                     </>
                                 )}
                             </div>
+                            {!isEditing && (
+                            <button className="delete-button" onClick={() => startDeletion(dining_item.dining_id)}>
+                                Delete Dining
+                            </button>
+                            )}
+                            </>
+                            )}
                         </div>
-                        <button className="delete-button" onClick={() => startDeletion(dining_item.dining_id)}>
-                            Delete Dining
-                        </button>
+                        
                     </div>
                 ))}
             </div>

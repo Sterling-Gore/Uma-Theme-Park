@@ -63,8 +63,8 @@
 
 .attraction-description {
     color: #555;
-    line-height: 1.6;
     margin-bottom: 15px;
+    font-size: 25px;
 }
 
 
@@ -112,7 +112,6 @@
 .delete-button {
     background-color: #e74c3c;
     color: white;
-    margin: 15px auto;
     width: 100%;
     max-width: 100%;
     padding: 15px 20px;
@@ -136,9 +135,12 @@
 .attraction-footer {
     display: flex;
     flex-direction: column;
-    margin-bottom: 15px;
-    border-top: 1px solid #eee;
     padding-top: 15px;
+}
+
+.attraction-text {
+    font-size: 25px;
+    margin-bottom: 15px;
 }
 
 .attraction-details {
@@ -170,13 +172,14 @@ input[type="file"],
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 5px;
-    font-size: 14px;
+    font-size: 20px;
     margin-bottom: 10px;
     box-sizing: border-box;
 }
 
 .description-box {
     min-height: 100px;
+    min-width: 100%;
     resize: vertical;
     font-family: 'Arial', sans-serif;
 }
@@ -188,6 +191,7 @@ input[type="file"],
     background-repeat: no-repeat;
     background-position: right 10px center;
     padding-right: 30px;
+    height: 50px;
 }
 
 

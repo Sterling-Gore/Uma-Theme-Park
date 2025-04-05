@@ -20,6 +20,7 @@ const HandleAttraction = ({ setActiveTab }) => {
     const [imagePreview, setImagePreview] = useState(null);
 
 
+
     
     useEffect(() => {
         const fetchAttractions = async () => {
@@ -44,6 +45,7 @@ const HandleAttraction = ({ setActiveTab }) => {
                             is_editing_duration : false,
                             is_editing_status : false,
                             is_editing_description : false,
+                            maintenanceWarning : false
                         };
                     });
                     setAttractions(attractions);
@@ -280,12 +282,23 @@ const HandleAttraction = ({ setActiveTab }) => {
         });
         setAttractions(newAttraction);
     };
+    const cancelSumbitStatus = (attraction_id) => {
+        const newAttraction = attractions.map(item => {
+            if (item.attraction_id === attraction_id)
+            {
+                item.maintenanceWarning = false;
+            }
+            return item;
+        });
+        setAttractions(newAttraction);
+    }
 
-    const submitEditAttractionStatus = async (attraction_id) => {
+    const submitEditAttractionStatus = async (attraction_id, confirmChanges) => {
         try {
             const dataToSend = {
                 id : attraction_id,
-                newStatus : newStatus
+                newStatus : newStatus,
+                confirmChanges : confirmChanges
             }
             const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/updateAttractionStatus`, {
             method: 'POST',
@@ -299,10 +312,30 @@ const HandleAttraction = ({ setActiveTab }) => {
         if (!response.ok) {
             throw new Error('Failed to update attraction');
         }
-        
-        setIsEditing(false);
-        setNewStatus("");
-        setRefreshAttractions(!refreshAttractions);
+        const result = await response.json();
+        if(result.status === "Blocked")
+        {
+            //setMaintenanceWarning(true);
+            const newAttraction = attractions.map(item => {
+                if (item.attraction_id === attraction_id)
+                {
+                    item.maintenanceWarning = true;
+                }
+                return item;
+            });
+            setAttractions(newAttraction);
+        }
+        else if(result.status === "Success")
+        {
+            setIsEditing(false);
+            setNewStatus("");
+            setRefreshAttractions(!refreshAttractions);
+
+            if(confirmChanges === true)
+            {
+                cancelSumbitStatus(attraction_id);
+            }
+        }
 
         } catch (error) {
             console.error('Error fetching attraction:', error);
@@ -441,21 +474,38 @@ const HandleAttraction = ({ setActiveTab }) => {
                             ) : (
                                 <p>Loading Image ... </p>
                             )}
+                            {Attraction.maintenanceWarning ? (
+                                <>
+                                <div>
+                                    <h2>There is a maintenance log currently on {Attraction.attraction_name}. Do you want to close the log and open the attraction?</h2>
+                                    <div /*make these buttons side by side*/>
+                                        <button className="attraction-button" onClick={() => submitEditAttractionStatus(Attraction.attraction_id, true)}>Continue</button>
+                                        <button className="delete-button" onClick={() => cancelSumbitStatus(Attraction.attraction_id)}>Cancel</button>
+                                    </div>
+                                </div>
+                                </>
+                            ) : (
+                                <>
+                               
                             {!isEditing && (
                             <button className="attraction-button" onClick={() => EditAttractionImage(Attraction.attraction_id)}>
                                 Update Image
                             </button>
                             )}
-                            <p className="attraction-description">
-                                {Attraction.description}
-                            </p>
-                            {!isEditing && (
-                                <button className="attraction-button" onClick={() => EditAttractionDescription(Attraction.attraction_id)}>
-                                    Update Description
-                                </button>
-                            )}
                             <div className="attraction-footer">
-                                <p className="attraction-description"><strong>Status:</strong> {Attraction.attraction_status}</p>
+                                <p className="attraction-text">
+                                    {Attraction.description}
+                                </p>
+                                {!isEditing && (
+                                    <button className="attraction-button" onClick={() => EditAttractionDescription(Attraction.attraction_id)}>
+                                        Update Description
+                                    </button>
+                                )}
+                            </div>
+                            <div className="attraction-footer">
+                                <p className="attraction-text">
+                                    <strong>Status:</strong> {Attraction.attraction_status}
+                                </p>
                                 {!isEditing && (
                                 <button className="attraction-button" onClick={() => EditAttractionStatus(Attraction.attraction_id)}>
                                     Update Status
@@ -464,7 +514,7 @@ const HandleAttraction = ({ setActiveTab }) => {
                             </div>
                             <div className="attraction-footer">
                                 <div className="attraction-details">
-                                    <span className="attraction-detail">
+                                    <span className="attraction-text">
                                         
                                         <><strong>Capacity:</strong> {Attraction.attraction_capacity}</>
                                         
@@ -477,7 +527,9 @@ const HandleAttraction = ({ setActiveTab }) => {
                                 )}
                             </div>
                             <div className="attraction-footer">
-                                <p className="attraction-description"><strong>Duration:</strong> {Attraction.attraction_duration}</p>
+                                <p className="attraction-text">
+                                    <strong>Duration:</strong> {Attraction.attraction_duration}
+                                </p>
                                 {!isEditing && (
                                 <button className="attraction-button" onClick={() => EditAttractionDuration(Attraction.attraction_id)}>
                                     Update Duration
@@ -639,11 +691,10 @@ const HandleAttraction = ({ setActiveTab }) => {
                                     >
                                         <option value="">Select Status</option>
                                         <option value="Open">Open</option>
-                                        <option value="Maintenance">Maintenance</option>
                                         <option value="Closed">Closed</option>
                                     </select>
                                     {newStatus !== "" && (
-                                        <button className="attraction-button" onClick={() => submitEditAttractionStatus(Attraction.attraction_id)}>
+                                        <button className="attraction-button" onClick={() => submitEditAttractionStatus(Attraction.attraction_id, false)}>
                                             Confirm Changes
                                         </button>
                                     )}
@@ -653,10 +704,16 @@ const HandleAttraction = ({ setActiveTab }) => {
                                     </>
                                 )}
                             </div>
+                            {!isEditing && (
+                            <button className="delete-button" onClick={() => startDeletion(Attraction.attraction_id)}>
+                                Delete Attraction
+                            </button>
+                            )}
+                            </>
+                            )}
                         </div>
-                        <button className="delete-button" onClick={() => startDeletion(Attraction.attraction_id)}>
-                            Delete Attraction
-                        </button>
+                        
+                        
                     </div>
                 ))}
             </div>

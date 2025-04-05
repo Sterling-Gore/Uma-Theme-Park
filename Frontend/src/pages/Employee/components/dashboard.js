@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+//import "../../Manager/components/attractionTab/Attraction.css";
 
 const Dashboard = ({ setActiveTab }) => {
     const alertShown = useRef(false);
@@ -391,6 +392,7 @@ const Dashboard = ({ setActiveTab }) => {
                   <img 
                       src={`data:${employeeAssignment.mimeType};base64,${employeeAssignment.viewing_image}`}
                       alt="Attraction Image"
+                      className="center-image"
                       style={{ width: '300px', height: '300px', objectFit: 'contain' }} 
                   />
                   </div>
@@ -518,6 +520,7 @@ const Dashboard = ({ setActiveTab }) => {
                   <img 
                       src={`data:${employeeAssignment.mimeType};base64,${employeeAssignment.viewing_image}`}
                       alt="Attraction Image"
+                      className="center-image"
                       style={{ width: '300px', height: '300px', objectFit: 'contain' }} 
                   />
                   </div>
