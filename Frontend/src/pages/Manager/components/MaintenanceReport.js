@@ -352,16 +352,16 @@ const MaintenanceReport = ({ setActiveTab }) => {
                                                 {Object.keys(getColumnHeaders('overview')).map((key, colIndex) => (
                                                     <td key={colIndex}>
                                                         {key === 'cost' && 
-                                                            (<>{record[key]  ? (record[key].toFixed(2)) : ('-')  }</>) 
+                                                            (<>{record[key] !== null ? (record[key].toFixed(2)) : ('-')  }</>) 
                                                         }
                                                         {key === 'average_date_difference' && 
-                                                            (<>{ record[key] ? (Number(record[key]).toFixed(3)) : ('-')  }</>)
+                                                            (<>{ record[key] !== null ? (Number(record[key]).toFixed(3)) : ('-')  }</>)
                                                         }
                                                         {(key === 'maintenance_count') && 
-                                                            (<>{ record[key] ?  record[key] : ('-')}</>)
+                                                            (<>{ record[key] !== null ?  record[key] : ('-')}</>)
                                                         }
                                                         {(key === 'facility_name') && 
-                                                            (<>{ record[key] ?  record[key] : (`[DELETED]: ${record['saved_name']}`)}</>)
+                                                            (<>{ record[key] !== null ?  record[key] : (`[DELETED]: ${record['saved_name']}`)}</>)
                                                         }
                                                     </td>
                                                 ))}
@@ -400,19 +400,19 @@ const MaintenanceReport = ({ setActiveTab }) => {
                                                 {Object.keys(getColumnHeaders('logs')).map((key, colIndex) => (
                                                     <td key={colIndex}>
                                                         {(key === 'start_date' || key === 'end_date' || key === 'expected_end_date') && 
-                                                            (<>{record[key] ? (formatDate(record[key])) : ('-')}</>)
+                                                            (<>{record[key] !== null? (formatDate(record[key])) : ('-')}</>)
                                                         }
                                                         {key === 'cost' && 
-                                                            (<>{record[key]  ? (record[key].toFixed(2)) : ('-')  }</>) 
+                                                            (<>{record[key] !== null ? (record[key].toFixed(2)) : ('-')  }</>) 
                                                         }
                                                         {key === 'date_difference' && 
-                                                            (<>{ record[key] ? (record[key]) : ('-')  }</>)
+                                                            (<>{ record[key] !== null ? (record[key]) : ('-')  }</>)
                                                         }
                                                         {(key === 'name') && 
-                                                            (<>{ record[key] ?  record[key] : ('-')}</>)
+                                                            (<>{ record[key] !== null?  record[key] : ('-')}</>)
                                                         }
                                                         {(key === 'facility_name') && 
-                                                            (<>{ record[key] ?  record[key] : (`[DELETED]: ${record['saved_name']}`)}</>)
+                                                            (<>{ record[key] !== null ?  record[key] : (`[DELETED]: ${record['saved_name']}`)}</>)
                                                         }
                                                     </td>
                                                 ))}
