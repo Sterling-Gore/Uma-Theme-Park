@@ -231,7 +231,7 @@ const CreateMerchandise = ({ setActiveTab }) => {
             </div>
             
             
-            <div /*space between*/>
+            <div className="error-container">
             {error !== "" ? (
                 <p className="error-message">{error}</p>
             ) : (

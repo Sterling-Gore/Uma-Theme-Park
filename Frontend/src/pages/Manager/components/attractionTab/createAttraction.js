@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import "../../../../App.css";
+import "./Attraction.css";
 
 const CreateAttraction = ({ setActiveTab }) => {
     const alertShown = useRef(false);
@@ -248,7 +248,7 @@ const CreateAttraction = ({ setActiveTab }) => {
             </div>
             
             
-            <div /*space between*/>
+            <div className="error-container">
             {error !== "" ? (
                 <p className="error-message">{error}</p>
             ) : (
