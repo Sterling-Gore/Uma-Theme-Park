@@ -3,7 +3,7 @@ const pool = require('../../database');
 
 async function runQuery(employee_id){
     try{
-        const query = "SELECT first_name, last_name, email FROM theme_park.employee WHERE employee_id = ?;";
+        const query = "SELECT first_name, last_name, email, phone_number FROM theme_park.employee WHERE employee_id = ?;";
         const [rows] = await pool.execute(query, [employee_id]);
         console.log(rows);
         return rows.length > 0 ? rows[0] : null;

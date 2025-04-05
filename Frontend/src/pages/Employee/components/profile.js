@@ -6,7 +6,8 @@ export default function UpdateEmployeeForm() {
         employee_id: localStorage.getItem("userID"),
         first_name: "",
         last_name: "",
-        email: ""
+        email: "",
+        phone_number:  ""
     });
 
     const [passwordData, setPasswordData] = useState({
@@ -32,11 +33,13 @@ export default function UpdateEmployeeForm() {
 
                 const result = await response.json();
                 if (result.message === "Success" && result.data) {
+                    console.log(result.data);
                     setEmployeeData((prevData) => ({
                         ...prevData,
                         first_name: result.data.first_name || "",
                         last_name: result.data.last_name || "",
-                        email: result.data.email || ""
+                        email: result.data.email || "",
+                        phone_number : result.data.phone_number || ""
                     }));
                 }
             } catch (error) {
@@ -128,17 +131,31 @@ export default function UpdateEmployeeForm() {
 
                     <div className="input-group">
                         <label>First Name</label>
-                        <input type="text" name="first_name" value={employeeData.first_name} onChange={handleChange} required />
+                        <input type="text" name="first_name" value={employeeData.first_name} onChange={handleChange} maxLength={50}required />
                     </div>
 
                     <div className="input-group">
                         <label>Last Name</label>
-                        <input type="text" name="last_name" value={employeeData.last_name} onChange={handleChange} required />
+                        <input type="text" name="last_name" value={employeeData.last_name} onChange={handleChange} maxLength={50} required />
                     </div>
 
                     <div className="input-group">
                         <label>Email</label>
-                        <input type="email" name="email" value={employeeData.email} onChange={handleChange} required />
+                        <input type="email" name="email" value={employeeData.email} onChange={handleChange} maxLength={100} required />
+                    </div>
+                    <div className="input-group">
+                        <label>Phone Number</label>
+                        <input 
+                            type="text" name="phone_number" 
+                            value={employeeData.phone_number} 
+                            onChange={(e) => {
+                                const onlyDigits = e.target.value.replace(/\D/g, ""); // Remove non-digits
+                                setEmployeeData({ ...employeeData, phone_number: onlyDigits});
+                                //checkError();
+                            }} 
+                            maxLength={10} 
+                            minLength={10} 
+                            required />
                     </div>
 
                     <button type="submit">Update Profile</button>

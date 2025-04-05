@@ -10,12 +10,12 @@ async function updateEmployeeProfile(req, res) {
 
         req.on('end', async () => {
             try {
-                const { employee_id, first_name, last_name, email} = JSON.parse(body);
+                const { employee_id, first_name, last_name, email, phone_number} = JSON.parse(body);
 
 
-                const updateEmployeeQuery = "UPDATE employee SET first_name = ?, last_name = ?, email = ? WHERE employee_id = ?";
+                const updateEmployeeQuery = "UPDATE employee SET first_name = ?, last_name = ?, email = ?, phone_number = ? WHERE employee_id = ?";
 
-                await pool.execute(updateEmployeeQuery, [first_name, last_name, email, employee_id]);
+                await pool.execute(updateEmployeeQuery, [first_name, last_name, email, phone_number, employee_id]);
 
 
                 res.writeHead(200, { 'Content-Type': 'application/json' });
