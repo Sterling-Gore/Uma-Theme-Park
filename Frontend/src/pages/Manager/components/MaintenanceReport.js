@@ -36,6 +36,8 @@ const MaintenanceReport = ({ setActiveTab }) => {
           });
     };
 
+
+
     // Fetch report data from backend
     const fetchReportData = async (e) => {
         e.preventDefault();
@@ -51,11 +53,11 @@ const MaintenanceReport = ({ setActiveTab }) => {
         try {
             // Create request parameters
             const params = new URLSearchParams({
-                reportType,
-                orderBy,
-                dateType,
-                ...(startDate && { startDate }),
-                ...(endDate && { endDate })
+                reportType : filterReportType,
+                orderBy : filterOrderBy,
+                dateType : filterDateType,
+                startDate : filterStartDate,
+                endDate : filterEndDate
             });
 
             // Fetch data from the backend

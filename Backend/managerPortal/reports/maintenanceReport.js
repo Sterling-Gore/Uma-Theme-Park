@@ -369,10 +369,7 @@ const getTotalSummary = async (startDate, endDate, dateType) => {
         COUNT(*) AS maintenance_count,
         COALESCE(SUM(M.maintenance_cost), 0) AS cost,
         AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) AS average_date_difference,
-        CASE
-            WHEN A.attraction_name  IS NOT NULL AND D.dining_name IS NULL THEN TRUE
-            ELSE FALSE
-        END AS isAttraction
+        M.isAttraction as isAttraction
     FROM maintenance_logs AS M
     LEFT JOIN attractions AS A ON M.attraction_id = A.attraction_id
     LEFT JOIN dining AS D ON M.dining_id = D.dining_id
@@ -422,7 +419,7 @@ const getTotalSummary = async (startDate, endDate, dateType) => {
         params.push(endDate);
     }
 
-    query += ` GROUP BY saved_name`
+    query += ` GROUP BY saved_name, isAttraction`
 
     const [rows] = await pool.query(query, params);
     return rows;
@@ -485,7 +482,7 @@ const getAttractionSummary = async (startDate, endDate, dateType) => {
         params.push(endDate);
     }
 
-    query += ` GROUP BY saved_name`
+    query += ` GROUP BY saved_name, isAttraction`
 
     const [rows] = await pool.query(query, params);
     return rows;
@@ -550,7 +547,7 @@ const getDiningSummary = async (startDate, endDate, dateType) => {
         params.push(endDate);
     }
 
-    query += ` GROUP BY saved_name`
+    query += ` GROUP BY saved_name, isAttraction`
 
     const [rows] = await pool.query(query, params);
     return rows;
