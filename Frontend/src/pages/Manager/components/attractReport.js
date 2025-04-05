@@ -83,7 +83,7 @@ const AttractReport = ({ setActiveTab }) => {
 </div>
 
                         <div className="summary-card">
-                            <p className="label">Type</p>
+                            <p className="label">Most Popular Ticket</p>
                             <p className="value">{report.popularTicketType.type}</p>
                         </div>
                     </div>
@@ -93,7 +93,7 @@ const AttractReport = ({ setActiveTab }) => {
                         <thead>
                             <tr>
                                 <th>Attraction</th>
-                                <th>Visits</th>
+                                <th>Number of Interests</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -111,7 +111,7 @@ const AttractReport = ({ setActiveTab }) => {
                         <thead>
                             <tr>
                                 <th>Attraction</th>
-                                <th>Total Visits</th>
+                                <th>Total Number of Interests</th>
                             </tr>
                         </thead>
                         <tbody>
