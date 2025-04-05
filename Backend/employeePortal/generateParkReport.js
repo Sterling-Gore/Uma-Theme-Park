@@ -13,7 +13,8 @@ const generateParkReport = async (req, res) => {
             attractionVisits: await getAttractionVisits(startDate,endDate),
             totalTickets: await getTotalTickets(startDate, endDate),
             popularTicketType: await getPopularTicketType(startDate, endDate),
-            totalFoodPasses: await getTotalFoodPasses(startDate, endDate)
+            totalFoodPasses: await getTotalFoodPasses(startDate, endDate),
+            ticketBreakdown: await getTicketBreakdown(startDate, endDate)
         };
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -151,6 +152,31 @@ const getPopularTicketType = async (startDate, endDate) => {
 
     return ticketTypes[0];
 };
+const getTicketBreakdown = async (startDate, endDate) => {
+    let query = `
+        SELECT 
+            SUM(number_of_standards) AS standards,
+            SUM(number_of_children) AS children,
+            SUM(number_of_seniors) AS seniors
+        FROM ticket_receipt
+        WHERE 1=1
+    `;
+    const params = [];
+
+    if (startDate) {
+        query += ` AND purchase_date >= ?`;
+        params.push(startDate);
+    }
+
+    if (endDate) {
+        query += ` AND purchase_date <= ?`;
+        params.push(endDate);
+    }
+
+    const [rows] = await pool.query(query, params);
+    return rows[0];
+};
+
 const getTotalFoodPasses = async (startDate, endDate) => {
     let query = `
         SELECT COUNT(*) AS totalFoodPasses
