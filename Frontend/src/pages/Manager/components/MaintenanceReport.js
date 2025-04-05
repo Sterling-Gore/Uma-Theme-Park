@@ -361,7 +361,7 @@ const MaintenanceReport = ({ setActiveTab }) => {
                                                             (<>{ record[key] ?  record[key] : ('-')}</>)
                                                         }
                                                         {(key === 'facility_name') && 
-                                                            (<>{ record[key] ?  record[key] : (`[DELETED]:${record['saved_name']}`)}</>)
+                                                            (<>{ record[key] ?  record[key] : (`[DELETED]: ${record['saved_name']}`)}</>)
                                                         }
                                                     </td>
                                                 ))}
@@ -412,7 +412,7 @@ const MaintenanceReport = ({ setActiveTab }) => {
                                                             (<>{ record[key] ?  record[key] : ('-')}</>)
                                                         }
                                                         {(key === 'facility_name') && 
-                                                            (<>{ record[key] ?  record[key] : (`[DELETED]:${record['saved_name']}`)}</>)
+                                                            (<>{ record[key] ?  record[key] : (`[DELETED]: ${record['saved_name']}`)}</>)
                                                         }
                                                     </td>
                                                 ))}
