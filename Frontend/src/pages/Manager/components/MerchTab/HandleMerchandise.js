@@ -364,7 +364,7 @@ const HandleMerchandise = ({ setActiveTab }) => {
                             </button>
                             )}
                         <div className="attraction-footer">
-                            <p className="attraction-description"> <strong>Price:</strong> ${Merchandise.merchandise_price} USD</p>
+                            <p className="attraction-text"> <strong>Price:</strong> ${Merchandise.merchandise_price} USD</p>
                             {!isEditing && (
                             <button className="attraction-button" onClick={() => EditMerchandisePrice(Merchandise.merchandise_id)}>
                                 Update Price
@@ -373,7 +373,7 @@ const HandleMerchandise = ({ setActiveTab }) => {
                         </div>
                         <div className="attraction-footer">
                             <div className="attraction-details">
-                                <span className="attraction-detail">
+                                <span className="attraction-text">
                                     
                                     <><strong>Stock Amount:</strong> {Merchandise.stock_amount}</>
                                     
@@ -490,10 +490,12 @@ const HandleMerchandise = ({ setActiveTab }) => {
                                 </>
                             )}
                         </div>
+                        {!isEditing && (
+                        <button className="delete-button" onClick={() => startDeletion(Merchandise.merchandise_id)}>
+                            Delete Merchandise
+                        </button>
+                        )}
                     </div>
-                    <button className="delete-button" onClick={() => startDeletion(Merchandise.merchandise_id)}>
-                        Delete Merchandise
-                    </button>
                 </div>
             ))}
         </div>
