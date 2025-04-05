@@ -73,6 +73,7 @@ function EmployeeLogin() {
           <input
             type="email"
             value={email}
+            placeholder="Email"
             onChange={(e) => setEmail(e.target.value)}
             required
             disabled={isSubmitting}
@@ -83,6 +84,7 @@ function EmployeeLogin() {
           <input
             type="password"
             value={password}
+            placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
             required
             disabled={isSubmitting}
