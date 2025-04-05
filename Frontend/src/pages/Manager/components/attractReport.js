@@ -42,28 +42,51 @@ const AttractReport = ({ setActiveTab }) => {
         }
     };
 
-    return (
-        <div className="attract-report">
-            <h1 className="report-title">Attraction Reports</h1>
-            <p className="report-description">Access and generate reports.</p>
+    const handleReset = () => {
+        setStartDate('');
+        setEndDate('');
+        setError(null);
+    };
 
-            <div className="filters">
-                <div className="filter-group">
-                    <label>Start Date</label>
-                    <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                </div>
-                <div className="filter-group">
-                    <label>End Date</label>
-                    <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-                </div>
-                <div className="button-group">
-                    <button className="btn btn-primary" onClick={fetchReport}>Generate Report</button>
-                    <button className="btn btn-secondary" onClick={() => setActiveTab('dashboard')}>Back to Dashboard</button>
+    return (
+        <div className="reports">
+            <div className="content-header">
+                <h2>Attraction Reports</h2>
+            </div>
+            <div className="report-controls">
+                <div className="filter-form">
+                    <p className="report-description">Access and generate reports.</p>
+
+                    <div className="filter-row">
+                        <div className="filter-group">
+                            <label>Start Date</label>
+                            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                        </div>
+                        <div className="filter-group">
+                            <label>End Date</label>
+                            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                        </div>
+                        
+                    </div>
+                    
+                    <div className="filter-actions">
+                        <button onClick={fetchReport} className="generate-btn">
+                            Generate Report
+                        </button>
+                        <button type="button" className="reset-btn" onClick={handleReset}>
+                            Reset Filters
+                        </button>
+                    </div>
                 </div>
             </div>
 
             {loading && <p className="loading-text">Generating report...</p>}
             {error && <p className="error-text">{error}</p>}
+            {!loading && !error && !report && (
+                <div className="report-placeholder">
+                    <p>Select filters and click "Generate Report" to view Attraction data</p>
+                </div>
+            )}
 
             {report && (
                 <div className="report-output">
