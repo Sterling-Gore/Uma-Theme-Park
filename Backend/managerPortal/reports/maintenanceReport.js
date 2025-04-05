@@ -435,8 +435,8 @@ const getAttractionSummary = async (startDate, endDate, dateType) => {
         AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) as average_date_difference,
         TRUE AS isAttraction 
     FROM maintenance_logs as M
-    JOIN attractions AS A ON M.attraction_id = A.attraction_id
-    WHERE 1 = 1
+    LEFT JOIN attractions AS A ON M.attraction_id = A.attraction_id
+    WHERE isAttraction = true 
     `;
 
     const params = [];
@@ -482,7 +482,7 @@ const getAttractionSummary = async (startDate, endDate, dateType) => {
         params.push(endDate);
     }
 
-    query += ` GROUP BY saved_name, isAttraction`
+    query += ` GROUP BY saved_name`
 
     const [rows] = await pool.query(query, params);
     return rows;
@@ -500,8 +500,8 @@ const getDiningSummary = async (startDate, endDate, dateType) => {
         AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) as average_date_difference,
         FALSE AS isAttraction 
     FROM maintenance_logs as M
-    JOIN dining AS D ON M.dining_id = D.dining_id
-    WHERE 1 = 1
+    LEFT JOIN dining AS D ON M.dining_id = D.dining_id
+    WHERE isAttraction = false 
     `;
 
     const params = [];
@@ -547,7 +547,7 @@ const getDiningSummary = async (startDate, endDate, dateType) => {
         params.push(endDate);
     }
 
-    query += ` GROUP BY saved_name, isAttraction`
+    query += ` GROUP BY saved_name`
 
     const [rows] = await pool.query(query, params);
     return rows;

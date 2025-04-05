@@ -357,8 +357,11 @@ const MaintenanceReport = ({ setActiveTab }) => {
                                                         {key === 'average_date_difference' && 
                                                             (<>{ record[key] ? (Number(record[key]).toFixed(3)) : ('-')  }</>)
                                                         }
-                                                        {(key === 'maintenance_count' || key === 'facility_name') && 
+                                                        {(key === 'maintenance_count') && 
                                                             (<>{ record[key] ?  record[key] : ('-')}</>)
+                                                        }
+                                                        {(key === 'facility_name') && 
+                                                            (<>{ record[key] ?  record[key] : (`[DELETED]:${record['saved_name']}`)}</>)
                                                         }
                                                     </td>
                                                 ))}
@@ -405,8 +408,11 @@ const MaintenanceReport = ({ setActiveTab }) => {
                                                         {key === 'date_difference' && 
                                                             (<>{ record[key] ? (record[key]) : ('-')  }</>)
                                                         }
-                                                        {(key === 'name' || key === 'facility_name') && 
+                                                        {(key === 'name') && 
                                                             (<>{ record[key] ?  record[key] : ('-')}</>)
+                                                        }
+                                                        {(key === 'facility_name') && 
+                                                            (<>{ record[key] ?  record[key] : (`[DELETED]:${record['saved_name']}`)}</>)
                                                         }
                                                     </td>
                                                 ))}
