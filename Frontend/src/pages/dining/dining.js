@@ -58,6 +58,24 @@ function Dining() {
     }
   ];
 
+
+  const getStatusClass = (status) => {
+      switch (status) {
+          case 'Closed':
+              return 'dining-closed';
+              break;
+          case 'Maintenance':
+              return 'status-maintenance';
+              break;
+          case 'Open':
+              return 'dining-open'; //default green
+              break;
+          default:
+              return 'dining-open'; //default green
+              break;
+      }
+  };
+
   return (
     <div className="dining-container">
       <div
@@ -77,21 +95,38 @@ function Dining() {
         <div className="food-stands-container">
           {dining.map((stand, index) => (
             <div className="food-stand-card" key={index}>
-              <div
-                className="food-stand-image"
-                style={{
-                  backgroundImage: `url(data:${stand.mimeType};base64,${stand.viewing_image})`,
-                }}
-              >
-                <div className="image-overlay">
-                  <div className="image-text">{stand.dining_name}</div>
+              <div className="dining-space-between-container">
+                <div>
+                    <div
+                      className="food-stand-image"
+                      style={{
+                        backgroundImage: `url(data:${stand.mimeType};base64,${stand.viewing_image})`,
+                      }}
+                    >
+                      <div className="image-overlay">
+                        <div className="image-text">{stand.dining_name}</div>
+                      </div>
+                    </div>
+                    <div className="food-stand-info">
+                      <h3>{stand.dining_name}</h3>
+                      <p>{stand.dining_description}</p>
+                      
+                    </div>
                 </div>
-              </div>
-              <div className="food-stand-info">
-                <h3>{stand.dining_name}</h3>
-                <p>{stand.dining_description}</p>
+                <div>
+                    <div className="food-stand-info">
+                      <span className={`dining-status ${getStatusClass(stand.dining_status)}`}>
+                          {stand.dining_status.charAt(0).toUpperCase() + stand.dining_status.slice(1)}
+                      </span>
+                    </div>
+                </div>
+            
+              
+
+              
               </div>
             </div>
+            
           ))}
         </div>
       </section>

@@ -1,5 +1,49 @@
 /* dining.css */
 
+
+.dining-status {
+  font-size: 0.9rem;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 4px;
+  background-color: #4caf50;
+  /* Green for open (default) */
+  color: white;
+  display: "flex";
+  justify-content: "center";
+  align-items: "center";
+}
+.dining-space-between-container {
+  display: flex; 
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+}
+/* Status classes for different states */
+.dining-closed {
+  background-color: #f44336;
+  display: "flex";
+  justify-content: "center";
+  align-items: "center";
+  /* Red for closed */
+}
+.dining-open {
+  background-color: #4caf50;
+  display: "flex";
+  justify-content: "center";
+  align-items: "center";
+}
+
+.center-dining-status {
+  display: "flex";
+  justify-content: "center";
+  align-items: "center";
+  height: 30px;
+  
+}
+
+
 .dining-container {
   width: 100%;
   max-width: 1200px;
@@ -67,6 +111,7 @@
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 30px;
+  
 }
 
 .food-stand-card {

@@ -149,6 +149,10 @@
     background-color: #f44336;
     /* Red for closed */
 }
+.status-open {
+    background-color: #4caf50;
+    /* Red for closed */
+}
 
 .status-maintenance {
     background-color: #ff9800;
