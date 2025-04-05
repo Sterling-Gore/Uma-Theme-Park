@@ -115,10 +115,10 @@ function Activities() {
                                 <p className="attraction-description">{attraction.description}</p>
                                 <div className="attraction-details">
                                     <span className="attraction-detail">
-                                        <strong>Capacity:</strong> {attraction.attraction_capacity} people
+                                        <strong>Capacity: </strong> {attraction.attraction_capacity} people
                                     </span>
                                     <span className="attraction-detail">
-                                        <strong>Duration:</strong> {formatDuration(attraction.attraction_duration)}
+                                        <strong>Duration: </strong> {formatDuration(attraction.attraction_duration)}
                                     </span>
                                 </div>
                                 <div className="attraction-footer">
