@@ -33,9 +33,7 @@ async function getPreviousMaintenanceLogsForEmployee(req, res) {
     req.on('end', async () => {
     try {
         const { userID } = JSON.parse(body);
-        console.log(userID);
         const previousMaintenanceLogs = await getData(userID);
-        console.log(`previous maintenance logs ${previousMaintenanceLogs}`);
 
         
         let returnedActiveMaintenanceLogs;

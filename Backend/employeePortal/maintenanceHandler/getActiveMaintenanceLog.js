@@ -32,9 +32,7 @@ async function getActiveMaintenanceLog(req, res) {
     req.on('end', async () => {
     try {
         const { userID } = JSON.parse(body);
-        console.log(userID);
         const activeMaintenanceLog = await getData(userID);
-        console.log(activeMaintenanceLog);
 
         
         let returnedActiveMaintenanceLog;

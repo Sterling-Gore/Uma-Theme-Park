@@ -14,7 +14,7 @@ async function getData(userID) {
         FROM theme_park.employee AS E
         LEFT JOIN theme_park.attractions AS A ON A.attraction_id = E.attraction
         LEFT JOIN theme_park.dining AS D ON D.dining_id = E.dining
-        WHERE E.employee_id = ?;
+        WHERE E.employee_id = ? AND (A.attraction_id IS NOT NULL OR D.dining_id IS NOT NULL);
     `;
 
     const [row] = await pool.execute(getEmployeeAssignmentQuery, [userID]);
@@ -30,7 +30,6 @@ async function getEmployeeAssignment(req, res) {
     try {
         const { userID } = JSON.parse(body);
         const assignment = await getData(userID);
-        console.log(assignment);
 
         const { default: imageType } = await import('image-type');
 

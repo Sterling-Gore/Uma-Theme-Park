@@ -38,17 +38,17 @@ const Dashboard = ({ setActiveTab }) => {
               });
               
               if (!response.ok) {
-                  throw new Error('Failed to fetch attractions');
+                  throw new Error('Failed to fetch assignment');
               }
               const result = await response.json();
 
               if (result.success) {
                 setEmployeeAssignment(result.data);
               } else {
-                  throw new Error(result.message || 'Failed to fetch attractions');
+                  throw new Error(result.message || 'Failed to fetch assignment');
               }
           } catch (error) {
-              console.error('Error fetching attractions:', error);
+              console.error('Error fetching assignment:', error);
           } finally {
               setLoading(false);
           }
