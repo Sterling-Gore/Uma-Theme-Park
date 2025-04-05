@@ -12,12 +12,14 @@ async function insertTicketAndMerchQuery(data)
 
         const {Tickets, Merchandise, userID} = JSON.parse(data);
         const today = new Date(); 
-        const merchandiseReceiptInsertQuery = "INSERT INTO theme_park.merchandise_receipt (receipt_id, customer_id, total_items_sold, total_cost, merchandise_name, purchase_date) VALUES (?, ?, ?, ?, ?, ?);";
+        const merchandiseReceiptInsertQuery = "INSERT INTO theme_park.merchandise_receipt (receipt_id, customer_id, total_items_sold, total_cost, merchandise_name, purchase_date, head_receipt_id) VALUES (?, ?, ?, ?, ?, ?,?);";
         const updateMerchandiseStockQuery = "UPDATE theme_park.merchandise SET stock_amount = ? WHERE merchandise_id = ?";
 
+        const head_merchandise_receipt_id = uuidv4();
         for (const item of Merchandise){
             const merchandise_receipt_id = uuidv4();  
-            const [merchReceiptInsertResult] = await connection.execute(merchandiseReceiptInsertQuery, [merchandise_receipt_id, userID, item.in_shopping_cart, (item.merchandise_price * item.in_shopping_cart), item.merchandise_name, today]);
+            const [merchReceiptInsertResult] = await connection.execute(merchandiseReceiptInsertQuery, [merchandise_receipt_id, userID, item.in_shopping_cart, (item.merchandise_price * item.in_shopping_cart), item.merchandise_name, today, head_merchandise_receipt_id]);
+            //console.log(merchReceiptInsertResult)
             const [merchStockUpdateResult] = await connection.execute(updateMerchandiseStockQuery, [item.stock_amount, item.merchandise_id]);
         }
 
