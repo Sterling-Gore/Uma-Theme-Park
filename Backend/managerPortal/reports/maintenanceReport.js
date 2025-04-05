@@ -9,6 +9,17 @@ const generateMaintenanceReport = async (req, res) => {
     const orderBy = url.searchParams.get('orderBy');
 
     try {
+        const [sqlModeResult] = await pool.query('SELECT @@SESSION.sql_mode');
+        const currentSqlMode = sqlModeResult[0]['@@SESSION.sql_mode'];
+
+        const newSqlMode = currentSqlMode
+            .split(',')
+            .filter(mode => mode !== 'ONLY_FULL_GROUP_BY')
+            .join(',');
+
+        await pool.query(`SET SESSION sql_mode = '${newSqlMode}'`);
+
+
         let data = [];
         let summary = {};
         /*
@@ -32,7 +43,7 @@ const generateMaintenanceReport = async (req, res) => {
             }));
             return;
         }
-
+        try {
         switch (reportType) {
             case 'all':
                 data = await getTotalData(startDate, endDate, dateType, orderBy);
@@ -111,6 +122,10 @@ const generateMaintenanceReport = async (req, res) => {
             summary,
             combined_summary
         }));
+        
+        } finally {
+            await pool.query(`SET SESSION sql_mode = '${currentSqlMode}'`);
+        }
     } catch (error) {
         console.error('Error generating finance report:', error);
         res.writeHead(500, { 'Content-Type': 'application/json' });
