@@ -14,6 +14,7 @@ import './ManagerPortal.css';
 import AuthContext from '../../context/AuthContext';
 import FinanceReport from './components/FinanceReport';
 import AttractReport from './components/attractReport';
+import MaintenanceReport from './components/MaintenanceReport';
 
 function ManagerPortal() {
   const [activeTab, setActiveTab] = useState('view');
@@ -54,6 +55,7 @@ function ManagerPortal() {
           {activeTab === 'assign' && <AttractionAssignment setActiveTab={setActiveTab} />}
           {activeTab === 'financeReport' && <FinanceReport setActiveTab={setActiveTab} />}
           {activeTab === 'AttractReport' && <AttractReport setActiveTab={setActiveTab} />}
+          {activeTab === 'MaintenanceReport' && <MaintenanceReport setActiveTab={setActiveTab} />}
           {activeTab === 'handleMerchandise' && <HandleMerchandise setActiveTab={setActiveTab} />}
           {activeTab === 'createMerchandise' && <CreateMerchandise setActiveTab={setActiveTab} />}
           {activeTab === 'handleAttractions' && <HandleAttraction setActiveTab={setActiveTab} />}

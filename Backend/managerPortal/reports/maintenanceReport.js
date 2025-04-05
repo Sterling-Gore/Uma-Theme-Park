@@ -11,6 +11,18 @@ const generateMaintenanceReport = async (req, res) => {
     try {
         let data = [];
         let summary = {};
+        /*
+        let combined_summary = {
+            total_summary : {},
+            dining_summary : {},
+            attraction_summary: {},
+        };*/
+        let combined_summary = {
+            total_combined_summary : null,
+            attraction_combined_summary : null,
+            dining_combined_summary : null
+        };
+
 
         if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
             res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -25,49 +37,79 @@ const generateMaintenanceReport = async (req, res) => {
             case 'all':
                 data = await getTotalData(startDate, endDate, dateType, orderBy);
                 summary = await getTotalSummary(startDate, endDate, dateType);
+                combined_summary.total_combined_summary = combineSummary(summary, "total");
+                combined_summary.attraction_combined_summary = combineSummary(summary, "attraction");
+                combined_summary.dining_combined_summary = combineSummary(summary, "dining");
                 break;
             case 'attraction':
                 data = await getAttractionData(startDate, endDate, dateType, orderBy);
                 summary = await getAttractionSummary(startDate, endDate, dateType);
+                combined_summary.attraction_combined_summary = combineSummary(summary, "attraction");
                 break;
             case 'dining':
                 data = await getDiningData(startDate, endDate, dateType, orderBy);
                 summary = await getDiningSummary(startDate, endDate, dateType);
+                combined_summary.dining_combined_summary = combineSummary(summary, "dining");
                 break;
             default:
                 case 'all':
                 data = await getTotalData(startDate, endDate, dateType, orderBy);
                 summary = await getTotalSummary(startDate, endDate, dateType);
+                combined_summary.total_combined_summary = combineSummary(summary, "total");
+                combined_summary.attraction_combined_summary = combineSummary(summary, "attraction");
+                combined_summary.dining_combined_summary = combineSummary(summary, "dining");
+
                 break;
         }
 
-        function combineSummary(summary) {
+        function combineSummary(summary, dataToCollect) {
             // Initialize an empty object to hold the combined result
-            const combined = {};
+            let combined = {
+                maintenance_count : 0,
+                cost : 0,
+                average_date_difference : 0
+            };
+            let total_maintenance = 0;
         
             // Iterate over each object in the summary array
-            summary.forEach(item => {
-                // For each key in the item object, add the value to the combined object
-                Object.keys(item).forEach(key => {
-                    if (combined[key] === undefined) {
-                        combined[key] = item[key];
-                    } else {
-                        combined[key] += item[key];  // Or use another operation depending on your needs (e.g., sum, concatenation)
+            //console.log(summary);
+            for(const item of summary){
+                
+                if(dataToCollect === 'total' || (dataToCollect === 'attraction' && item.isAttraction === 1) || (dataToCollect === 'dining' && item.isAttraction === 0))
+                {
+                    //console.log(dataToCollect + " " + item.isAttraction);
+                    if(item.average_date_difference !== null)
+                    {
+                        total_maintenance += item.maintenance_count ?? 0;
+                        combined.average_date_difference += (Number(item.average_date_difference) * (item.maintenance_count ?? 0)) ?? 0
                     }
-                });
-            });
+                    combined.maintenance_count += item.maintenance_count ?? 0;
+                    combined.cost += item.cost ?? 0;
+                }
+                
+            };
+
+            if(total_maintenance !== 0)
+            {combined.average_date_difference = combined.average_date_difference / total_maintenance;}
+            else
+            {combined.average_date_difference = 0;}
         
             return combined;
         }
 
-        const combinedSummary = combineSummary(summary);
-
+        //const combinedSummary = combineSummary(summary);
+        console.log(`data ${JSON.stringify(data)}`);
+        console.log()
+        console.log(`summary ${JSON.stringify(summary)}`);
+        console.log()
+        console.log(`combined summary ${JSON.stringify(combined_summary)}`);
+        console.log()
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
             success: true,
             data,
             summary,
-            combinedSummary
+            combined_summary
         }));
     } catch (error) {
         console.error('Error generating finance report:', error);
@@ -307,7 +349,11 @@ const getTotalSummary = async (startDate, endDate, dateType) => {
         COALESCE(A.attraction_name, D.dining_name) AS facility_name,
         COUNT(*) AS maintenance_count,
         COALESCE(SUM(M.maintenance_cost), 0) AS cost,
-        AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) AS average_date_difference
+        AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) AS average_date_difference,
+        CASE
+            WHEN A.attraction_name  IS NOT NULL AND D.dining_name IS NULL THEN TRUE
+            ELSE FALSE
+        END AS isAttraction
     FROM maintenance_logs AS M
     LEFT JOIN attractions AS A ON M.attraction_id = A.attraction_id
     LEFT JOIN dining AS D ON M.dining_id = D.dining_id
@@ -357,7 +403,12 @@ const getTotalSummary = async (startDate, endDate, dateType) => {
         params.push(endDate);
     }
 
-    query += ` GROUP BY facility_name`
+    query += ` GROUP BY 
+                    COALESCE(A.attraction_name, D.dining_name),
+                    CASE 
+                        WHEN A.attraction_name IS NOT NULL AND D.dining_name IS NULL THEN TRUE 
+                        ELSE FALSE 
+                    END`
 
     const [rows] = await pool.query(query, params);
     return rows;
@@ -369,7 +420,8 @@ const getAttractionSummary = async (startDate, endDate, dateType) => {
         A.attraction_name as facility_name,
         COUNT(*) AS maintenance_count,
         COALESCE(SUM(M.maintenance_cost),0) as cost,
-        AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) as average_date_difference 
+        AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) as average_date_difference,
+        TRUE AS isAttraction 
     FROM maintenance_logs as M
     JOIN attractions AS A ON M.attraction_id = A.attraction_id
     WHERE 1 = 1
@@ -418,7 +470,7 @@ const getAttractionSummary = async (startDate, endDate, dateType) => {
         params.push(endDate);
     }
 
-    query += ` GROUP BY D.dining_name`
+    query += ` GROUP BY A.attraction_name`
 
     const [rows] = await pool.query(query, params);
     return rows;
@@ -432,7 +484,8 @@ const getDiningSummary = async (startDate, endDate, dateType) => {
         D.dining_name as facility_name,
         COUNT(*) AS maintenance_count,
         COALESCE(SUM(M.maintenance_cost),0) as cost,
-        AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) as average_date_difference 
+        AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) as average_date_difference,
+        FALSE AS isAttraction 
     FROM maintenance_logs as M
     JOIN dining AS D ON M.dining_id = D.dining_id
     WHERE 1 = 1

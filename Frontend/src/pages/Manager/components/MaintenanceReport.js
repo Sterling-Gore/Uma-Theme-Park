@@ -7,7 +7,14 @@ const MaintenanceReport = ({ setActiveTab }) => {
     const [endDate, setEndDate] = useState('');
     const [dateType, setDateType] = useState('all');
     const [reportType, setReportType] = useState('all');
-    const [groupBy, setGroupBy] = useState('none');
+    const [orderBy, setOrderBy] = useState('start');
+
+     // Filters for form inputs
+     const [filterStartDate, setFilterStartDate] = useState('');
+     const [filterEndDate, setFilterEndDate] = useState('');
+     const [filterDateType, setFilterDateType] = useState('all');
+     const [filterReportType, setFilterReportType] = useState('all');
+     const [filterOrderBy, setFilterOrderBy] = useState('start');
 
     // State for report data
     const [reportData, setReportData] = useState(null);
@@ -20,7 +27,13 @@ const MaintenanceReport = ({ setActiveTab }) => {
     const formatDate = (dateString) => {
         if (!dateString) return '';
         const date = new Date(dateString);
-        return date.toLocaleDateString();
+        return date.toLocaleDateString('en-US', {
+            timeZone: 'UTC',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+      
+          });
     };
 
     // Fetch report data from backend
@@ -29,11 +42,17 @@ const MaintenanceReport = ({ setActiveTab }) => {
         setLoading(true);
         setError(null);
 
+        setOrderBy(filterOrderBy);
+        setStartDate(filterStartDate);
+        setEndDate(filterEndDate);
+        setDateType(filterDateType);
+        setReportType(filterReportType);
+
         try {
             // Create request parameters
             const params = new URLSearchParams({
                 reportType,
-                groupBy,
+                orderBy,
                 dateType,
                 ...(startDate && { startDate }),
                 ...(endDate && { endDate })
@@ -55,9 +74,12 @@ const MaintenanceReport = ({ setActiveTab }) => {
             const data = await response.json();
 
             if (data.success) {
+                console.log(data.data);
+                console.log(data.summary);
+                console.log(data.combined_summary)
                 setReportData(data.data);
                 setOverviewData(data.summary);
-                setSummary(data.combinedSummary);
+                setSummary(data.combined_summary);
             } else {
                 setError(data.message || 'Failed to fetch report data');
             }
@@ -70,15 +92,25 @@ const MaintenanceReport = ({ setActiveTab }) => {
     };
 
     // Get column headers based on report type
-    const getColumnHeaders = () => {
+    const getColumnHeaders = (tableType) => {
+        if(tableType === 'overview')
+        {
+            const columns = {
+                facility_name: 'Facility',
+                maintenance_count: 'Total Maintenance Logs',
+                cost: 'Total Maintenance Costs',
+                average_date_difference: 'Average Expected vs End Date Difference'
+            }
+            return columns
+        }
         const columns = {
-            maintenance_log: 'Maintenance Log',
+            name: 'Maintenance Log',
+            facility_name: 'Facility',
             cost: 'Maintenance Cost',
             start_date: 'Maintenance Start Date',
             end_date: 'Maintenance End Date',
             expected_end_date: 'Expected Maintenance End Date',
-            expected_difference: 'Expected To Actual End Date Difference'
-            
+            date_difference: 'Expected To Actual End Date Difference'
         }
         return columns;
         const baseColumns = {
@@ -118,7 +150,14 @@ const MaintenanceReport = ({ setActiveTab }) => {
         setEndDate('');
         setDateType('all');
         setReportType('all');
-        setGroupBy('none');
+        setOrderBy('start');
+
+        setFilterStartDate('');
+        setFilterEndDate('');
+        setFilterDateType('all');
+        setFilterReportType('all');
+        setFilterOrderBy('start');
+
         setReportData(null);
         setSummary(null);
         setError(null);
@@ -138,8 +177,8 @@ const MaintenanceReport = ({ setActiveTab }) => {
                             <input
                                 type="date"
                                 id="startDate"
-                                value={startDate}
-                                onChange={(e) => setStartDate(e.target.value)}
+                                value={filterStartDate}
+                                onChange={(e) => setFilterStartDate(e.target.value)}
                             />
                         </div>
 
@@ -148,8 +187,8 @@ const MaintenanceReport = ({ setActiveTab }) => {
                             <input
                                 type="date"
                                 id="endDate"
-                                value={endDate}
-                                onChange={(e) => setEndDate(e.target.value)}
+                                value={filterEndDate}
+                                onChange={(e) => setFilterEndDate(e.target.value)}
                             />
                         </div>
 
@@ -157,8 +196,8 @@ const MaintenanceReport = ({ setActiveTab }) => {
                             <label htmlFor="dateType">Date Type</label>
                             <select
                                 id="dateType"
-                                value={dateType}
-                                onChange={(e) => setDateType(e.target.value)}
+                                value={filterDateType}
+                                onChange={(e) => setFilterDateType(e.target.value)}
                             >
                                 <option value="all">All Maintenance Dates</option>
                                 <option value="start">Maintenance Start Dates</option>
@@ -170,8 +209,8 @@ const MaintenanceReport = ({ setActiveTab }) => {
                             <label htmlFor="reportType">Report Type</label>
                             <select
                                 id="reportType"
-                                value={reportType}
-                                onChange={(e) => setReportType(e.target.value)}
+                                value={filterReportType}
+                                onChange={(e) => setFilterReportType(e.target.value)}
                             >
                                 <option value="all">All Maintenance Data</option>
                                 <option value="attraction">Attraction Maintenance Only</option>
@@ -181,17 +220,14 @@ const MaintenanceReport = ({ setActiveTab }) => {
 
 
                         <div className="filter-group">
-                            <label htmlFor="groupBy">Group By</label>
+                            <label htmlFor="orderBy">Order By</label>
                             <select
-                                id="groupBy"
-                                value={groupBy}
-                                onChange={(e) => setGroupBy(e.target.value)}
+                                id="orderBy"
+                                value={filterOrderBy}
+                                onChange={(e) => setFilterOrderBy(e.target.value)}
                             >
-                                <option value="none">No Grouping</option>
-                                <option value="daily">Daily</option>
-                                <option value="weekly">Weekly</option>
-                                <option value="monthly">Monthly</option>
-                                <option value="yearly">Yearly</option>
+                                <option value="start">Start Date</option>
+                                <option value="end">End Date</option>
                             </select>
                         </div>
                     </div>
@@ -232,45 +268,122 @@ const MaintenanceReport = ({ setActiveTab }) => {
                         </p>
 
                         {summary && (
-                            <div className="report-summary">
-                                <h4>Summary</h4>
-                                <div className="summary-grid">
-                                    {reportType === 'all' || reportType === 'attraction' ? (
+                            <>
+                            {reportType === 'all' && (
+                                <div className="report-summary">
+                                    <h4>Total Summary</h4>
+                                    <div className="summary-grid">
+                                        <div className="summary-item">
+                                            <span className="summary-label">Total Maintenance Logs:</span>
+                                            <span className="summary-value">{summary && summary.total_combined_summary && summary.total_combined_summary.maintenance_count ? summary.total_combined_summary.maintenance_count : 'missing'}</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span className="summary-label">Total Maintenance Cost:</span>
+                                            <span className="summary-value">{summary && summary.total_combined_summary && summary.total_combined_summary.cost ? summary.total_combined_summary.cost.toFixed(2) : 'missing'}</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span className="summary-label">Average Expected vs End Date Difference:</span>
+                                            <span className="summary-value">{summary && summary.total_combined_summary && summary.total_combined_summary.average_date_difference ? summary.total_combined_summary.average_date_difference.toFixed(3) : 'missing'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            {(reportType === 'all' || reportType === 'attraction' )&& (
+                                <div className="report-summary">
+                                    <h4>Attraction Summary</h4>
+                                    <div className="summary-grid">
                                         <div className="summary-item">
                                             <span className="summary-label">Total Attraction Maintenance Logs:</span>
-                                            <span className="summary-value">${summary && summary.totalTicketSales ? summary.totalTicketSales : '0.00'}</span>
+                                            <span className="summary-value">{summary && summary.attraction_combined_summary && summary.attraction_combined_summary.maintenance_count ? summary.attraction_combined_summary.maintenance_count : 'missing'}</span>
                                         </div>
-                                    ) : null}
-
-                                    {reportType === 'all' || reportType === 'merchandise' ? (
                                         <div className="summary-item">
-                                            <span className="summary-label">Total Merchandise Sales:</span>
-                                            <span className="summary-value">${summary && summary.totalMerchandiseSales ? summary.totalMerchandiseSales : '0.00'}</span>
+                                            <span className="summary-label">Total Attraction Maintenance Cost:</span>
+                                            <span className="summary-value">{summary && summary.attraction_combined_summary && summary.attraction_combined_summary.cost ? summary.attraction_combined_summary.cost.toFixed(2) : 'missing'}</span>
                                         </div>
-                                    ) : null}
-
-                                    {reportType === 'all' || reportType === 'maintenance' ? (
                                         <div className="summary-item">
-                                            <span className="summary-label">Total Maintenance Costs:</span>
-                                            <span className="summary-value">${summary && summary.totalMaintenanceCosts ? summary.totalMaintenanceCosts : '0.00'}</span>
+                                            <span className="summary-label">Average Attraction Expected vs End Date Difference:</span>
+                                            <span className="summary-value">{summary && summary.attraction_combined_summary && summary.attraction_combined_summary.average_date_difference ? summary.attraction_combined_summary.average_date_difference.toFixed(3) : 'missing'}</span>
                                         </div>
-                                    ) : null}
-
-                                    {reportType === 'all' && (
-                                        <div className="summary-item">
-                                            <span className="summary-label">Total Profit:</span>
-                                            <span className="summary-value">${summary && summary.totalProfit ? summary.totalProfit : '0.00'}</span>
-                                        </div>
-                                    )}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
+                            {(reportType === 'all' || reportType ==='dining') && (
+                                <div className="report-summary">
+                                    <h4>Dining Summary</h4>
+                                    <div className="summary-grid">
+                                        <div className="summary-item">
+                                            <span className="summary-label">Total Dining Maintenance Logs:</span>
+                                            <span className="summary-value">{summary && summary.dining_combined_summary && summary.dining_combined_summary.maintenance_count ? summary.dining_combined_summary.maintenance_count : 'missing'}</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span className="summary-label">Total Dining Maintenance Cost:</span>
+                                            <span className="summary-value">{summary && summary.dining_combined_summary && summary.dining_combined_summary.cost ? summary.dining_combined_summary.cost.toFixed(2) : 'missing'}</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span className="summary-label">Average Dining Expected vs End Date Difference:</span>
+                                            <span className="summary-value">{summary && summary.dining_combined_summary && summary.dining_combined_summary.average_date_difference ? summary.dining_combined_summary.average_date_difference.toFixed(3) : 'missing'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            </>
                         )}
 
+
                         <div className="table-container">
+                            {reportType === 'all' && <h4>Total Maintenance Overview</h4>}
+                            {reportType === 'dining' && <h4>Dining Maintenance Overview</h4>}
+                            {reportType === 'attraction' && <h4>Attraction Maintenance Overview</h4>}
                             <table className="report-table">
+                                
                                 <thead>
                                     <tr>
-                                        {Object.values(getColumnHeaders()).map((header, index) => (
+                                        {Object.values(getColumnHeaders('overview')).map((header, index) => (
+                                            <th key={index}>{header}</th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {overviewData.length > 0 ? (
+                                        overviewData.map((record, index) => (
+                                            <tr key={index}>
+                                                {Object.keys(getColumnHeaders('overview')).map((key, colIndex) => (
+                                                    <td key={colIndex}>
+                                                        {key === 'cost' && 
+                                                            (<>{record[key]  ? (record[key].toFixed(2)) : ('-')  }</>) 
+                                                        }
+                                                        {key === 'average_date_difference' && 
+                                                            (<>{ record[key] ? (Number(record[key]).toFixed(3)) : ('-')  }</>)
+                                                        }
+                                                        {(key === 'maintenance_count' || key === 'facility_name') && 
+                                                            (<>{ record[key] ?  record[key] : ('-')}</>)
+                                                        }
+                                                    </td>
+                                                ))}
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={Object.keys(getColumnHeaders('overview')).length} className="no-results">
+                                                No data found for the selected filters
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                                
+                            </table>
+                            
+                        </div>
+
+                        <div className="table-container">
+                            {reportType === 'all' && <h4>All Maintenance Logs</h4>}
+                            {reportType === 'dining' && <h4>Dining Maintenance Logs</h4>}
+                            {reportType === 'attraction' && <h4>Attraction Maintenance Logs</h4>}
+                            <table className="report-table">
+                                
+                                <thead>
+                                    <tr>
+                                        {Object.values(getColumnHeaders('logs')).map((header, index) => (
                                             <th key={index}>{header}</th>
                                         ))}
                                     </tr>
@@ -279,26 +392,35 @@ const MaintenanceReport = ({ setActiveTab }) => {
                                     {reportData.length > 0 ? (
                                         reportData.map((record, index) => (
                                             <tr key={index}>
-                                                {Object.keys(getColumnHeaders()).map((key, colIndex) => (
+                                                {Object.keys(getColumnHeaders('logs')).map((key, colIndex) => (
                                                     <td key={colIndex}>
-                                                        {key === 'date' ? formatDate(record[key]) :
-                                                            typeof record[key] === 'number' ?
-                                                                key.includes('number') || key.includes('count') ?
-                                                                    record[key] : `$${record[key].toFixed(2)}` :
-                                                                record[key] || '-'}
+                                                        {(key === 'start_date' || key === 'end_date' || key === 'expected_end_date') && 
+                                                            (<>{record[key] ? (formatDate(record[key])) : ('-')}</>)
+                                                        }
+                                                        {key === 'cost' && 
+                                                            (<>{record[key]  ? (record[key].toFixed(2)) : ('-')  }</>) 
+                                                        }
+                                                        {key === 'date_difference' && 
+                                                            (<>{ record[key] ? (record[key]) : ('-')  }</>)
+                                                        }
+                                                        {(key === 'name' || key === 'facility_name') && 
+                                                            (<>{ record[key] ?  record[key] : ('-')}</>)
+                                                        }
                                                     </td>
                                                 ))}
                                             </tr>
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan={Object.keys(getColumnHeaders()).length} className="no-results">
+                                            <td colSpan={Object.keys(getColumnHeaders('logs')).length} className="no-results">
                                                 No data found for the selected filters
                                             </td>
                                         </tr>
                                     )}
                                 </tbody>
+                                
                             </table>
+                            
                         </div>
                     </div>
                 )}
