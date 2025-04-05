@@ -130,6 +130,7 @@ const getTotalData = async (startDate, endDate, dateType, orderBy) => {
         SELECT 
             M.maintenance_name AS name,
             COALESCE(A.attraction_name, D.dining_name) AS facility_name,
+            M.facility_name AS saved_name,
             M.maintenance_cost AS cost,
             DATE(M.maintenance_date) AS start_date,
             DATE(M.finalized_date) AS end_date,
@@ -205,6 +206,7 @@ const getAttractionData = async (startDate, endDate, dateType, orderBy) => {
     SELECT 
         M.maintenance_name as name,
         A.attraction_name as facility_name,
+        M.facility_name AS saved_name,
         M.maintenance_cost as cost,
         DATE(maintenance_date) as start_date,
         DATE(finalized_date) as end_date,
@@ -276,6 +278,7 @@ const getDiningData = async (startDate, endDate, dateType, orderBy) => {
     SELECT 
         M.maintenance_name as name,
         D.dining_name as facility_name,
+        M.facility_name AS saved_name,
         M.maintenance_cost as cost,
         DATE(maintenance_date) as start_date,
         DATE(finalized_date) as end_date,
@@ -347,6 +350,7 @@ const getTotalSummary = async (startDate, endDate, dateType) => {
     let query = `
     SELECT 
         COALESCE(A.attraction_name, D.dining_name) AS facility_name,
+        M.facility_name AS saved_name,
         COUNT(*) AS maintenance_count,
         COALESCE(SUM(M.maintenance_cost), 0) AS cost,
         AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) AS average_date_difference,
@@ -403,12 +407,7 @@ const getTotalSummary = async (startDate, endDate, dateType) => {
         params.push(endDate);
     }
 
-    query += ` GROUP BY 
-                    COALESCE(A.attraction_name, D.dining_name),
-                    CASE 
-                        WHEN A.attraction_name IS NOT NULL AND D.dining_name IS NULL THEN TRUE 
-                        ELSE FALSE 
-                    END`
+    query += ` GROUP BY saved_name`
 
     const [rows] = await pool.query(query, params);
     return rows;
@@ -418,6 +417,7 @@ const getAttractionSummary = async (startDate, endDate, dateType) => {
     let query = `
     SELECT 
         A.attraction_name as facility_name,
+        M.facility_name AS saved_name,
         COUNT(*) AS maintenance_count,
         COALESCE(SUM(M.maintenance_cost),0) as cost,
         AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) as average_date_difference,
@@ -470,7 +470,7 @@ const getAttractionSummary = async (startDate, endDate, dateType) => {
         params.push(endDate);
     }
 
-    query += ` GROUP BY A.attraction_name`
+    query += ` GROUP BY saved_name`
 
     const [rows] = await pool.query(query, params);
     return rows;
@@ -482,6 +482,7 @@ const getDiningSummary = async (startDate, endDate, dateType) => {
     let query = `
     SELECT 
         D.dining_name as facility_name,
+        M.facility_name AS saved_name,
         COUNT(*) AS maintenance_count,
         COALESCE(SUM(M.maintenance_cost),0) as cost,
         AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) as average_date_difference,
@@ -534,7 +535,7 @@ const getDiningSummary = async (startDate, endDate, dateType) => {
         params.push(endDate);
     }
 
-    query += ` GROUP BY D.dining_name`
+    query += ` GROUP BY saved_name`
 
     const [rows] = await pool.query(query, params);
     return rows;

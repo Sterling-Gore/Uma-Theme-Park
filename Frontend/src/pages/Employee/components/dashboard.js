@@ -222,7 +222,8 @@ const Dashboard = ({ setActiveTab }) => {
           cost : Number(formData.maintenanceLogEstimatedPrice),
           expectedDate : formData.maintenanceLogExpectedCompletionDate,
           ID : employeeAssignment.id,
-          isAttraction : employeeAssignment.isAttraction
+          isAttraction : employeeAssignment.isAttraction,
+          facility_name : employeeAssignment.name
         }
         const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/createMaintenanceLog`, {
             method: 'POST',
