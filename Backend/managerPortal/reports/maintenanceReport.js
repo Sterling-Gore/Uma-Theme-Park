@@ -81,35 +81,12 @@ const generateMaintenanceReport = async (req, res) => {
                     if(item.average_date_difference !== null)
                     {
                         total_maintenance += item.maintenance_count ?? 0;
-                        combined.average_date_difference += Number(item.average_date_difference) ?? 0
+                        combined.average_date_difference += (Number(item.average_date_difference) * (item.maintenance_count ?? 0)) ?? 0
                     }
                     combined.maintenance_count += item.maintenance_count ?? 0;
                     combined.cost += item.cost ?? 0;
                 }
-                /*
-                if(!item.isAttraction && dataToCollect !== "dining")
-                {
-                    console.log(dataToCollect + " dining");
-                    if(item.average_date_difference !== null)
-                    {
-                        total_maintenance += item.maintenance_count ?? 0;
-                        combined.average_date_difference += Number(item.average_date_difference) ?? 0
-                    }
-                    combined.maintenance_count += item.maintenance_count ?? 0;
-                    combined.cost += item.cost ?? 0;
-                }
-                else
-                {
-                    console.log(dataToCollect + " attraction");
-                    if(item.average_date_difference !== null)
-                    {
-                        total_maintenance += item.maintenance_count ?? 0;
-                        combined.average_date_difference += Number(item.average_date_difference) ?? 0
-                    }
-                    combined.maintenance_count += item.maintenance_count ?? 0;
-                    combined.cost += item.cost ?? 0;
-                }
-                    */
+                
             };
 
             if(total_maintenance !== 0)
@@ -121,7 +98,12 @@ const generateMaintenanceReport = async (req, res) => {
         }
 
         //const combinedSummary = combineSummary(summary);
-
+        console.log(`data ${JSON.stringify(data)}`);
+        console.log()
+        console.log(`summary ${JSON.stringify(summary)}`);
+        console.log()
+        console.log(`combined summary ${JSON.stringify(combined_summary)}`);
+        console.log()
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
             success: true,
@@ -438,7 +420,8 @@ const getAttractionSummary = async (startDate, endDate, dateType) => {
         A.attraction_name as facility_name,
         COUNT(*) AS maintenance_count,
         COALESCE(SUM(M.maintenance_cost),0) as cost,
-        AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) as average_date_difference 
+        AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) as average_date_difference,
+        TRUE AS isAttraction 
     FROM maintenance_logs as M
     JOIN attractions AS A ON M.attraction_id = A.attraction_id
     WHERE 1 = 1
@@ -501,7 +484,8 @@ const getDiningSummary = async (startDate, endDate, dateType) => {
         D.dining_name as facility_name,
         COUNT(*) AS maintenance_count,
         COALESCE(SUM(M.maintenance_cost),0) as cost,
-        AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) as average_date_difference 
+        AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) as average_date_difference,
+        FALSE AS isAttraction 
     FROM maintenance_logs as M
     JOIN dining AS D ON M.dining_id = D.dining_id
     WHERE 1 = 1

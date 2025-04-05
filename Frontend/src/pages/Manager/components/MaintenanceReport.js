@@ -9,6 +9,13 @@ const MaintenanceReport = ({ setActiveTab }) => {
     const [reportType, setReportType] = useState('all');
     const [orderBy, setOrderBy] = useState('start');
 
+     // Filters for form inputs
+     const [filterStartDate, setFilterStartDate] = useState('');
+     const [filterEndDate, setFilterEndDate] = useState('');
+     const [filterDateType, setFilterDateType] = useState('all');
+     const [filterReportType, setFilterReportType] = useState('all');
+     const [filterOrderBy, setFilterOrderBy] = useState('start');
+
     // State for report data
     const [reportData, setReportData] = useState(null);
     const [overviewData, setOverviewData] = useState(null);
@@ -34,6 +41,12 @@ const MaintenanceReport = ({ setActiveTab }) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
+
+        setOrderBy(filterOrderBy);
+        setStartDate(filterStartDate);
+        setEndDate(filterEndDate);
+        setDateType(filterDateType);
+        setReportType(filterReportType);
 
         try {
             // Create request parameters
@@ -79,7 +92,17 @@ const MaintenanceReport = ({ setActiveTab }) => {
     };
 
     // Get column headers based on report type
-    const getColumnHeaders = () => {
+    const getColumnHeaders = (tableType) => {
+        if(tableType === 'overview')
+        {
+            const columns = {
+                facility_name: 'Facility',
+                maintenance_count: 'Total Maintenance Logs',
+                cost: 'Total Maintenance Costs',
+                average_date_difference: 'Average Expected vs End Date Difference'
+            }
+            return columns
+        }
         const columns = {
             name: 'Maintenance Log',
             facility_name: 'Facility',
@@ -88,7 +111,6 @@ const MaintenanceReport = ({ setActiveTab }) => {
             end_date: 'Maintenance End Date',
             expected_end_date: 'Expected Maintenance End Date',
             date_difference: 'Expected To Actual End Date Difference'
-            
         }
         return columns;
         const baseColumns = {
@@ -129,6 +151,13 @@ const MaintenanceReport = ({ setActiveTab }) => {
         setDateType('all');
         setReportType('all');
         setOrderBy('start');
+
+        setFilterStartDate('');
+        setFilterEndDate('');
+        setFilterDateType('all');
+        setFilterReportType('all');
+        setFilterOrderBy('start');
+
         setReportData(null);
         setSummary(null);
         setError(null);
@@ -148,8 +177,8 @@ const MaintenanceReport = ({ setActiveTab }) => {
                             <input
                                 type="date"
                                 id="startDate"
-                                value={startDate}
-                                onChange={(e) => setStartDate(e.target.value)}
+                                value={filterStartDate}
+                                onChange={(e) => setFilterStartDate(e.target.value)}
                             />
                         </div>
 
@@ -158,8 +187,8 @@ const MaintenanceReport = ({ setActiveTab }) => {
                             <input
                                 type="date"
                                 id="endDate"
-                                value={endDate}
-                                onChange={(e) => setEndDate(e.target.value)}
+                                value={filterEndDate}
+                                onChange={(e) => setFilterEndDate(e.target.value)}
                             />
                         </div>
 
@@ -167,8 +196,8 @@ const MaintenanceReport = ({ setActiveTab }) => {
                             <label htmlFor="dateType">Date Type</label>
                             <select
                                 id="dateType"
-                                value={dateType}
-                                onChange={(e) => setDateType(e.target.value)}
+                                value={filterDateType}
+                                onChange={(e) => setFilterDateType(e.target.value)}
                             >
                                 <option value="all">All Maintenance Dates</option>
                                 <option value="start">Maintenance Start Dates</option>
@@ -180,8 +209,8 @@ const MaintenanceReport = ({ setActiveTab }) => {
                             <label htmlFor="reportType">Report Type</label>
                             <select
                                 id="reportType"
-                                value={reportType}
-                                onChange={(e) => setReportType(e.target.value)}
+                                value={filterReportType}
+                                onChange={(e) => setFilterReportType(e.target.value)}
                             >
                                 <option value="all">All Maintenance Data</option>
                                 <option value="attraction">Attraction Maintenance Only</option>
@@ -194,8 +223,8 @@ const MaintenanceReport = ({ setActiveTab }) => {
                             <label htmlFor="orderBy">Order By</label>
                             <select
                                 id="orderBy"
-                                value={orderBy}
-                                onChange={(e) => setOrderBy(e.target.value)}
+                                value={filterOrderBy}
+                                onChange={(e) => setFilterOrderBy(e.target.value)}
                             >
                                 <option value="start">Start Date</option>
                                 <option value="end">End Date</option>
@@ -302,13 +331,59 @@ const MaintenanceReport = ({ setActiveTab }) => {
 
 
                         <div className="table-container">
-                            <h4>Total Overview</h4>
-                            {/*
+                            {reportType === 'all' && <h4>Total Maintenance Overview</h4>}
+                            {reportType === 'dining' && <h4>Dining Maintenance Overview</h4>}
+                            {reportType === 'attraction' && <h4>Attraction Maintenance Overview</h4>}
                             <table className="report-table">
                                 
                                 <thead>
                                     <tr>
-                                        {Object.values(getColumnHeaders()).map((header, index) => (
+                                        {Object.values(getColumnHeaders('overview')).map((header, index) => (
+                                            <th key={index}>{header}</th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {overviewData.length > 0 ? (
+                                        overviewData.map((record, index) => (
+                                            <tr key={index}>
+                                                {Object.keys(getColumnHeaders('overview')).map((key, colIndex) => (
+                                                    <td key={colIndex}>
+                                                        {key === 'cost' && 
+                                                            (<>{record[key]  ? (record[key].toFixed(2)) : ('-')  }</>) 
+                                                        }
+                                                        {key === 'average_date_difference' && 
+                                                            (<>{ record[key] ? (Number(record[key]).toFixed(3)) : ('-')  }</>)
+                                                        }
+                                                        {(key === 'maintenance_count' || key === 'facility_name') && 
+                                                            (<>{ record[key] ?  record[key] : ('-')}</>)
+                                                        }
+                                                    </td>
+                                                ))}
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={Object.keys(getColumnHeaders('overview')).length} className="no-results">
+                                                No data found for the selected filters
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                                
+                            </table>
+                            
+                        </div>
+
+                        <div className="table-container">
+                            {reportType === 'all' && <h4>All Maintenance Logs</h4>}
+                            {reportType === 'dining' && <h4>Dining Maintenance Logs</h4>}
+                            {reportType === 'attraction' && <h4>Attraction Maintenance Logs</h4>}
+                            <table className="report-table">
+                                
+                                <thead>
+                                    <tr>
+                                        {Object.values(getColumnHeaders('logs')).map((header, index) => (
                                             <th key={index}>{header}</th>
                                         ))}
                                     </tr>
@@ -317,7 +392,7 @@ const MaintenanceReport = ({ setActiveTab }) => {
                                     {reportData.length > 0 ? (
                                         reportData.map((record, index) => (
                                             <tr key={index}>
-                                                {Object.keys(getColumnHeaders()).map((key, colIndex) => (
+                                                {Object.keys(getColumnHeaders('logs')).map((key, colIndex) => (
                                                     <td key={colIndex}>
                                                         {(key === 'start_date' || key === 'end_date' || key === 'expected_end_date') && 
                                                             (<>{record[key] ? (formatDate(record[key])) : ('-')}</>)
@@ -337,7 +412,7 @@ const MaintenanceReport = ({ setActiveTab }) => {
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan={Object.keys(getColumnHeaders()).length} className="no-results">
+                                            <td colSpan={Object.keys(getColumnHeaders('logs')).length} className="no-results">
                                                 No data found for the selected filters
                                             </td>
                                         </tr>
@@ -345,7 +420,7 @@ const MaintenanceReport = ({ setActiveTab }) => {
                                 </tbody>
                                 
                             </table>
-                            */}
+                            
                         </div>
                     </div>
                 )}
