@@ -9,8 +9,8 @@ const generateParkReport = async (req, res) => {
         const results = {
             totalVisitors: await getTotalVisitors(startDate, endDate),
             visitorsInRange: await getVisitorsInRange(startDate, endDate),
-            popularAttractions: await getPopularAttractions(),
-            attractionVisits: await getAttractionVisits(),
+            popularAttractions: await getPopularAttractions(startDate,endDate),
+            attractionVisits: await getAttractionVisits(startDate,endDate),
             totalTickets: await getTotalTickets(startDate, endDate),
             popularTicketType: await getPopularTicketType(startDate, endDate),
             totalFoodPasses: await getTotalFoodPasses(startDate, endDate)
@@ -45,25 +45,58 @@ const getTotalVisitors = async (startDate, endDate) => {
 
 const getVisitorsInRange = getTotalVisitors;
 
-const getPopularAttractions = async () => {
-    const query = `
+const getPopularAttractions = async (startDate, endDate) => {
+    let query = `
         SELECT ai.attraction_name, COUNT(*) AS visit_count
         FROM attraction_interests ai
+        JOIN ticket_receipt tr ON ai.ticket_receipt_id = tr.ticket_receipt_id
+        WHERE 1=1
+    `;
+    const params = [];
+
+    if (startDate) {
+        query += ` AND tr.purchase_date >= ?`;
+        params.push(startDate);
+    }
+
+    if (endDate) {
+        query += ` AND tr.purchase_date <= ?`;
+        params.push(endDate);
+    }
+
+    query += `
         GROUP BY ai.attraction_name
         ORDER BY visit_count DESC
         LIMIT 5
     `;
-    const [rows] = await pool.query(query);
+
+    const [rows] = await pool.query(query, params);
     return rows;
 };
 
-const getAttractionVisits = async () => {
-    const query = `
+
+const getAttractionVisits = async (startDate, endDate) => {
+    let query = `
         SELECT ai.attraction_name, COUNT(*) AS visits
         FROM attraction_interests ai
-        GROUP BY ai.attraction_name
+        JOIN ticket_receipt tr ON ai.ticket_receipt_id = tr.ticket_receipt_id
+        WHERE 1=1
     `;
-    const [rows] = await pool.query(query);
+    const params = [];
+
+    if (startDate) {
+        query += ` AND tr.purchase_date >= ?`;
+        params.push(startDate);
+    }
+
+    if (endDate) {
+        query += ` AND tr.purchase_date <= ?`;
+        params.push(endDate);
+    }
+
+    query += ` GROUP BY ai.attraction_name`;
+
+    const [rows] = await pool.query(query, params);
     return rows;
 };
 
