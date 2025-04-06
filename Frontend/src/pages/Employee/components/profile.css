@@ -47,6 +47,23 @@ button:hover {
     background: #ccc;
 }
 
+.edit-profile-btn {
+    background: #1d62ac;
+    border: 1px solid #aaa;
+    color: #e6e6e6;
+    margin-top: 15px;
+}
+.edit-profile-btn:hover {
+    background: #e6e6e6;
+    color: #1d62ac;
+}
+
+.div-row {
+    display: flex;
+    justify-content: center; /* centers the boxes horizontally */
+    align-items: center; 
+}
+
 .edit-password-btn {
     background: #f8f8f8;
     border: 1px solid #aaa;
