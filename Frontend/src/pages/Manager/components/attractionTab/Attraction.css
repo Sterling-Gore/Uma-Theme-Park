@@ -131,6 +131,9 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+.attraction-title-space {
+    margin-bottom: 25px;
+}
 
 .attraction-footer {
     display: flex;

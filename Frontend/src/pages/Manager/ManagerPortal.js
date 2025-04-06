@@ -16,6 +16,10 @@ import FinanceReport from './components/FinanceReport';
 import AttractReport from './components/attractReport';
 import MaintenanceReport from './components/MaintenanceReport';
 
+import AttractionTabViewer from './components/attractionTab/attractionTabViewer'
+import DiningTabViewer from './components/diningTab/diningTabViewer'
+import MerchandiseTabViewer from './components/MerchTab/merchandiseTabViewer';
+
 function ManagerPortal() {
   const [activeTab, setActiveTab] = useState('view');
   const { logout } = useContext(AuthContext);
@@ -62,6 +66,10 @@ function ManagerPortal() {
           {activeTab === 'createAttraction' && <CreateAttraction setActiveTab={setActiveTab} />}
           {activeTab === 'handleDining' && <HandleDining setActiveTab={setActiveTab} />}
           {activeTab === 'createDining' && <CreateDining setActiveTab={setActiveTab} />}
+
+          {activeTab === 'attractionTabViewer' && <AttractionTabViewer setActiveTab={setActiveTab} />}
+          {activeTab === 'diningTabViewer' && <DiningTabViewer setActiveTab={setActiveTab} />}
+          {activeTab === 'merchandiseTabViewer' && <MerchandiseTabViewer setActiveTab={setActiveTab} />}
         </div>
       </div>
     </div>

@@ -124,9 +124,9 @@ const CreateAttraction = ({ setActiveTab }) => {
     
     return (
         <div className="employee-form-container">
-        <div className="content-header">
-            <h2>Create New Attraction</h2>
-        </div>
+        
+
+        <h2 className='attraction-title-space'>Create New Attraction</h2>
         
         <div /*onSubmit={handleSubmit}*/ className="employee-form">
             <div className="form-group">
@@ -259,7 +259,7 @@ const CreateAttraction = ({ setActiveTab }) => {
             <button 
                 type="button" 
                 className="delete-button" 
-                onClick={() => setActiveTab('handleMerchandise')}
+                onClick={() => setActiveTab('handleAttraction')}
             >
                 Cancel
             </button>

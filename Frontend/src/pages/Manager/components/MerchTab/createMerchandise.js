@@ -147,9 +147,7 @@ const CreateMerchandise = ({ setActiveTab }) => {
     
     return (
         <div className="employee-form-container">
-        <div className="content-header">
-            <h2>Create New Merchandise</h2>
-        </div>
+        <h2 className='attraction-title-space'>Create New Merchandise</h2>
         
         <div /*onSubmit={handleSubmit}*/ className="employee-form">
             <div className="form-group">

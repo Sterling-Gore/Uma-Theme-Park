@@ -453,8 +453,7 @@ const HandleAttraction = ({ setActiveTab }) => {
 
     return (
         <div className="profile-container">
-          <h2>Attractions</h2>
-          <p>View and update the attraction information here.</p>
+          <h2 className='attraction-title-space'>View and update the attractions</h2>
           {step === 1 && (
           <div className="attractions-grid">
                 {attractions.map((Attraction) => (

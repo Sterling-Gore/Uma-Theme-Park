@@ -337,8 +337,7 @@ const HandleMerchandise = ({ setActiveTab }) => {
 
   return (
     <div className="profile-container">
-      <h2>Online Store Merchandise</h2>
-      <p>View and update your merchandise information here.</p>
+      <h2 className='attraction-title-space'>View and update the merchandise</h2>
       {step === 1 && (
       <div className="attractions-grid">
             {merchandises.map((Merchandise) => (

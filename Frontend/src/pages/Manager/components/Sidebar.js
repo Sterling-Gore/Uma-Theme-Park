@@ -37,6 +37,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
         >
           Attraction Report
         </button>
+        {/*
         <button 
           className={activeTab === 'handleMerchandise' ? 'active' : ''} 
           onClick={() => setActiveTab('handleMerchandise')}
@@ -73,6 +74,27 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           onClick={() => setActiveTab('createDining')}
         >
           Create Dining
+        </button>
+        */}
+        
+
+        <button 
+          className={activeTab === 'attractionTabViewer' ? 'active' : ''} 
+          onClick={() => setActiveTab('attractionTabViewer')}
+        >
+          Attraction Viewer
+        </button>
+        <button 
+          className={activeTab === 'diningTabViewer' ? 'active' : ''} 
+          onClick={() => setActiveTab('diningTabViewer')}
+        >
+          Dining Viewer
+        </button>
+        <button 
+          className={activeTab === 'merchandiseTabViewer' ? 'active' : ''} 
+          onClick={() => setActiveTab('merchandiseTabViewer')}
+        >
+          Merchandise Viewer
         </button>
       </nav>
     </div>

@@ -344,8 +344,7 @@ const HandleDining = ({ setActiveTab }) => {
 
     return (
         <div className="profile-container">
-          <h2>Dining</h2>
-          <p>View and update the dining information here.</p>
+          <h2 className='attraction-title-space'>View and update the dinings</h2>
           {step === 1 && (
           <div className="attractions-grid">
                 {dining.map((dining_item) => (
