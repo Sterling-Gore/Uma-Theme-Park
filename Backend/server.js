@@ -44,6 +44,7 @@ const { deleteEmployee } = require('./managerPortal/deleteEmployee');
 const { updateEmployeeAttraction } = require('./managerPortal/updateEmployeeAttraction');
 const { submitFeedback } = require('./feedback/submitFeedback');
 const { getAccountInfo } = require('./accountHandler/getAccountInfo');
+const { deleteAccount } = require('./accountHandler/deleteAccount');
 const { UpdatePassword } = require('./accountHandler/updatePassword');
 const { UpdateAccount } = require('./accountHandler/UpdateAccount');
 const { getTicketOrders } = require('./myorders/getTicketOrders');
@@ -207,6 +208,9 @@ const server = http.createServer(async (req, res) => {
     }
     else if (req. url === '/getAccountInfo' && req.method === 'POST'){
         getAccountInfo(req, res)
+    }
+    else if (req. url === '/deleteAccount' && req.method === 'POST'){
+        deleteAccount(req, res)
     }
     else if(req.url === '/updatePassword' && req.method === 'PUT'){
         UpdatePassword(req, res)

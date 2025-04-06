@@ -5,7 +5,7 @@ import './Account.css';
 
 function Account() {
     const navigate = useNavigate();
-    const { isLoggedIn, userType, isLoading } = useContext(AuthContext);
+    const { isLoggedIn, userType, logout, isLoading } = useContext(AuthContext);
     const alertShown = useRef(false);
     const [formData, setFormData] = useState({
         first_name: '',
@@ -49,9 +49,10 @@ function Account() {
     // Verify auth status for ticket purchase
     useEffect(() => {
         if (!isLoading && !isLoggedIn && !alertShown.current) {
-            alertShown.current = true;
-            alert("Please login to purchase tickets!");
-            navigate("/login");
+            //alertShown.current = true;
+            //alert("Please login to purchase tickets!");
+            logout();
+            navigate("/");
         }
     }, [isLoggedIn, navigate, isLoading]);
 
@@ -401,14 +402,19 @@ function Account() {
             'Content-Type': 'application/json'
             },
             body: JSON.stringify(dataToSend),
-        });
+        }); 
         
         if (!response.ok) {
             throw new Error('Failed to delete account');
+        } 
+        else
+        {
+            alertShown.current = true;
+            alert("Account Succesfully Deleted");
+            logout();
+            navigate('/');
         }
         
-        
-        //logout
 
         } catch (error) {
             console.error('Error deleting account:', error);
