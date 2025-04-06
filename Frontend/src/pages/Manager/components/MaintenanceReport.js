@@ -101,7 +101,8 @@ const MaintenanceReport = ({ setActiveTab }) => {
                 facility_name: 'Facility',
                 maintenance_count: 'Total Maintenance Logs',
                 cost: 'Total Maintenance Costs',
-                average_date_difference: 'Average Expected vs End Date Difference'
+                average_date_difference: 'Average Expected Date Difference',
+                average_days_under_maintenance: 'Average Days Under Maintenance'
             }
             return columns
         }
@@ -112,7 +113,8 @@ const MaintenanceReport = ({ setActiveTab }) => {
             start_date: 'Maintenance Start Date',
             end_date: 'Maintenance End Date',
             expected_end_date: 'Expected Maintenance End Date',
-            date_difference: 'Expected To Actual End Date Difference'
+            date_difference: 'Expected Date Difference',
+            days_under_maintenance: 'Days Under Maintenance'
         }
         return columns;
         const baseColumns = {
@@ -277,15 +279,19 @@ const MaintenanceReport = ({ setActiveTab }) => {
                                     <div className="summary-grid">
                                         <div className="summary-item">
                                             <span className="summary-label">Total Maintenance Logs:</span>
-                                            <span className="summary-value">{summary && summary.total_combined_summary && summary.total_combined_summary.maintenance_count ? summary.total_combined_summary.maintenance_count : 'missing'}</span>
+                                            <span className="summary-value">{summary && summary.total_combined_summary && summary.total_combined_summary.maintenance_count !== null ? summary.total_combined_summary.maintenance_count : 'missing'}</span>
                                         </div>
                                         <div className="summary-item">
                                             <span className="summary-label">Total Maintenance Cost:</span>
-                                            <span className="summary-value">{summary && summary.total_combined_summary && summary.total_combined_summary.cost ? summary.total_combined_summary.cost.toFixed(2) : 'missing'}</span>
+                                            <span className="summary-value">{summary && summary.total_combined_summary && summary.total_combined_summary.cost !== null ? summary.total_combined_summary.cost.toFixed(2) : 'missing'}</span>
                                         </div>
                                         <div className="summary-item">
-                                            <span className="summary-label">Average Expected vs End Date Difference:</span>
-                                            <span className="summary-value">{summary && summary.total_combined_summary && summary.total_combined_summary.average_date_difference ? summary.total_combined_summary.average_date_difference.toFixed(3) : 'missing'}</span>
+                                            <span className="summary-label">Average Expected Date Difference:</span>
+                                            <span className="summary-value">{summary && summary.total_combined_summary && summary.total_combined_summary.average_date_difference !== null ? summary.total_combined_summary.average_date_difference.toFixed(3) : 'missing'}</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span className="summary-label">Average Days Under Maintenance:</span>
+                                            <span className="summary-value">{summary && summary.total_combined_summary && summary.total_combined_summary.average_days_under_maintenance !== null ? summary.total_combined_summary.average_days_under_maintenance.toFixed(3) : 'missing'}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -296,15 +302,19 @@ const MaintenanceReport = ({ setActiveTab }) => {
                                     <div className="summary-grid">
                                         <div className="summary-item">
                                             <span className="summary-label">Total Attraction Maintenance Logs:</span>
-                                            <span className="summary-value">{summary && summary.attraction_combined_summary && summary.attraction_combined_summary.maintenance_count ? summary.attraction_combined_summary.maintenance_count : 'missing'}</span>
+                                            <span className="summary-value">{summary && summary.attraction_combined_summary && summary.attraction_combined_summary.maintenance_count !== null ? summary.attraction_combined_summary.maintenance_count : 'missing'}</span>
                                         </div>
                                         <div className="summary-item">
                                             <span className="summary-label">Total Attraction Maintenance Cost:</span>
-                                            <span className="summary-value">{summary && summary.attraction_combined_summary && summary.attraction_combined_summary.cost ? summary.attraction_combined_summary.cost.toFixed(2) : 'missing'}</span>
+                                            <span className="summary-value">{summary && summary.attraction_combined_summary && summary.attraction_combined_summary.cost !== null ? summary.attraction_combined_summary.cost.toFixed(2) : 'missing'}</span>
                                         </div>
                                         <div className="summary-item">
-                                            <span className="summary-label">Average Attraction Expected vs End Date Difference:</span>
-                                            <span className="summary-value">{summary && summary.attraction_combined_summary && summary.attraction_combined_summary.average_date_difference ? summary.attraction_combined_summary.average_date_difference.toFixed(3) : 'missing'}</span>
+                                            <span className="summary-label">Average Attraction Expected Date Difference:</span>
+                                            <span className="summary-value">{summary && summary.attraction_combined_summary && summary.attraction_combined_summary.average_date_difference !== null ? summary.attraction_combined_summary.average_date_difference.toFixed(3) : 'missing'}</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span className="summary-label">Average Days Under Attraction Maintenance:</span>
+                                            <span className="summary-value">{summary && summary.attraction_combined_summary && summary.attraction_combined_summary.average_days_under_maintenance !== null ? summary.attraction_combined_summary.average_days_under_maintenance.toFixed(3) : 'missing'}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -315,15 +325,19 @@ const MaintenanceReport = ({ setActiveTab }) => {
                                     <div className="summary-grid">
                                         <div className="summary-item">
                                             <span className="summary-label">Total Dining Maintenance Logs:</span>
-                                            <span className="summary-value">{summary && summary.dining_combined_summary && summary.dining_combined_summary.maintenance_count ? summary.dining_combined_summary.maintenance_count : 'missing'}</span>
+                                            <span className="summary-value">{summary && summary.dining_combined_summary && summary.dining_combined_summary.maintenance_count !== null ? summary.dining_combined_summary.maintenance_count : 'missing'}</span>
                                         </div>
                                         <div className="summary-item">
                                             <span className="summary-label">Total Dining Maintenance Cost:</span>
-                                            <span className="summary-value">{summary && summary.dining_combined_summary && summary.dining_combined_summary.cost ? summary.dining_combined_summary.cost.toFixed(2) : 'missing'}</span>
+                                            <span className="summary-value">{summary && summary.dining_combined_summary && summary.dining_combined_summary.cost !== null ? summary.dining_combined_summary.cost.toFixed(2) : 'missing'}</span>
                                         </div>
                                         <div className="summary-item">
-                                            <span className="summary-label">Average Dining Expected vs End Date Difference:</span>
-                                            <span className="summary-value">{summary && summary.dining_combined_summary && summary.dining_combined_summary.average_date_difference ? summary.dining_combined_summary.average_date_difference.toFixed(3) : 'missing'}</span>
+                                            <span className="summary-label">Average Dining Expected Date Difference:</span>
+                                            <span className="summary-value">{summary && summary.dining_combined_summary && summary.dining_combined_summary.average_date_difference !== null ? summary.dining_combined_summary.average_date_difference.toFixed(3) : 'missing'}</span>
+                                        </div>
+                                        <div className="summary-item">
+                                            <span className="summary-label">Average Days Under Dining Maintenance:</span>
+                                            <span className="summary-value">{summary && summary.dining_combined_summary && summary.dining_combined_summary.average_days_under_maintenance !== null ? summary.dining_combined_summary.average_days_under_maintenance.toFixed(3) : 'missing'}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -355,6 +369,9 @@ const MaintenanceReport = ({ setActiveTab }) => {
                                                             (<>{record[key] !== null ? (record[key].toFixed(2)) : ('-')  }</>) 
                                                         }
                                                         {key === 'average_date_difference' && 
+                                                            (<>{ record[key] !== null ? (Number(record[key]).toFixed(3)) : ('-')  }</>)
+                                                        }
+                                                        {key === 'average_days_under_maintenance' && 
                                                             (<>{ record[key] !== null ? (Number(record[key]).toFixed(3)) : ('-')  }</>)
                                                         }
                                                         {(key === 'maintenance_count') && 
@@ -404,6 +421,9 @@ const MaintenanceReport = ({ setActiveTab }) => {
                                                         }
                                                         {key === 'cost' && 
                                                             (<>{record[key] !== null ? (record[key].toFixed(2)) : ('-')  }</>) 
+                                                        }
+                                                        {key === 'days_under_maintenance' && 
+                                                            (<>{ record[key] !== null ? (record[key]) : ('-')  }</>)
                                                         }
                                                         {key === 'date_difference' && 
                                                             (<>{ record[key] !== null ? (record[key]) : ('-')  }</>)
