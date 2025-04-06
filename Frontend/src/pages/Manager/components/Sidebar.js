@@ -82,19 +82,19 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           className={activeTab === 'attractionTabViewer' ? 'active' : ''} 
           onClick={() => setActiveTab('attractionTabViewer')}
         >
-          Attraction Viewer
+          Attraction Handler
         </button>
         <button 
           className={activeTab === 'diningTabViewer' ? 'active' : ''} 
           onClick={() => setActiveTab('diningTabViewer')}
         >
-          Dining Viewer
+          Dining Handler
         </button>
         <button 
           className={activeTab === 'merchandiseTabViewer' ? 'active' : ''} 
           onClick={() => setActiveTab('merchandiseTabViewer')}
         >
-          Merchandise Viewer
+          Merchandise Handler
         </button>
       </nav>
     </div>
