@@ -33,6 +33,7 @@ function Account() {
     const [successMessage, setSuccessMessage] = useState('');
     const [formError, setFormError] = useState("");
     const [passwordFormError, setPasswordFormError] = useState("");
+    const [step, setStep] = useState(1);
 
     // Redirect employees and managers to their portals
     useEffect(() => {
@@ -381,12 +382,48 @@ function Account() {
         }
     };
 
+    function cancelDeletion(){
+        setStep(1);
+        setIsEditing(false);
+        setIsChangingPassword(false);
+    }
+
+    const confirmDeletion = async () => {
+        try {
+            const userID = localStorage.getItem('userID');
+            const dataToSend = {
+                id : userID,
+            }
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API}/deleteAccount`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataToSend),
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to delete account');
+        }
+        
+        
+        //logout
+
+        } catch (error) {
+            console.error('Error deleting account:', error);
+            alertShown.current = true;
+            alert("Error deleting account");
+        }
+    };
+
     if (isLoadingPage && formData.first_name === '') {
         return <div className="account-container loading">Loading account information...</div>;
     }
 
     return (
         <>
+        {step === 1 && (
         <div className="account-container">
             <div className="navigation-buttons">
                 <button
@@ -758,12 +795,30 @@ function Account() {
                 )}
             </div>
             {!isChangingPassword && !isEditing && (
-            <button className="delete-button" >
+            <button className="delete-button"  onClick={() => (setStep(2))}>
                 Delete Account
             </button>
             )}
         </div>
+        )}
         
+
+
+        {step === 2 && (
+            <div /*center this */>
+            
+                <>
+                <div>
+                    <h2>Are you sure you want to DELETE your account</h2>
+                    <div /*make these buttons side by side*/>
+                        <button className="delete-button" onClick={() => confirmDeletion()}>Confirm Deletion</button>
+                        <button className="attraction-button" onClick={() => cancelDeletion()}>Cancel Deletion</button>
+                    </div>
+                </div>
+                </>
+            
+            </div>
+        )}
         </>
         
     );
