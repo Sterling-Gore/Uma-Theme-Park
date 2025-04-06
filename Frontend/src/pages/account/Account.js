@@ -386,6 +386,7 @@ function Account() {
     }
 
     return (
+        <>
         <div className="account-container">
             <div className="navigation-buttons">
                 <button
@@ -409,6 +410,7 @@ function Account() {
             <form className="account-form" onSubmit={handleSubmit}>
                 <div className="form-header">
                     <h2>Personal Information</h2>
+                    {!isChangingPassword && (
                     <button
                         type="button"
                         className="toggle-edit-btn"
@@ -416,6 +418,7 @@ function Account() {
                     >
                         {isEditing ? 'Cancel' : 'Edit'}
                     </button>
+                    )}
                 </div>
 
                 <div className="form-row">
@@ -679,6 +682,7 @@ function Account() {
             <div className="password-section">
                 <div className="form-header">
                     <h2>Password</h2>
+                    {!isEditing && (
                     <button
                         type="button"
                         className="toggle-edit-btn"
@@ -686,6 +690,7 @@ function Account() {
                     >
                         {isChangingPassword ? 'Cancel' : 'Change Password'}
                     </button>
+                    )}
                 </div>
 
                 {isChangingPassword && (
@@ -749,9 +754,18 @@ function Account() {
                         )}
                         
                     </form>
+                    
                 )}
             </div>
+            {!isChangingPassword && !isEditing && (
+            <button className="delete-button" >
+                Delete Account
+            </button>
+            )}
         </div>
+        
+        </>
+        
     );
 }
 
