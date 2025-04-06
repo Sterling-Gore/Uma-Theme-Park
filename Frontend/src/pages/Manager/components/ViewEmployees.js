@@ -97,7 +97,7 @@ const ViewEmployees = ({ setActiveTab }) => {
         <thead>
           <tr>
             <th>Name</th>
-            <th>Assigned Attraction or Dining</th>
+            <th>Assigned Facility</th>
             <th>Role</th>
             <th>Email</th>
             <th>Phone</th>
@@ -115,7 +115,7 @@ const ViewEmployees = ({ setActiveTab }) => {
                 <td>{employee.phone_number}</td>
                 <td className="action-buttons">
                   <button className="edit-btn" onClick={() => handleAssignAttraction(employee)}>
-                    Assign Attraction or Dining
+                    Assign Facility
                   </button>
                   <button className="delete-btn" onClick={() => handleDelete(employee.email)}>
                     Delete
