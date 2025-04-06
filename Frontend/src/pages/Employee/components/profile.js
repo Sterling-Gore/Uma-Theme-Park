@@ -9,6 +9,7 @@ export default function UpdateEmployeeForm() {
         email: "",
         phone_number:  ""
     });
+    const [isEditing, setIsEditing] = useState(false);
 
     const [passwordData, setPasswordData] = useState({
         password: "",
@@ -16,8 +17,11 @@ export default function UpdateEmployeeForm() {
         employee_id: localStorage.getItem("userID")
     });
 
+    const [employeeDataError, setEmployeeDataError] = useState('');
+
     const [showPasswordForm, setShowPasswordForm] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [refreshEmployeeDate, SetRefreshEmployeeData] = useState(true);
 
     useEffect(() => {
         const fetchEmployeeData = async () => {
@@ -51,7 +55,53 @@ export default function UpdateEmployeeForm() {
         };
 
         fetchEmployeeData();
-    }, []);
+    }, [refreshEmployeeDate]);
+
+    useEffect( () => {
+        checkEmployeeDataError();
+    }, [employeeData])
+
+    const validateEmail = (email) => {
+        return email.match(
+          /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        );
+        
+      };
+      
+    function checkEmployeeDataError(){
+        if(employeeData.first_name === "")
+        {
+            setEmployeeDataError("Fill in your first name");
+            return false;
+        }
+        if(employeeData.last_name === "")
+        {
+            setEmployeeDataError("Fill in your last name");
+            return false;
+        }
+        if(employeeData.email === "")
+        {
+            setEmployeeDataError("Fill in your email");
+            return false;
+        }
+        if(!validateEmail(employeeData.email))
+        {
+            setEmployeeDataError("Enter a valid email");
+            return false;
+        }
+        if(employeeData.phone_number === "")
+        {
+            setEmployeeDataError("Fill in your phone number");
+            return false;
+        }
+        if(employeeData.phone_number.length < 10)
+        {
+            setEmployeeDataError("Enter a valid phone number");
+            return false;
+        }
+        setEmployeeDataError("");
+        return true;
+    }
 
     const handleChange = (e) => {
         setEmployeeData({
@@ -81,7 +131,14 @@ export default function UpdateEmployeeForm() {
             });
 
             const result = await response.json();
-            alert(result.message);
+            if(result.success)
+            {
+                setIsEditing(false);
+            }
+            else
+            {
+                alert(result.message);
+            }
         } catch (error) {
             console.error("Error updating employee profile:", error);
             alert("Failed to update employee profile");
@@ -131,17 +188,17 @@ export default function UpdateEmployeeForm() {
 
                     <div className="input-group">
                         <label>First Name</label>
-                        <input type="text" name="first_name" value={employeeData.first_name} onChange={handleChange} maxLength={50}required />
+                        <input type="text" name="first_name" value={employeeData.first_name} onChange={handleChange} maxLength={50} disabled={!isEditing} required />
                     </div>
 
                     <div className="input-group">
                         <label>Last Name</label>
-                        <input type="text" name="last_name" value={employeeData.last_name} onChange={handleChange} maxLength={50} required />
+                        <input type="text" name="last_name" value={employeeData.last_name} onChange={handleChange} maxLength={50} disabled={!isEditing} required />
                     </div>
 
                     <div className="input-group">
                         <label>Email</label>
-                        <input type="email" name="email" value={employeeData.email} onChange={handleChange} maxLength={100} required />
+                        <input type="email" name="email" value={employeeData.email} onChange={handleChange} maxLength={100} disabled={!isEditing} required />
                     </div>
                     <div className="input-group">
                         <label>Phone Number</label>
@@ -154,18 +211,25 @@ export default function UpdateEmployeeForm() {
                                 //checkError();
                             }} 
                             maxLength={10} 
-                            minLength={10} 
+                            minLength={10}
+                            disabled={!isEditing}  
                             required />
                     </div>
 
-                    <button type="submit">Update Profile</button>
+                        
+                    {!isEditing && !showPasswordForm && <button className="edit-profile-btn" onClick={() => (setIsEditing(true))}>Update Profile</button>}
+                    {isEditing && employeeDataError !== "" && (<p className="error-message">{employeeDataError}</p>)}
+                    <div className="div-row">
+                        {isEditing && <button onClick={() => (setIsEditing(false), SetRefreshEmployeeData(!refreshEmployeeDate))} className="edit-password-btn">Cancel</button>}
+                        {isEditing && employeeDataError === "" && <button type="submit" className="edit-profile-btn">Save Changes</button>}
+                    </div>
                 </form>
             )}
 
             {/* Password update section */}
-            <button className="edit-password-btn" onClick={() => setShowPasswordForm(!showPasswordForm)}>
+            {!isEditing && <button className="edit-password-btn" onClick={() => setShowPasswordForm(!showPasswordForm)}>
                 {showPasswordForm ? "Cancel" : "Edit Password"}
-            </button>
+            </button>}
 
             {showPasswordForm && (
                 <form onSubmit={handlePasswordSubmit} className="password-form">

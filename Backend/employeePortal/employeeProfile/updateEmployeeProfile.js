@@ -19,17 +19,17 @@ async function updateEmployeeProfile(req, res) {
 
 
                 res.writeHead(200, { 'Content-Type': 'application/json' });
-                return res.end(JSON.stringify({ message: "Employee profile updated successfully" }));
+                return res.end(JSON.stringify({ message: "Employee profile updated successfully", success: true }));
             } catch (error) {
                 console.error("Error parsing request body:", error);
                 res.writeHead(400, { 'Content-Type': 'application/json' });
-                return res.end(JSON.stringify({ message: "Invalid request data" }));
+                return res.end(JSON.stringify({ message: "Invalid request data", success: false }));
             }
         });
     } catch (error) {
         console.error("Unexpected error:", error);
         res.writeHead(500, { 'Content-Type': 'application/json' });
-        return res.end(JSON.stringify({ message: "Internal Server Error" }));
+        return res.end(JSON.stringify({ message: "Internal Server Error", success: false }));
     }
 }
 
