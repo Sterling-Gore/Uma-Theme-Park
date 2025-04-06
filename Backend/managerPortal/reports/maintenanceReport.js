@@ -78,7 +78,8 @@ const generateMaintenanceReport = async (req, res) => {
             let combined = {
                 maintenance_count : 0,
                 cost : 0,
-                average_date_difference : 0
+                average_date_difference : 0,
+                average_days_under_maintenance: 0
             };
             let total_maintenance = 0;
         
@@ -92,7 +93,8 @@ const generateMaintenanceReport = async (req, res) => {
                     if(item.average_date_difference !== null)
                     {
                         total_maintenance += item.maintenance_count ?? 0;
-                        combined.average_date_difference += (Number(item.average_date_difference) * (item.maintenance_count ?? 0)) ?? 0
+                        combined.average_date_difference += (Number(item.average_date_difference) * (item.maintenance_count ?? 0)) ?? 0;
+                        combined.average_days_under_maintenance += (Number(item.average_days_under_maintenance) * (item.maintenance_count ?? 0)) ?? 0;
                     }
                     combined.maintenance_count += item.maintenance_count ?? 0;
                     combined.cost += item.cost ?? 0;
@@ -150,7 +152,8 @@ const getTotalData = async (startDate, endDate, dateType, orderBy) => {
             DATE(M.maintenance_date) AS start_date,
             DATE(M.finalized_date) AS end_date,
             DATE(M.expected_completion_date) AS expected_end_date,
-            DATEDIFF(M.finalized_date, M.expected_completion_date) AS date_difference 
+            DATEDIFF(M.expected_completion_date, M.finalized_date) as date_difference,
+            DATEDIFF(M.finalized_date, M.maintenance_date) as days_under_maintenance 
         FROM maintenance_logs AS M
         LEFT JOIN attractions AS A ON M.attraction_id = A.attraction_id
         LEFT JOIN dining AS D ON M.dining_id = D.dining_id
@@ -226,7 +229,8 @@ const getAttractionData = async (startDate, endDate, dateType, orderBy) => {
         DATE(maintenance_date) as start_date,
         DATE(finalized_date) as end_date,
         DATE(expected_completion_date) as expected_end_date,
-        DATEDIFF(M.finalized_date, M.expected_completion_date) as date_difference 
+        DATEDIFF(M.expected_completion_date, M.finalized_date) as date_difference,
+        DATEDIFF(M.finalized_date, M.maintenance_date) as days_under_maintenance 
     FROM maintenance_logs as M, attractions as A
     WHERE M.attraction_id = A.attraction_id 
     `;
@@ -298,7 +302,8 @@ const getDiningData = async (startDate, endDate, dateType, orderBy) => {
         DATE(maintenance_date) as start_date,
         DATE(finalized_date) as end_date,
         DATE(expected_completion_date) as expected_end_date,
-        DATEDIFF(M.finalized_date, M.expected_completion_date) as date_difference 
+        DATEDIFF(M.expected_completion_date, M.finalized_date) as date_difference,
+        DATEDIFF(M.finalized_date, M.maintenance_date) as days_under_maintenance
     FROM maintenance_logs as M, dining as D
     WHERE M.dining_id = D.dining_id
     `;
@@ -368,7 +373,8 @@ const getTotalSummary = async (startDate, endDate, dateType) => {
         M.facility_name AS saved_name,
         COUNT(*) AS maintenance_count,
         COALESCE(SUM(M.maintenance_cost), 0) AS cost,
-        AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) AS average_date_difference,
+        AVG(DATEDIFF(M.expected_completion_date, M.finalized_date)) as average_date_difference,
+        AVG(DATEDIFF(M.finalized_date, M.maintenance_date)) as average_days_under_maintenance,
         M.isAttraction as isAttraction
     FROM maintenance_logs AS M
     LEFT JOIN attractions AS A ON M.attraction_id = A.attraction_id
@@ -432,7 +438,8 @@ const getAttractionSummary = async (startDate, endDate, dateType) => {
         M.facility_name AS saved_name,
         COUNT(*) AS maintenance_count,
         COALESCE(SUM(M.maintenance_cost),0) as cost,
-        AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) as average_date_difference,
+        AVG(DATEDIFF(M.expected_completion_date, M.finalized_date)) as average_date_difference,
+        AVG(DATEDIFF(M.finalized_date, M.maintenance_date)) as average_days_under_maintenance,
         TRUE AS isAttraction 
     FROM maintenance_logs as M
     LEFT JOIN attractions AS A ON M.attraction_id = A.attraction_id
@@ -497,7 +504,8 @@ const getDiningSummary = async (startDate, endDate, dateType) => {
         M.facility_name AS saved_name,
         COUNT(*) AS maintenance_count,
         COALESCE(SUM(M.maintenance_cost),0) as cost,
-        AVG(DATEDIFF(M.finalized_date, M.expected_completion_date)) as average_date_difference,
+        AVG(DATEDIFF(M.expected_completion_date, M.finalized_date)) as average_date_difference,
+        AVG(DATEDIFF(M.finalized_date, M.maintenance_date)) as average_days_under_maintenance,
         FALSE AS isAttraction 
     FROM maintenance_logs as M
     LEFT JOIN dining AS D ON M.dining_id = D.dining_id
