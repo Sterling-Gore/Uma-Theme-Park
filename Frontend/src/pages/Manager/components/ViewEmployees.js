@@ -5,6 +5,7 @@ const ViewEmployees = ({ setActiveTab }) => {
   const [employees, setEmployees] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [refreshEmployees, setRefreshEmployees] = useState(false);
+  const [userID, setUserID] = useState(null);
 
   // Fetch employees from backend
   useEffect(() => {
@@ -32,6 +33,9 @@ const ViewEmployees = ({ setActiveTab }) => {
     };
 
     fetchEmployees();
+    const id = localStorage.getItem('userID');
+    console.log(`userID: ${id}`);
+    setUserID( id );
   }, [refreshEmployees]);
 
   const handleAssignAttraction = (employee) => {
@@ -117,9 +121,10 @@ const ViewEmployees = ({ setActiveTab }) => {
                   <button className="edit-btn" onClick={() => handleAssignAttraction(employee)}>
                     Assign Facility
                   </button>
-                  <button className="delete-btn" onClick={() => handleDelete(employee.email)}>
+                  {console.log(`ID: ${employee.employee_id} ==  ${employee.first_name}`)}
+                  {userID !== employee.employee_id && <button className="delete-btn" onClick={() => handleDelete(employee.email)}>
                     Delete
-                  </button>
+                  </button>}
                 </td>
               </tr>
             ))

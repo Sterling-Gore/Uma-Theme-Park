@@ -6,6 +6,7 @@ async function pullData(){
     E.first_name, 
     E.last_name, 
     E.role, 
+    E.employee_id,
     COALESCE(A.attraction_name, NULL) AS attraction_name, 
     COALESCE(D.dining_name, NULL) AS dining_name, 
     E.phone_number, 
