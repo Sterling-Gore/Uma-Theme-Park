@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import "./Attraction.css";
 
-const CreateAttraction = ({ setActiveTab }) => {
+const CreateAttraction = ({ setInnerActiveTab }) => {
     const alertShown = useRef(false);
     const [formData, setFormData] = useState({
         attraction_name : "",
@@ -90,7 +90,7 @@ const CreateAttraction = ({ setActiveTab }) => {
                 }
                 const data = await response.json();
                 if (data.success) {
-                    setActiveTab('handleAttractions')
+                    setInnerActiveTab('handleAttractions')
                     
                 }
             } catch (error) {
@@ -259,7 +259,7 @@ const CreateAttraction = ({ setActiveTab }) => {
             <button 
                 type="button" 
                 className="delete-button" 
-                onClick={() => setActiveTab('handleAttraction')}
+                onClick={() => setInnerActiveTab('handleAttractions')}
             >
                 Cancel
             </button>
