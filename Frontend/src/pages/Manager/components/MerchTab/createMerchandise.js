@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import "../../../../App.css";
 
-const CreateMerchandise = ({ setActiveTab }) => {
+const CreateMerchandise = ({ setInnerActiveTab }) => {
     const alertShown = useRef(false);
     const [merchandises, setMerchandises] = useState([]);
     const [formData, setFormData] = useState({
@@ -113,7 +113,7 @@ const CreateMerchandise = ({ setActiveTab }) => {
                 }
                 const data = await response.json();
                 if (data.success) {
-                    setActiveTab('handleMerchandise')
+                    setInnerActiveTab('handleMerchandise')
                     
                 }
             } catch (error) {
@@ -241,7 +241,7 @@ const CreateMerchandise = ({ setActiveTab }) => {
             <button 
                 type="button" 
                 className="delete-button" 
-                onClick={() => setActiveTab('handleMerchandise')}
+                onClick={() => setInnerActiveTab('handleMerchandise')}
             >
                 Cancel
             </button>
