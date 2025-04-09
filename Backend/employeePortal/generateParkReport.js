@@ -15,7 +15,7 @@ const generateParkReport = async (req, res) => {
             popularTicketType: await getPopularTicketType(startDate, endDate),
             totalFoodPasses: await getTotalFoodPasses(startDate, endDate),
             ticketBreakdown: await getTicketBreakdown(startDate, endDate),
-            ticketDetails: await getTicketDetailsByDate(startDate, endDate),
+            ticketDetails: await getTicketDetailsByVisitDate(startDate, endDate),
             foodPassBreakdown: await getFoodPassBreakdown(startDate, endDate),
 
 
@@ -203,34 +203,39 @@ const getTotalFoodPasses = async (startDate, endDate) => {
     const [rows] = await pool.query(query, params);
     return rows[0].totalFoodPasses || 0;
 };
-const getTicketDetailsByDate = async (startDate, endDate) => {
+const getTicketDetailsByVisitDate = async (startDate, endDate) => {
     let query = `
         SELECT 
-            purchase_date AS date,
-            SUM(number_of_standards) AS standards,
-            SUM(number_of_children) AS children,
-            SUM(number_of_seniors) AS seniors,
-            SUM(number_of_standards + number_of_children + number_of_seniors) AS total
-        FROM ticket_receipt
+            td.ticket_date AS date,
+            SUM(tr.number_of_standards) AS standards,
+            SUM(tr.number_of_children) AS children,
+            SUM(tr.number_of_seniors) AS seniors,
+            SUM(tr.number_of_standards + tr.number_of_children + tr.number_of_seniors) AS total
+        FROM ticket_dates td
+        JOIN ticket_receipt tr ON td.ticket_receipt_id = tr.ticket_receipt_id
         WHERE 1=1
     `;
     const params = [];
 
     if (startDate) {
-        query += ` AND purchase_date >= ?`;
+        query += ` AND td.ticket_date >= ?`;
         params.push(startDate);
     }
 
     if (endDate) {
-        query += ` AND purchase_date <= ?`;
+        query += ` AND td.ticket_date <= ?`;
         params.push(endDate);
     }
 
-    query += ` GROUP BY purchase_date ORDER BY purchase_date`;
+    query += `
+        GROUP BY td.ticket_date
+        ORDER BY td.ticket_date
+    `;
 
     const [rows] = await pool.query(query, params);
     return rows;
 };
+
 const getFoodPassBreakdown = async (startDate, endDate) => {
     let query = `
         SELECT 

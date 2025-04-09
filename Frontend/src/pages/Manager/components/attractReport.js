@@ -42,51 +42,62 @@ const AttractReport = ({ setActiveTab }) => {
         }
     };
 
-    const handleReset = () => {
-        setStartDate('');
-        setEndDate('');
-        setError(null);
-    };
+    // 🔄 Combine ticket + food pass data by visit date
+    const combinedVisitData = (() => {
+        if (!report) return [];
+
+        const ticketMap = new Map();
+        report.ticketDetails.forEach(entry => {
+            ticketMap.set(entry.date, {
+                date: entry.date,
+                standards: entry.standards,
+                children: entry.children,
+                seniors: entry.seniors,
+                total: entry.total,
+                food_passes: 0
+            });
+        });
+
+        report.foodPassBreakdown.forEach(entry => {
+            if (ticketMap.has(entry.date)) {
+                ticketMap.get(entry.date).food_passes = entry.food_passes;
+            } else {
+                ticketMap.set(entry.date, {
+                    date: entry.date,
+                    standards: 0,
+                    children: 0,
+                    seniors: 0,
+                    total: 0,
+                    food_passes: entry.food_passes
+                });
+            }
+        });
+
+        return Array.from(ticketMap.values()).sort((a, b) => new Date(a.date) - new Date(b.date));
+    })();
 
     return (
-        <div className="reports">
-            <div className="content-header">
-                <h2>Attraction Reports</h2>
-            </div>
-            <div className="report-controls">
-                <div className="filter-form">
-                    <p className="report-description">Access and generate reports.</p>
+        <div className="attract-report">
+            <h1 className="report-title">Attraction Reports</h1>
+            <p className="report-description">Access and generate reports.</p>
 
-                    <div className="filter-row">
-                        <div className="filter-group">
-                            <label>Start Date</label>
-                            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                        </div>
-                        <div className="filter-group">
-                            <label>End Date</label>
-                            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-                        </div>
-                        
-                    </div>
-                    
-                    <div className="filter-actions">
-                        <button onClick={fetchReport} className="generate-btn">
-                            Generate Report
-                        </button>
-                        <button type="button" className="reset-btn" onClick={handleReset}>
-                            Reset Filters
-                        </button>
-                    </div>
+            <div className="filters">
+                <div className="filter-group">
+                    <label>Start Date</label>
+                    <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                </div>
+                <div className="filter-group">
+                    <label>End Date</label>
+                    <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                </div>
+                <div className="button-group">
+                    <button className="btn btn-primary" onClick={fetchReport}>Generate Report</button>
+                    <button className="btn btn-secondary" onClick={() => setActiveTab('dashboard')}>Back to Dashboard</button>
                 </div>
             </div>
 
             {loading && <p className="loading-text">Generating report...</p>}
             {error && <p className="error-text">{error}</p>}
-            {!loading && !error && !report && (
-                <div className="report-placeholder">
-                    <p>Select filters and click "Generate Report" to view Attraction data</p>
-                </div>
-            )}
 
             {report && (
                 <div className="report-output">
@@ -97,77 +108,59 @@ const AttractReport = ({ setActiveTab }) => {
                             <p className="value">{report.totalVisitors}</p>
                         </div>
                         <div className="summary-card">
-    <p className="label">Standard Tickets</p>
-    <p className="value">{report.ticketBreakdown.standards || 0}</p>
-</div>
-<div className="summary-card">
-    <p className="label">Children Tickets</p>
-    <p className="value">{report.ticketBreakdown.children || 0}</p>
-</div>
-<div className="summary-card">
-    <p className="label">Senior Tickets</p>
-    <p className="value">{report.ticketBreakdown.seniors || 0}</p>
-</div>
-
+                            <p className="label">Standard Tickets</p>
+                            <p className="value">{report.ticketBreakdown?.standards || 0}</p>
+                        </div>
                         <div className="summary-card">
-    <p className="label">Total Food Passes</p>
-    <p className="value">{report.totalFoodPasses}</p>
-</div>
-
+                            <p className="label">Children Tickets</p>
+                            <p className="value">{report.ticketBreakdown?.children || 0}</p>
+                        </div>
+                        <div className="summary-card">
+                            <p className="label">Senior Tickets</p>
+                            <p className="value">{report.ticketBreakdown?.seniors || 0}</p>
+                        </div>
+                        <div className="summary-card">
+                            <p className="label">Total Food Passes</p>
+                            <p className="value">{report.totalFoodPasses}</p>
+                        </div>
                         <div className="summary-card">
                             <p className="label">Most Popular Ticket</p>
-                            <p className="value">{report.popularTicketType.type}</p>
+                            <p className="value">{report.popularTicketType?.type || 'N/A'}</p>
                         </div>
                     </div>
-                    <h2 className="section-title">Food Passes by Date</h2>
-<table className="styled-table">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Food Passes</th>
-        </tr>
-    </thead>
-    <tbody>
-        {report.foodPassBreakdown?.map((row, idx) => (
-            <tr key={idx}>
-                <td>{new Date(row.date).toLocaleDateString()}</td>
-                <td>{row.food_passes}</td>
-            </tr>
-        ))}
-    </tbody>
-</table>
 
-                    <h2 className="section-title">Ticket Breakdown by Date</h2>
-<table className="styled-table">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Standard Tickets</th>
-            <th>Children</th>
-            <th>Seniors</th>
-            <th>Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        {report.ticketDetails.map((row, idx) => (
-            <tr key={idx}>
-                <td>{new Date(row.date).toLocaleDateString()}</td>
-                <td>{row.standards}</td>
-                <td>{row.children}</td>
-                <td>{row.seniors}</td>
-                <td>{row.total}</td>
-            </tr>
-        ))}
-    </tbody>
-</table>
-
+                    <h2 className="section-title">Visitor Details by Date</h2>
+                    <table className="styled-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Standard</th>
+                                <th>Children</th>
+                                <th>Seniors</th>
+                                <th>Total Tickets</th>
+                                <th>Food Passes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {combinedVisitData.map((row, idx) => (
+                                <tr key={idx}>
+                                    <td>{new Date(row.date).toLocaleDateString()}</td>
+                                    <td>{row.standards}</td>
+                                    <td>{row.children}</td>
+                                    <td>{row.seniors}</td>
+                                    <td>{row.total}</td>
+                                    <td>{row.food_passes}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
 
                     <h2 className="section-title">Top 5 Attractions</h2>
                     <table className="styled-table">
                         <thead>
                             <tr>
                                 <th>Attraction</th>
-                                <th>Number of Interests</th>
+                                <th>Visits</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -185,7 +178,7 @@ const AttractReport = ({ setActiveTab }) => {
                         <thead>
                             <tr>
                                 <th>Attraction</th>
-                                <th>Total Number of Interests</th>
+                                <th>Total Visits</th>
                             </tr>
                         </thead>
                         <tbody>
