@@ -119,6 +119,48 @@ const AttractReport = ({ setActiveTab }) => {
                             <p className="value">{report.popularTicketType.type}</p>
                         </div>
                     </div>
+                    <h2 className="section-title">Food Passes by Date</h2>
+<table className="styled-table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Food Passes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {report.foodPassBreakdown?.map((row, idx) => (
+            <tr key={idx}>
+                <td>{new Date(row.date).toLocaleDateString()}</td>
+                <td>{row.food_passes}</td>
+            </tr>
+        ))}
+    </tbody>
+</table>
+
+                    <h2 className="section-title">Ticket Breakdown by Date</h2>
+<table className="styled-table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Standard Tickets</th>
+            <th>Children</th>
+            <th>Seniors</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {report.ticketDetails.map((row, idx) => (
+            <tr key={idx}>
+                <td>{new Date(row.date).toLocaleDateString()}</td>
+                <td>{row.standards}</td>
+                <td>{row.children}</td>
+                <td>{row.seniors}</td>
+                <td>{row.total}</td>
+            </tr>
+        ))}
+    </tbody>
+</table>
+
 
                     <h2 className="section-title">Top 5 Attractions</h2>
                     <table className="styled-table">
